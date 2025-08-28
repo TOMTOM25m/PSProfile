@@ -1,0 +1,49 @@
+{
+  "Version": "v08.00.15",
+  "RulebookVersion": "v6.6.6",
+  "Language": "en-US",
+  "Environment": "PROD",
+  "WhatIfMode": false,
+  "TemplateVersions": {
+    "Profile": "v23.0.1",
+    "ProfileX": "v6.0.0",
+    "ProfileMOD": "v6.0.0"
+  },
+  "TemplateFilePaths": [
+    "F:\\VSCode\\Profile\\Profile-template.ps1",
+    "F:\\VSCode\\Profile\\\\Profile-templateX.ps1",
+    "F:\\VSCode\\Profile\\Profile-templateMOD.ps1"
+  ],
+  "UNCPaths": {
+    "Logo": "\\\\itscmgmt03.srv.meduniwien.ac.at\\iso\\DEV\\Images\\Logo.ico"
+  },
+  "Logging": {
+    "LogRetentionDays": 30,
+    "ReportPath": "F:\\VSCode\\Profile\\Reports",
+    "ArchiveRetentionDays": 90,
+    "ArchiveLogs": true,
+    "EnableEventLog": true,
+    "LogPath": "F:\\VSCode\\Profile\\LOG",
+    "LogoPath": "F:\\DEV\\PROD\\Profile\\Images\\Logo.ico",
+    "SevenZipPath": "C:\\Program Files\\7-Zip\\7z.exe"
+  },
+  "Backup": {
+    "Path": "",
+    "Enabled": false
+  },
+  "Mail": {
+    "UseSsl": false,
+    "SmtpServer": "smtpi.meduniwien.ac.at",
+    "ProdTo": "win-admin@meduniwien.ac.at;another.admin@meduniwien.ac.at",
+    "DevTo": "Thomas.garnreiter@meduniwien.ac.at",
+    "Enabled": false,
+    "SmtpPort": 25,
+    "Sender": "ITSC020@meduniwien.ac.at"
+  },
+  "GitUpdate": {
+    "RepositoryUrl": "https://your-git-server/user/powershell-profiles.git",
+    "Enabled": false,
+    "Branch": "main",
+    "LocalCachePath": "F:\\VSCode\\Profile\\GitCache"
+  }
+}

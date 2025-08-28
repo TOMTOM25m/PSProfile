@@ -1,0 +1,120 @@
+[2025.08.27 14:01:45] [INFO] Configuration applied successfully.
+[2025.08.27 14:01:48] [INFO] Configuration applied successfully.
+[2025.08.27 14:01:49] [INFO] Restarting script to apply language change...
+[2025.08.27 14:01:49] [INFO] Starting archive maintenance...
+[2025.08.27 14:01:49] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:01:55] [INFO] Restarting script to apply language change...
+[2025.08.27 14:01:55] [INFO] Starting archive maintenance...
+[2025.08.27 14:01:55] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:01:59] [INFO] Restarting script to apply language change...
+[2025.08.27 14:01:59] [INFO] Starting archive maintenance...
+[2025.08.27 14:01:59] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:02:22] [INFO] Restarting script to apply language change...
+[2025.08.27 14:02:22] [INFO] Starting archive maintenance...
+[2025.08.27 14:02:22] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:10:46] [INFO] --- Script started: Reset-PowerShellProfiles.ps1 v08.00.03 ---
+[2025.08.27 14:10:46] [INFO] Deleting existing PowerShell profiles...
+[2025.08.27 14:10:46] [INFO] Creating new profiles from templates...
+[2025.08.27 14:10:46] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profile.ps1
+[2025.08.27 14:10:46] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profileX.ps1
+[2025.08.27 14:10:46] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\ProfileMOD.ps1
+[2025.08.27 14:10:47] [INFO] PowerShell profiles have been reset successfully.
+[2025.08.27 14:10:52] [INFO] Sending email notification to 'win-admin@meduniwien.ac.at'.
+[2025.08.27 14:10:52] [INFO] Email sent successfully.
+[2025.08.27 14:10:52] [INFO] Starting archive maintenance...
+[2025.08.27 14:10:52] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:11:02] [INFO] --- Script started: Reset-PowerShellProfiles.ps1 v08.00.03 ---
+[2025.08.27 14:11:02] [INFO] Deleting existing PowerShell profiles...
+[2025.08.27 14:11:02] [INFO]   - Deleted: C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
+[2025.08.27 14:11:02] [INFO] Creating new profiles from templates...
+[2025.08.27 14:11:02] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profile.ps1
+[2025.08.27 14:11:02] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profileX.ps1
+[2025.08.27 14:11:02] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\ProfileMOD.ps1
+[2025.08.27 14:11:02] [INFO] PowerShell profiles have been reset successfully.
+[2025.08.27 14:11:05] [INFO] Sending email notification to 'win-admin@meduniwien.ac.at'.
+[2025.08.27 14:11:05] [INFO] Email sent successfully.
+[2025.08.27 14:11:05] [INFO] Starting archive maintenance...
+[2025.08.27 14:11:05] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:12:30] [INFO] Restarting script to apply language change...
+[2025.08.27 14:12:30] [INFO] Starting archive maintenance...
+[2025.08.27 14:12:30] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:35:02] [INFO] Configuration finished. Script will exit.
+[2025.08.27 14:35:13] [INFO] Configuration finished. Script will exit.
+[2025.08.27 14:39:14] [INFO] --- Script started: Reset-PowerShellProfiles.ps1 v08.00.05 ---
+[2025.08.27 14:39:14] [INFO] Deleting existing PowerShell profiles...
+[2025.08.27 14:39:14] [INFO] Creating new profiles from templates...
+[2025.08.27 14:39:14] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profile.ps1
+[2025.08.27 14:39:14] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profileX.ps1
+[2025.08.27 14:39:14] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\ProfileMOD.ps1
+[2025.08.27 14:39:14] [INFO] PowerShell profiles have been reset successfully.
+[2025.08.27 14:39:14] [INFO] Log archiving is disabled.
+[2025.08.27 14:39:14] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:39:30] [INFO] --- Script started: Reset-PowerShellProfiles.ps1 v08.00.05 ---
+[2025.08.27 14:39:30] [INFO] Deleting existing PowerShell profiles...
+[2025.08.27 14:39:30] [INFO]   - Deleted: C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
+[2025.08.27 14:39:30] [INFO] Creating new profiles from templates...
+[2025.08.27 14:39:31] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profile.ps1
+[2025.08.27 14:39:31] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profileX.ps1
+[2025.08.27 14:39:31] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\ProfileMOD.ps1
+[2025.08.27 14:39:31] [INFO] PowerShell profiles have been reset successfully.
+[2025.08.27 14:39:31] [INFO] Log archiving is disabled.
+[2025.08.27 14:39:31] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:39:34] [INFO] Configuration finished. Script will exit.
+[2025.08.27 14:43:43] [INFO] --- Script started: Reset-PowerShellProfiles.ps1 v08.00.06 ---
+[2025.08.27 14:43:43] [INFO] Deleting existing PowerShell profiles...
+[2025.08.27 14:43:43] [INFO]   - Deleted: C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
+[2025.08.27 14:43:43] [INFO] Creating new profiles from templates...
+[2025.08.27 14:43:43] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profile.ps1
+[2025.08.27 14:43:43] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profileX.ps1
+[2025.08.27 14:43:43] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\ProfileMOD.ps1
+[2025.08.27 14:43:43] [INFO] PowerShell profiles have been reset successfully.
+[2025.08.27 14:43:43] [INFO] Log archiving is disabled.
+[2025.08.27 14:43:43] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:43:47] [INFO] Configuration finished. Script will exit.
+[2025.08.27 14:44:50] [INFO] Configuration finished. Script will exit.
+[2025.08.27 14:44:54] [INFO] --- Script started: Reset-PowerShellProfiles.ps1 v08.00.06 ---
+[2025.08.27 14:44:54] [INFO] Deleting existing PowerShell profiles...
+[2025.08.27 14:44:54] [INFO]   - Deleted: C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1
+[2025.08.27 14:44:54] [INFO] Creating new profiles from templates...
+[2025.08.27 14:44:54] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profile.ps1
+[2025.08.27 14:44:54] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profileX.ps1
+[2025.08.27 14:44:54] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\ProfileMOD.ps1
+[2025.08.27 14:44:54] [INFO] PowerShell profiles have been reset successfully.
+[2025.08.27 14:44:55] [INFO] Log archiving is disabled.
+[2025.08.27 14:44:55] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:44:58] [INFO] Configuration finished. Script will exit.
+[2025.08.27 14:49:32] [INFO] --- Script started: Reset-PowerShellProfiles.ps1 v08.00.07 ---
+[2025.08.27 14:49:33] [INFO] Deleting existing PowerShell profiles...
+[2025.08.27 14:49:33] [INFO] Creating new profiles from templates...
+[2025.08.27 14:49:33] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profile.ps1
+[2025.08.27 14:49:33] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profileX.ps1
+[2025.08.27 14:49:33] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\ProfileMOD.ps1
+[2025.08.27 14:49:33] [INFO] PowerShell profiles have been reset successfully.
+[2025.08.27 14:49:33] [INFO] Log archiving is disabled.
+[2025.08.27 14:49:33] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:49:41] [INFO] Configuration finished. Script will exit.
+[2025.08.27 14:56:11] [INFO] --- Script started: Reset-PowerShellProfiles.ps1 v08.00.08 ---
+[2025.08.27 14:56:11] [INFO] Deleting existing PowerShell profiles...
+[2025.08.27 14:56:11] [INFO] Creating new profiles from templates...
+[2025.08.27 14:56:11] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profile.ps1
+[2025.08.27 14:56:11] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\profileX.ps1
+[2025.08.27 14:56:11] [INFO]   - Created: C:\WINDOWS\System32\WindowsPowerShell\v1.0\ProfileMOD.ps1
+[2025.08.27 14:56:11] [INFO] PowerShell profiles have been reset successfully.
+[2025.08.27 14:56:11] [INFO] Log archiving is disabled.
+[2025.08.27 14:56:11] [INFO] --- Script finished: Reset-PowerShellProfiles.ps1. ---
+[2025.08.27 14:56:45] [INFO] Configuration applied successfully.
+[2025.08.27 14:56:48] [INFO] Restarting script to apply language change...
+[2025.08.27 14:56:52] [INFO] Restarting script to apply language change...
+[2025.08.27 14:58:13] [INFO] Restarting script to apply language change...
+[2025.08.27 14:58:25] [INFO] Configuration applied successfully.
+[2025.08.27 14:58:26] [INFO] Configuration applied successfully.
+[2025.08.27 14:58:26] [INFO] Configuration applied successfully.
+[2025.08.27 14:58:27] [INFO] Configuration applied successfully.
+[2025.08.27 14:58:30] [INFO] Configuration applied successfully.
+[2025.08.27 14:58:31] [INFO] Configuration applied successfully.
+[2025.08.27 14:58:32] [INFO] Configuration applied successfully.
+[2025.08.27 14:58:34] [INFO] Restarting script to apply language change...
+[2025.08.27 14:58:37] [INFO] Restarting script to apply language change...
+[2025.08.27 14:58:40] [INFO] Restarting script to apply language change...
+[2025.08.27 14:58:55] [INFO] Restarting script to apply language change...
+[2025.08.27 15:02:30] [WARNING] Configuration file not found. Starting GUI for initial setup.
