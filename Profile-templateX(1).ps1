@@ -102,4 +102,3 @@ foreach ($path in $networkPaths) {
 
 # --- End of the Script, old: v5.0.1 to now: v6.0.0  Regelwerk: v6.6.6 ---
 
-
