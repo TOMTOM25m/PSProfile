@@ -14,12 +14,10 @@
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.08.15
     Last modified:  2025.09.01
-    Version:        v10.3.0
+    Version:        v10.3.1
     MUW-Regelwerk:  v7.7.0
-    Notes:          [DE] Refactoring: Fehlerhafte Here-String-Logik in 'Initialize-LocalizationFiles' durch eine
-                    robuste Kopier-Routine von .default-Vorlagen ersetzt.
-                    [EN] Refactoring: Replaced faulty Here-String logic in 'Initialize-LocalizationFiles' with a
-                    robust copy routine from .default templates.
+    Notes:          [DE] PSScriptAnalyzer-Warnung behoben: 'Load-ConfigIntoGui' zu 'Initialize-GuiFromConfig' umbenannt.
+                    [EN] Fixed PSScriptAnalyzer warning: Renamed 'Load-ConfigIntoGui' to 'Initialize-GuiFromConfig'.
     Copyright:      © 2025 Flecki Garnreiter
     License:        MIT License
 #>
@@ -208,7 +206,7 @@ function Show-MuwSetupGui {
     $xaml.SelectNodes("//*[@x:Name]") | ForEach-Object { $controls[$_.Name] = $Window.FindName($_.Name) }
 
     # --- Helper Functions ---
-    function Load-ConfigIntoGui {
+    function Initialize-GuiFromConfig {
         param($config)
         $controls.LanguageComboBox.SelectedItem = $controls.LanguageComboBox.Items | Where-Object { $_.Content -eq $config.Language }
         $controls.EnvironmentComboBox.SelectedItem = $controls.EnvironmentComboBox.Items | Where-Object { $_.Content -eq $config.Environment }
@@ -294,11 +292,11 @@ function Show-MuwSetupGui {
     })
 
     # --- Load data and show window ---
-    Load-ConfigIntoGui -config $InitialConfig
+    Initialize-GuiFromConfig -config $InitialConfig
     $null = $Window.ShowDialog()
 
     return $Window.Tag
 }
 
-# --- End of module --- v10.3.0 ; Regelwerk: v7.7.0 ---
+# --- End of module --- v10.3.1 ; Regelwerk: v7.7.0 ---
 

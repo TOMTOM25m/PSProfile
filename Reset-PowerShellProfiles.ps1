@@ -33,11 +33,11 @@
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.07.11
     Last modified:  2025.09.01
-    old Version:    v10.2.0
-    Version now:    v10.3.0
-    MUW-Regelwerk:  v7.7.0
-    Notes:          [DE] GUI-Modul-Fehler durch Umstellung auf .default-Sprachvorlagen behoben. Git-Fallback implementiert.
-                    [EN] Fixed GUI module error by switching to .default language templates. Implemented Git fallback.
+    old Version:    v10.4.1
+    Version now:    v10.5.0
+    MUW-Regelwerk:  v7.8.0
+    Notes:          [DE] Stabilitäts-Fix: Die Logik für die Erst-Initialisierung wurde überarbeitet, um Fehler bei fehlender Konfigurationsdatei zu beheben.
+                    [EN] Stability fix: Reworked the initial setup logic to resolve errors when the configuration file is missing.
     Copyright:      © 2025 Flecki Garnreiter
     License:        MIT License
 #>
@@ -53,8 +53,8 @@ param (
 
 #region ####################### [1. Initialization] ##############################
 $Global:ScriptName = $MyInvocation.MyCommand.Name
-$Global:ScriptVersion = "v10.3.0"
-$Global:RulebookVersion = "v7.7.0"
+$Global:ScriptVersion = "v10.5.0"
+$Global:RulebookVersion = "v7.8.0"
 $Global:ScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Path
 
 $configDir = Join-Path $Global:ScriptDirectory 'Config'
@@ -63,7 +63,9 @@ if (-not (Test-Path $configDir)) {
 }
 
 if ([string]::IsNullOrEmpty($ConfigFile)) {
-    $ConfigFile = Join-Path -Path $configDir -ChildPath "Config-$($MyInvocation.MyCommand.Name).json"
+    $Global:ConfigFile = Join-Path -Path $configDir -ChildPath "Config-$($MyInvocation.MyCommand.Name).json"
+} else {
+    $Global:ConfigFile = $ConfigFile
 }
 
 $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
@@ -80,7 +82,6 @@ try {
 }
 catch {
     Write-Error "A critical error occurred while loading essential modules: $($_.ToString())"
-    # Exit the script immediately if modules can't be loaded, as it cannot function.
     return
 }
 #endregion
@@ -90,15 +91,18 @@ $oldVersion = try {
     (Get-Content -Path $MyInvocation.MyCommand.Path -TotalCount 30 -ErrorAction SilentlyContinue | Select-String 'Version now:\s*(v[\d\.]+)' | ForEach-Object { $_.Matches.Groups[1].Value })[0]
 } catch { "v0.0.0" }
 
-if ($Setup.IsPresent) {
+# --- Handle dedicated operational modes first ---
+if ($Setup.IsPresent -or (-not (Test-Path $Global:ConfigFile))) {
+    if (-not (Test-Path $Global:ConfigFile)) {
+        Write-Host "[WARNING] Configuration file not found. Starting initial setup GUI automatically." -ForegroundColor Yellow
+        # Create and save a default config first to ensure all subsequent functions have a valid file to work with.
+        $Global:Config = Get-DefaultConfig
+        Save-Config -Config $Global:Config -Path $Global:ConfigFile
+    }
     do {
         $restartGui = $false
-        $Global:Config = Get-Config -Path $ConfigFile
-        if ($null -eq $Global:Config) {
-            Write-Log -Level WARNING -Message "Configuration file not found or corrupt. Using default values for GUI."
-            $Global:Config = Get-DefaultConfig
-        }
-        Invoke-VersionControl -LoadedConfig $Global:Config -Path $ConfigFile
+        $Global:Config = Get-Config -Path $Global:ConfigFile
+        Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
         Initialize-LocalizationFiles -ConfigDirectory $configDir
         $guiResult = Show-MuwSetupGui -InitialConfig $Global:Config
         if ($guiResult -eq 'Restart') {
@@ -110,22 +114,22 @@ if ($Setup.IsPresent) {
 }
 
 if ($Versionscontrol.IsPresent) {
-    $Global:Config = Get-Config -Path $ConfigFile
+    $Global:Config = Get-Config -Path $Global:ConfigFile
     if ($null -ne $Global:Config) {
-        Invoke-VersionControl -LoadedConfig $Global:Config -Path $ConfigFile
+        Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
         Write-Log -Level INFO -Message "Version control check finished. Script will exit."
-    }
-    else {
+    } else {
         Write-Log -Level WARNING -Message "Configuration file not found. Cannot perform version control."
     }
     return
 }
 
+# --- Main execution logic ---
 $emailSubject, $emailBody = $null, $null
 try {
-    $Global:Config = Get-Config -Path $ConfigFile
+    $Global:Config = Get-Config -Path $Global:ConfigFile
     if ($null -eq $Global:Config) {
-        throw "Configuration file `"$ConfigFile`" not found or corrupt. Please run the script with the -Setup parameter first."
+        throw "Configuration file `"$Global:ConfigFile`" is corrupt. Please delete it or run with -Setup to fix it."
     }
     if ($Global:Config.Environment -eq "DEV") {
         $VerbosePreference = 'Continue'
@@ -134,8 +138,7 @@ try {
             $WhatIfPreference = $true
             Write-Log -Level WARNING -Message "SCRIPT IS RUNNING IN SIMULATION (WhatIf) MODE. NO CHANGES WILL BE MADE."
         }
-    }
-    else {
+    } else {
         $VerbosePreference = 'SilentlyContinue'
         $DebugPreference = 'SilentlyContinue'
         $WhatIfPreference = $false
@@ -147,13 +150,10 @@ try {
     if ($Global:Config.GitUpdate.Enabled) {
         $templateSourcePath = Invoke-GitUpdate
     }
-    
-    # Fallback to local templates if Git update fails or is disabled
     if ($null -eq $templateSourcePath) {
         $templateSourcePath = $Global:ScriptDirectory
         Write-Log -Level INFO -Message "Using local template files from: $templateSourcePath"
     }
-
     $Global:Config.TemplateFilePaths = @{
         Profile    = Join-Path $templateSourcePath 'Profile-template.ps1';
         ProfileX   = Join-Path $templateSourcePath 'Profile-templateX.ps1';
@@ -190,7 +190,6 @@ try {
             New-Item -ItemType Directory -Path $systemwideProfileDir -Force | Out-Null
         }
     }
-    
     $templateMapping = @{
         Profile    = $systemwideProfilePath;
         ProfileX   = Join-Path $systemwideProfileDir 'profileX.ps1';
@@ -202,7 +201,6 @@ try {
         $destinationPath = $templateMapping[$templateKey]
         $oldTemplateVersion = $Global:Config.TemplateVersions[$templateKey]
         $versionToSet = $Global:Config.TargetTemplateVersions[$templateKey]
-
         if ($PSCmdlet.ShouldProcess($destinationPath, "Create Profile from $($templatePath | Split-Path -Leaf)")) {
             try {
                 Copy-Item -Path $templatePath -Destination $destinationPath -Force -ErrorAction Stop
@@ -228,11 +226,11 @@ finally {
     if ($Global:Config) {
         if ($emailSubject) { Send-MailNotification -Subject $emailSubject -Body $emailBody }
         Invoke-ArchiveMaintenance
-        Save-Config -Config $Global:Config -Path $ConfigFile | Out-Null
+        Save-Config -Config $Global:Config -Path $Global:ConfigFile | Out-Null
     }
-    Write-Log -Level INFO -Message "--- Script finished: $Global:ScriptName. ---"
+    Write-Log -Level INFO -Message "--- Script finished: $($Global:ScriptName). Old Version: $oldVersion -> New Version: $($Global:ScriptVersion) ---"
 }
 #endregion
 
-# --- End of Script --- old: v10.2.0 ; now: v10.3.0 ; Regelwerk: v7.7.0 ---
+# --- End of Script --- old: v10.4.1 ; now: v10.5.0 ; Regelwerk: v7.8.0 ---
 
