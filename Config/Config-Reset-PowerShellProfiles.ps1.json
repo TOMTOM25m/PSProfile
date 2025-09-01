@@ -1,6 +1,6 @@
 {
-  "Version": "v08.00.15",
-  "RulebookVersion": "v6.6.6",
+  "Version": "v09.04.00",
+  "RulebookVersion": "v7.3.0",
   "Language": "en-US",
   "Environment": "PROD",
   "WhatIfMode": false,
@@ -10,9 +10,9 @@
     "ProfileMOD": "v6.0.0"
   },
   "TemplateFilePaths": [
-    "F:\\VSCode\\Profile\\Profile-template.ps1",
-    "F:\\VSCode\\Profile\\\\Profile-templateX.ps1",
-    "F:\\VSCode\\Profile\\Profile-templateMOD.ps1"
+    "F:\\VSCode\\Profile\\GitCache\\repository\\Profile-template.ps1",
+    "F:\\VSCode\\Profile\\GitCache\\repository\\Profile-templateX.ps1",
+    "F:\\VSCode\\Profile\\GitCache\\repository\\Profile-templateMOD.ps1"
   ],
   "UNCPaths": {
     "Logo": "\\\\itscmgmt03.srv.meduniwien.ac.at\\iso\\DEV\\Images\\Logo.ico"
@@ -22,7 +22,7 @@
     "ReportPath": "F:\\VSCode\\Profile\\Reports",
     "ArchiveRetentionDays": 90,
     "ArchiveLogs": true,
-    "EnableEventLog": true,
+    "EnableEventLog": false,
     "LogPath": "F:\\VSCode\\Profile\\LOG",
     "LogoPath": "F:\\DEV\\PROD\\Profile\\Images\\Logo.ico",
     "SevenZipPath": "C:\\Program Files\\7-Zip\\7z.exe"
@@ -41,9 +41,13 @@
     "Sender": "ITSC020@meduniwien.ac.at"
   },
   "GitUpdate": {
-    "RepositoryUrl": "https://your-git-server/user/powershell-profiles.git",
+    "RepositoryUrl": "https://gitlab-itsc.meduniwien.ac.at/betrieb/active-directory-windows/PSProfile.git",
     "Enabled": false,
     "Branch": "main",
     "LocalCachePath": "F:\\VSCode\\Profile\\GitCache"
+  },
+  "LanguageFileVersions": {
+    "de-DE": "v1.0.0",
+    "en-US": "v1.0.0"
   }
 }
