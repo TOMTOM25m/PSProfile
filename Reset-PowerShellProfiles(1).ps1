@@ -25,8 +25,8 @@
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.07.11
     Last modified:  2025.09.01
-    Version:        v10.2.0
-    MUW-Regelwerk:  v7.6.0
+    Version:        v10.1.0
+    MUW-Regelwerk:  v7.5.0
     Notes:          [DE] Optimierung: Git-Update-Logik robuster gemacht (Fallback auf lokale Dateien). Sprachdateien nutzen nun .default-Vorlagen.
                     [EN] Optimization: Made Git update logic more robust (fallback to local files). Language files now use .default templates.
     Copyright:      © 2025 Flecki Garnreiter
@@ -44,8 +44,8 @@ param (
 
 #region ####################### [1. Initialization] ##############################
 $Global:ScriptName = $MyInvocation.MyCommand.Name
-$Global:ScriptVersion = "v10.2.0"
-$Global:RulebookVersion = "v7.6.0"
+$Global:ScriptVersion = "v10.1.0"
+$Global:RulebookVersion = "v7.5.0"
 $Global:ScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Path
 
 # --- Configuration Directory Management ---
@@ -62,18 +62,12 @@ $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 #endregion
 
 #region ####################### [2. Module Import] #################################################
-try {
-    $modulePath = Join-Path $Global:ScriptDirectory "Modules"
-    Import-Module (Join-Path $modulePath "FL-Config.psm1") -ErrorAction Stop
-    Import-Module (Join-Path $modulePath "FL-Logging.psm1") -ErrorAction Stop
-    Import-Module (Join-Path $modulePath "FL-Gui.psm1") -ErrorAction Stop
-    Import-Module (Join-Path $modulePath "FL-Maintenance.psm1") -ErrorAction Stop
-    Import-Module (Join-Path $modulePath "FL-Utils.psm1") -ErrorAction Stop
-}
-catch {
-    Write-Error "A critical error occurred while loading essential modules: $($_.Exception.Message)"
-    exit 1
-}
+$modulePath = Join-Path $Global:ScriptDirectory "Modules"
+Import-Module (Join-Path $modulePath "FL-Config.psm1")
+Import-Module (Join-Path $modulePath "FL-Logging.psm1")
+Import-Module (Join-Path $modulePath "FL-Gui.psm1")
+Import-Module (Join-Path $modulePath "FL-Maintenance.psm1")
+Import-Module (Join-Path $modulePath "FL-Utils.psm1")
 #endregion
 
 #region ####################### [5. Script Main Body] ##############################
@@ -117,10 +111,7 @@ if ($Versionscontrol.IsPresent) {
 
 # --- Main execution logic ---
 $emailSubject, $emailBody = $null, $null
-$oldVersion = try { 
-    (Get-Content -Path $MyInvocation.MyCommand.Path -TotalCount 20 | Select-String 'Version:\s*(v[\d\.]+)' | ForEach-Object { $_.Matches.Groups[1].Value })[0] 
-} catch { "v0.0.0" }
-
+$oldVersion = (Get-Content -Path $MyInvocation.MyCommand.Path -TotalCount 20 | Select-String 'Version:\s*(v[\d\.]+)' | ForEach-Object { $_.Matches.Groups[1].Value })[0]
 
 try {
     $Global:Config = Get-Config -Path $ConfigFile
@@ -256,5 +247,5 @@ finally {
 }
 #endregion
 
-# --- End of Script --- old: v10.1.0 ; now: v10.2.0 ; Regelwerk: v7.6.0 ---
+# --- End of Script --- old: v10.0.0 ; now: v10.1.0 ; Regelwerk: v7.5.0 ---
 
