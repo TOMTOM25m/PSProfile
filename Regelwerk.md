@@ -5,7 +5,7 @@
 
 ---
 
-<!-- markdownlint-disable-next-line MD033 -->
+<!-- markdownlint-disable MD033 -->
 <details>
 <summary>KI-Anweisungen (Technische Konventionen)</summary>
 
@@ -16,32 +16,33 @@ Dieser Abschnitt dient als technische Kurzübersicht für die KI-Assistenz.
 * **Kompatibilität:** PowerShell 5.1 und 7+ (`$IsCoreCLR` für Weichen nutzen).
 * **Admin:** Skripte mit Admin-Bedarf nutzen `#requires -RunAsAdministrator`.
 * **Dateistruktur:**
-    * **Hauptskript:** `*.ps1`
-    * **Module:** `./Modules/FL-*.psm1`
-    * **Konfiguration:** `./Config/Config-<ScriptName>.json`
-    * **Sprachdateien:** `./Config/[de-DE|en-US].json` (Versioniert)
-    * **Sprachvorlagen:** `./Config/[de-DE|en-US].json.default`
-    * **Dokumentation:** `FL-README-<ScriptName>.md`
+  * **Hauptskript:** `*.ps1`
+  * **Module:** `./Modules/FL-*.psm1`
+  * **Konfiguration:** `./Config/Config-<ScriptName>.json`
+  * **Sprachdateien:** `./Config/[de-DE|en-US].json` (Versioniert)
+  * **Sprachvorlagen:** `./Config/[de-DE|en-US].json.default`
+  * **Dokumentation:** `FL-README-<ScriptName>.md`
 * **Versionierung (vX.Y.Z):**
-    * Muss im Skript-Header (`Version now`), in der `$Global:ScriptVersion`-Variable und im End-Kommentar des Hauptskripts konsistent sein.
-    * Die `RulebookVersion` wird ebenfalls im Header und in der Default-Config gepflegt.
+  * Muss im Skript-Header (`Version now`), in der `$Global:ScriptVersion`-Variable und im End-Kommentar des Hauptskripts konsistent sein.
+  * Die `RulebookVersion` wird ebenfalls im Header und in der Default-Config gepflegt.
 * **Header & Footer:**
-    * **Header:** Ein standardisierter Kommentar-Header ist für alle `.ps1`- und `.psm1`-Dateien Pflicht.
-    * **Footer (.ps1):** `# --- End of Script --- old: vX.Y.Z ; now: vX.Y.Z ; Regelwerk: vX.Y.Z ---`
-    * **Footer (.psm1):** `# --- End of module --- vX.Y.Z ; Regelwerk: vX.Y.Z ---`
+  * **Header:** Ein standardisierter Kommentar-Header ist für alle `.ps1`- und `.psm1`-Dateien Pflicht.
+  * **Footer (.ps1):** `# --- End of Script --- old: vX.Y.Z ; now: vX.Y.Z ; Regelwerk: vX.Y.Z ---`
+  * **Footer (.psm1):** `# --- End of module --- vX.Y.Z ; Regelwerk: vX.Y.Z ---`
 * **GUI (WPF):**
-    * **Aufruf:** `-Setup`-Parameter startet die Konfigurations-GUI.
-    * **Auto-Start:** Erfolgt, wenn `config.json` fehlt oder korrupt ist.
-    * **Design:** Primärfarbe ist `#111d4e` (Dunkelblau) mit weißer Schrift.
-    * **Buttons:** `[Abbrechen]` links, `[Anwenden]` und `[OK]` rechts.
+  * **Aufruf:** `-Setup`-Parameter startet die Konfigurations-GUI.
+  * **Auto-Start:** Erfolgt, wenn `config.json` fehlt oder korrupt ist.
+  * **Design:** Primärfarbe ist `#111d4e` (Dunkelblau) mit weißer Schrift.
+  * **Buttons:** `[Abbrechen]` links, `[Anwenden]` und `[OK]` rechts.
 * **Logging:**
-    * **Sprache:** Alle Log-Meldungen, die in Dateien oder das EventLog geschrieben werden, müssen auf Englisch sein.
-    * **Dateinamen:** `DEV_<ScriptName>_yyyy-MM-dd.log` für Entwicklung, `PROD_<ScriptName>_yyyy-MM-dd.log` für Produktivbetrieb.
-    * **Event Log:** `WARNING`- und `ERROR`-Meldungen müssen ins Windows Event Log geschrieben werden (Funktion muss per Konfiguration abschaltbar sein).
+  * **Sprache:** Alle Log-Meldungen, die in Dateien oder das EventLog geschrieben werden, müssen auf Englisch sein.
+  * **Dateinamen:** `DEV_<ScriptName>_yyyy-MM-dd.log` für Entwicklung, `PROD_<ScriptName>_yyyy-MM-dd.log` für Produktivbetrieb.
+  * **Event Log:** `WARNING`- und `ERROR`-Meldungen müssen ins Windows Event Log geschrieben werden (Funktion muss per Konfiguration abschaltbar sein).
 * **Mail:** `System.Net.Mail.SmtpClient` verwenden, nicht `Send-MailMessage`.
 * **Archivierung:** 7-Zip bevorzugen, mit `Compress-Archive` als Fallback.
 
 </details>
+<!-- markdownlint-enable MD033 -->
 
 ---
 
@@ -76,10 +77,26 @@ Dieser Abschnitt dient als technische Kurzübersicht für die KI-Assistenz.
 .DISCLAIMER
     [DE] Die bereitgestellten Skripte und die zugehörige Dokumentation werden "wie besehen" ("as is")
     ohne ausdrückliche oder stillschweigende Gewährleistung jeglicher Art zur Verfügung gestellt.
-    [...]
+    Insbesondere wird keinerlei Gewähr übernommen für die Marktgängigkeit, die Eignung für einen bestimmten Zweck
+    oder die Nichtverletzung von Rechten Dritter.
+    Es besteht keine Verpflichtung zur Wartung, Aktualisierung oder Unterstützung der Skripte. Jegliche Nutzung erfolgt auf eigenes Risiko.
+    In keinem Fall haften Herr Flecki Garnreiter, sein Arbeitgeber oder die Mitwirkenden an der Erstellung,
+    Entwicklung oder Verbreitung dieser Skripte für direkte, indirekte, zufällige, besondere oder Folgeschäden - einschließlich,
+    aber nicht beschränkt auf entgangenen Gewinn, Betriebsunterbrechungen, Datenverlust oder sonstige wirtschaftliche Verluste -,
+    selbst wenn sie auf die Möglichkeit solcher Schäden hingewiesen wurden.
+    Durch die Nutzung der Skripte erklären Sie sich mit diesen Bedingungen einverstanden.
 
     [EN] The scripts and accompanying documentation are provided "as is," without warranty of any kind, either express or implied.
-    [...]
+    Flecki Garnreiter and his employer disclaim all warranties, including but not limited to the implied warranties of merchantability,
+    fitness for a particular purpose, and non-infringement.
+    There is no obligation to provide maintenance, support, updates, or enhancements for the scripts.
+    Use of these scripts is at your own risk. Under no circumstances shall Flecki Garnreiter, his employer, the authors,
+    or any party involved in the creation, production, or distribution of the scripts be held liable for any damages whatever,
+    including but not not limited to direct, indirect, incidental, consequential, or special damages
+    (such as loss of profits, business interruption, or loss of business data), even if advised of the possibility of such damages.
+    By using these scripts, you agree to be bound by the above terms.
+
+.END
 ```
 
 ### 1.2. Generierte Hilfedatei (README)
@@ -119,9 +136,9 @@ Grafische Benutzeroberflächen (GUIs) folgen dem Corporate Design der MedUni Wie
 
 * **Nutzen:** Sorgt für ein professionelles und vertrautes Erscheinungsbild.
 * **Details:**
-    * **Farbschema:** Primäre Elemente nutzen Dunkelblau (`#111d4e`) mit weißer Schrift.
-    * **Fenstertitel:** Zeigt immer den Skriptnamen und die Version an (z.B. `SetupGUI MeinSkript - v1.2.15`).
-    * **Button-Anordnung:** `Abbrechen` steht immer links; `Anwenden` und `OK` stehen immer rechts.
+  * **Farbschema:** Primäre Elemente nutzen Dunkelblau (`#111d4e`) mit weißer Schrift.
+  * **Fenstertitel:** Zeigt immer den Skriptnamen und die Version an (z.B. `SetupGUI <ScriptName> - v1.2.15`).
+  * **Button-Anordnung:** `Abbrechen` steht immer links; `Anwenden` und `OK` stehen immer rechts.
 
 ## 2. Benutzerfreundlichkeit & Bedienbarkeit
 
@@ -147,9 +164,9 @@ Die GUI ist selbsterklärend aufgebaut.
 
 * **Nutzen:** Reduziert Anwendungsfehler und Rückfragen.
 * **Details:**
-    * **Hilfetexte:** Kurze, informative Texte erklären die Einstellungen direkt im Fenster.
-    * **Sprachauswahl:** Die Oberfläche kann zwischen Deutsch und Englisch umgeschaltet werden.
-    * **Dateipfade auswählen:** Alle Pfadangaben verfügen über einen "Durchsuchen..."-Button.
+  * **Hilfetexte:** Kurze, informative Texte erklären die Einstellungen direkt im Fenster.
+  * **Sprachauswahl:** Die Oberfläche kann zwischen Deutsch und Englisch umgeschaltet werden.
+  * **Dateipfade auswählen:** Alle Pfadangaben verfügen über einen "Durchsuchen..."-Button.
 
 ## 3. Stabilität & Wartbarkeit
 
@@ -165,9 +182,9 @@ Das Skript protokolliert seine Aktivitäten in Log-Dateien.
 
 * **Nutzen:** Ermöglicht eine schnelle Fehleranalyse.
 * **Details:**
-    * **Sprache:** Alle Log-Einträge sind ausschließlich auf Englisch.
-    * **Dateiname:** `[DEV|PROD]_<ScriptName>_yyyy-MM-dd.log`.
-    * **Event Log:** Kritische Fehler und Warnungen werden zusätzlich ins Windows Event Log geschrieben.
+  * **Sprache:** Alle Log-Einträge sind ausschließlich auf Englisch.
+  * **Dateiname:** `[DEV|PROD]_<ScriptName>_yyyy-MM-dd.log`.
+  * **Event Log:** Kritische Fehler und Warnungen werden zusätzlich ins Windows Event Log geschrieben.
 
 ### 3.4. Automatische Archivierung
 
