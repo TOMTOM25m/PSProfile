@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
-    [DE] Setzt alle PowerShell-Profile auf einen Standard zurück, versioniert Vorlagen und verwaltet die Konfiguration über eine GUI.
-    [EN] Resets all PowerShell profiles to a standard, versions templates, and manages the configuration via a GUI.
+    [DE] Setzt alle PowerShell-Profile auf einen Standard zurück und verwaltet die Konfiguration über eine GUI.
+    [EN] Resets all PowerShell profiles to a standard and manages the configuration via a GUI.
 .DESCRIPTION
     [DE] Ein vollumfängliches Verwaltungsskript für PowerShell-Profile gemäss MUW-Regeln. Es erzwingt Administratorrechte,
          stellt die UTF-8-Kodierung sicher und bietet eine WPF-basierte GUI (-Setup) zur Konfiguration. Bei fehlender
@@ -18,26 +18,15 @@
 .PARAMETER Versionscontrol
     [DE] Prüft die Konfigurationsdatei gegen die Skript-Version, zeigt Unterschiede an und aktualisiert sie.
     [EN] Checks the configuration file against the script version, displays differences, and updates it.
-.PARAMETER ConfigFile
-    [DE] Pfad zur JSON-Konfigurationsdatei. Standard: 'Config\Config-Reset-PowerShellProfiles.ps1.json' im Skriptverzeichnis.
-    [EN] Path to the JSON configuration file. Default: 'Config\Config-Reset-PowerShellProfiles.ps1.json' in the script directory.
-.EXAMPLE
-    .\Reset-PowerShellProfiles.ps1
-    [DE] Führt das Skript aus. Setzt die Profile zurück und fordert bei Bedarf Admin-Rechte an. Startet die GUI bei Erstkonfiguration.
-    [EN] Executes the script. Resets the profiles and requests admin rights if necessary. Starts the GUI on first configuration.
-.EXAMPLE
-    .\Reset-PowerShellProfiles.ps1 -Setup
-    [DE] Öffnet die Konfigurations-GUI, um die aktuellen Einstellungen zu ändern.
-    [EN] Opens the configuration GUI to change the current settings.
 .NOTES
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.07.11
     Last modified:  2025.09.01
-    old Version:    v10.4.1
-    Version now:    v10.5.0
-    MUW-Regelwerk:  v7.8.0
-    Notes:          [DE] Stabilitäts-Fix: Die Logik für die Erst-Initialisierung wurde überarbeitet, um Fehler bei fehlender Konfigurationsdatei zu beheben.
-                    [EN] Stability fix: Reworked the initial setup logic to resolve errors when the configuration file is missing.
+    old Version:    v10.5.0
+    Version now:    v11.0.0
+    MUW-Regelwerk:  v8.0.0
+    Notes:          [DE] Grosses Stabilitäts-Update: Vollständiges, synchronisiertes Release aller Module, um Fehler bei der Erst-Initialisierung zu beheben.
+                    [EN] Major stability update: Full, synchronized release of all modules to fix errors during initial setup.
     Copyright:      © 2025 Flecki Garnreiter
     License:        MIT License
 #>
@@ -47,26 +36,20 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
     [Switch]$Setup,
-    [Switch]$Versionscontrol,
-    [string]$ConfigFile
+    [Switch]$Versionscontrol
 )
 
 #region ####################### [1. Initialization] ##############################
 $Global:ScriptName = $MyInvocation.MyCommand.Name
-$Global:ScriptVersion = "v10.5.0"
-$Global:RulebookVersion = "v7.8.0"
+$Global:ScriptVersion = "v11.0.0"
+$Global:RulebookVersion = "v8.0.0"
 $Global:ScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Path
 
 $configDir = Join-Path $Global:ScriptDirectory 'Config'
 if (-not (Test-Path $configDir)) {
     New-Item -Path $configDir -ItemType Directory | Out-Null
 }
-
-if ([string]::IsNullOrEmpty($ConfigFile)) {
-    $Global:ConfigFile = Join-Path -Path $configDir -ChildPath "Config-$($MyInvocation.MyCommand.Name).json"
-} else {
-    $Global:ConfigFile = $ConfigFile
-}
+$Global:ConfigFile = Join-Path -Path $configDir -ChildPath "Config-$($MyInvocation.MyCommand.Name).json"
 
 $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 #endregion
@@ -94,8 +77,7 @@ $oldVersion = try {
 # --- Handle dedicated operational modes first ---
 if ($Setup.IsPresent -or (-not (Test-Path $Global:ConfigFile))) {
     if (-not (Test-Path $Global:ConfigFile)) {
-        Write-Host "[WARNING] Configuration file not found. Starting initial setup GUI automatically." -ForegroundColor Yellow
-        # Create and save a default config first to ensure all subsequent functions have a valid file to work with.
+        Write-Host "[WARNING] Configuration file not found. Creating a default and starting setup GUI." -ForegroundColor Yellow
         $Global:Config = Get-DefaultConfig
         Save-Config -Config $Global:Config -Path $Global:ConfigFile
     }
@@ -232,5 +214,5 @@ finally {
 }
 #endregion
 
-# --- End of Script --- old: v10.4.1 ; now: v10.5.0 ; Regelwerk: v7.8.0 ---
+# --- End of Script --- old: v10.5.0 ; now: v11.0.0 ; Regelwerk: v8.0.0 ---
 
