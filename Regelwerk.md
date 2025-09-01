@@ -1,155 +1,189 @@
-# **MUW-Regelwerk**  **Standard für die MUW PowerShell-Skripte v6.6.6 © Flecki Garnreiter**
+# KI-Anweisungen (Technische Konventionen)
 
-## **Allgemein**
+*Dieser Abschnitt dient als technische Kurzübersicht für die KI-Assistenz.*
 
-### **Allgemeine Vorgaben**
+---
 
-* **Kodierung:** Für alle Skript- und Konfigurationsdateien ist die Kodierung UTF-8 zu verwenden.  
-* **Administratorrechte:** Skripte müssen einen Mechanismus zur Selbst-Erhöhung (\`Self-Elevation\`) enthalten.  
-* **PowerShell-Version:** Der Code muss die laufende PowerShell-Version erkennen und entsprechend versionsspezifische Funktionen verwenden.  
-* **Pfad-Validierung:** In der Konfiguration definierte Pfade müssen beim Skriptstart überprüft und bei Bedarf automatisch erstellt werden.  
-* **Script-Normungen:** Die Konventionen des PSScriptAnalyzer (z. B. Verb-Noun) sind anzuwenden.  
-* **Initialisierungslogik:** Das Skript muss prüfen, ob eine Konfigurationsdatei existiert und valides JSON enthält. Andernfalls startet die SetupGUI.
+- **Kodierung:** UTF-8 (ohne BOM) für alle `.ps1`, `.psm1`, `.json` Dateien.
+- **Analyse:** `PSScriptAnalyzer`-Regeln (insb. `Verb-Noun`) sind verbindlich.
+- **Kompatibilität:** PowerShell 5.1 und 7+ (`$IsCoreCLR` für Weichen nutzen).
+- **Admin:** Skripte mit Admin-Bedarf nutzen `#requires -RunAsAdministrator`.
 
-### **Datums- und Versionsformat**
+- **Dateistruktur:**
+    - Hauptskript: `*.ps1`
+    - Module: `./Modules/FL-*.psm1`
+    - Konfiguration: `./Config/Config-<ScriptName>.json`
+    - Sprachdateien: `./Config/[de-DE|en-US].json` (Versioniert)
+    - Dokumentation: `FL-README-<ScriptName>.md`
 
-* **Datum:** Das Datumsformat yyyy.MM.dd ist zu verwenden.  
-* **Versionierung:** Das Schema ist vX.Y.Z (Major.Minor.Patch).  
-* **Automatik:** Die Versionierung wird bei jeder Skriptausgabe durch den Entwicklungsassistenten konsistent gehalten.
+- **Versionierung (`vX.Y.Z`):**
+    - Muss im Skript-Header (`Version now`), in der `$Global:ScriptVersion`-Variable und im End-Kommentar des Hauptskripts konsistent sein.
+    - Die `RulebookVersion` wird ebenfalls im Header und in der Default-Config gepflegt.
 
-### **Corporate Design & Layout**
+- **Header & Footer:**
+    - **Header:** Ein standardisierter Kommentar-Header ist für **alle** `.ps1`- und `.psm1`-Dateien Pflicht.
+    - **Footer (.ps1):** `# --- End of Script --- old: vX.Y.Z ; now: vX.Y.Z ; Regelwerk: vX.Y.Z ---`
+    - **Footer (.psm1):** `# --- End of module --- vX.Y.Z ; Regelwerk: vX.Y.Z ---`
 
-* **Logo / Icon:** Logos/Icons werden aus einem konfigurierbaren Pfad geladen. Bei Erst-Einrichtung werden sie vom Standard-UNC-Pfad in ein lokales Images\-Verzeichnis kopiert.  
-* **Farbgebung:** Primäre UI-Elemente verwenden \#111d4e (Dunkelblau) mit weißer Schrift.  
-* **Button-Struktur:** Die untere Button-Leiste enthält Abbrechen (linksbündig) sowie Anwenden und OK (rechtsbündig).  
-* **Fenstertitel:** Muss dynamisch sein: SetupGUI \<ScriptName\> - vX.Y.Z.
+- **GUI (WPF):**
+    - **Aufruf:** `-Setup`-Parameter startet die Konfigurations-GUI.
+    - **Auto-Start:** Erfolgt, wenn `config.json` fehlt oder korrupt ist.
+    - **Design:** Primärfarbe ist `#111d4e` (Dunkelblau) mit weißer Schrift.
+    - **Buttons:** [Abbrechen] links, [Anwenden] und [OK] rechts.
 
-## **Konfiguration**
+- **Logging:**
+    - **Sprache:** Alle Log-Meldungen, die in Dateien oder das EventLog geschrieben werden, müssen **auf Englisch** sein.
+    - **Dateinamen:** `DEV_<ScriptName>_yyyy-MM-dd.log` für Entwicklung, `PROD_<ScriptName>_yyyy-MM-dd.log` für Produktivbetrieb.
+    - **Event Log:** `WARNING`- und `ERROR`-Meldungen müssen ins Windows Event Log geschrieben werden (Funktion muss per Konfiguration abschaltbar sein).
 
-### **ConfigFile**
+- **Mail:** `System.Net.Mail.SmtpClient` verwenden, nicht `Send-MailMessage`.
+- **Archivierung:** `7-Zip` bevorzugen, mit `Compress-Archive` als Fallback.
 
-* **Verortung** Alle `.json` Dateien werden in einem `Config`-Ordner gespeichern,
-                bzw. die schon vorhandenen `.json` Datein werden vom scriptroot da hinein kopieren und dann wenn alles oke ist im scriptroot dann gelöschen
-* **Externalisierung:** Alle Parameter müssen in eine `config-\<ScriptName\>.json\`-Datei ausgelagert werden.  
-* **Dateiname:** Der Name wird dynamisch vom Base-Skriptname abgeleitet.  
-* **Versions-Abgleich:** Das Skript vergleicht seine Version mit der in der Config-Datei und warnt bei Abweichungen.  
-* **Parameter \-Versionscontrol:** Gleicht die Config-Datei mit dem Skript ab und aktualisiert sie.  
-* **Regelwerk-Version:** Die Version des Regelwerks ist in der Config-Datei zu hinterlegen.
+---
+---
 
-### **Entwicklungsumgebung (Environment),WhatIf Mode und den  Produktivbetrieb (Production)**
+# MUW-Regelwerk für PowerShell-Skripte
 
-* **Definition:** ein Switch (SetupGUI) egt fest, ob das Skript in `DEV` oder `PROD` Betrieb läuft.
-                  es gibt einen Switch (SetupGUI) mit `PRODEmpänger` und `DEVEmpänger` . dieser bestimmt welche E-Mailadresse gegenommen wird ,  im Tab `E-Mail` dind die beiden Adresse hinterlegt. es können pro definition (`PRODEmpänger` oder `DEVEmpänger`) mehrere Mailadresse getrennt mit `;` hinterlegt werden.
-* **Steuerung:** Die Auswahl erfolgt über die `SetupGUI`.
+**Version 7.3.0 © Flecki Garnreiter**
 
-## **GUI**
+### Einleitung: Warum dieses Regelwerk?
 
-### **Tab Allgemein (SetupGUI)**
+Dieses Dokument definiert die Standards für die Entwicklung von PowerShell-Skripten an der MedUni Wien. Das Ziel ist es, Skripte zu erstellen, die nicht nur technisch exzellent sind, sondern auch **sicher, verständlich, wartbar und für alle Anwender einfach zu bedienen**.
 
-#### **Switch DEV**
+Ein einheitlicher Standard sorgt dafür, dass jedes Skript eine hohe Qualität aufweist und sich für Benutzer und Administratoren vertraut anfühlt.
 
-Das Sript schreibt alles im verbose mode und debugmode in ein Logfile  im LogVerzeichnis `DEBUG_\<scriptName\>.log`
-Der DebugMode legt den Mailversand und die Empfänger der E-Mail fest
+---
 
-#### **Switch PROD**
+## 1. Konsistenz & Wiedererkennung
 
-jeglicher debug Mode, Whatif mode oder Verbose Mode wird ausgeschaltet. es beginnt der Produktiv Modus.
-der Debugmode legt den mailversand und die Empfänger der E-Mail fest
+*Alle Skripte sollen einem einheitlichen Erscheinungsbild und einer logischen Struktur folgen.*
 
-#### **Switch WhatIf**
+### **1.1. Einheitliche Dokumentation (Script-Header)**
+Jede Skript- und Moduldatei (`.ps1`, `.psm1`) beginnt mit einem standardisierten Header. Dieser dient als "Visitenkarte" der Datei und muss vollständig ausgefüllt werden.
 
-**WICHTIG** bitte den DEV-Modus und den whatIf Modus der functions scharf schalten damit das logfile alle fehler auffängt...
-**Ausgenommen** das Logsystem und der Mailversand sind NICHT mit `whatif` auszustatten
+* **Nutzen:** Man erkennt auf den ersten Blick, was das Skript tut, wer es geschrieben hat und welche Version aktuell ist.
 
-### **SetupGUI-Funktionalität (SetupGUI)**
+**Beispiel eines vollständigen Headers für ein Hauptskript:**
+```powershell
+<#
+.SYNOPSIS
+    [DE] Setzt alle PowerShell-Profile auf einen Standard zurück und verwaltet die Konfiguration.
+    [EN] Resets all PowerShell profiles to a standard and manages the configuration.
 
-* **Technologie:** WPF.  
-* **Aufruflogik:** Startet automatisch bei fehlender/fehlerhafter Config oder manuell via \-Setup.
-* **TABS** Zwingend notwendige Tabs im SetupGUI: Allgemein, Pfade,Backup, E-Mail
-*          bitte in der Setupgui mehr Anleitungen auf der SetupGUI anzeigen
+.DESCRIPTION
+    [DE] Ein vollumfängliches Verwaltungsskript für PowerShell-Profile. Es erzwingt Administratorrechte, stellt die UTF-8-Kodierung sicher und bietet eine WPF-basierte GUI (-Setup) zur Konfiguration. Bei fehlender oder korrupter Konfiguration startet die GUI automatisch. Das Skript führt eine Versionskontrolle der Konfiguration durch, versioniert die Profil-Vorlagen, schreibt in das Windows Event Log und beinhaltet eine voll funktionsfähige Log-Archivierung sowie einen Mail-Versand.
+    [EN] A comprehensive management script for PowerShell profiles according to MUW rules. It enforces administrator rights, ensures UTF-8 encoding, and provides a WPF-based GUI (-Setup) for configuration. The GUI starts automatically if the configuration is missing or corrupt. The script performs version control of the configuration, versions the profile templates, writes to the Windows Event Log, and includes fully functional log archiving and mail sending.
 
-### **WorkGUIGUI-Funktionalität (WorkGUI)**
+.PARAMETER Setup
+    [DE] Startet die WPF-Konfigurations-GUI, um die Einstellungen zu bearbeiten.
+    [EN] Starts the WPF configuration GUI to edit the settings.
 
-* **Technologie:** WPF.  
-* **Aufruflogik:** Startet automatisch wenn es seiten des Scripts notwendig ist
+.EXAMPLE
+    .\Reset-PowerShellProfiles.ps1 -Setup
+    [DE] Öffnet die Konfigurations-GUI, um die aktuellen Einstellungen zu ändern.
+    [EN] Opens the configuration GUI to change the current settings.
 
-### **Benutzerfreundlichkeit (Usability)**
+.NOTES
+    Author:         Flecki (Tom) Garnreiter
+    Created on:     2025.07.11
+    Last modified:  2025.08.29
+    Version:        v09.03.00
+    MUW-Regelwerk:  v7.2.0
+    Copyright:      © 2025 Flecki Garnreiter
+    License:        MIT License
+#>
+```
 
-* **Pfad-Auswahl:** Alle Pfad-Eingabefelder müssen einen \`Durchsuchen...\`-Button haben.  
-* **Sprachauswahl & Lokalisierung:** Über externe de-DE.json und en-US.json Dateien.  
-* **Erst-Einrichtung:** Die GUI muss eine Starthilfe bieten (Standardwerte, Beispiel-Einträge).  
-* **Blockierende Operationen:** Der Benutzer muss durch eine Dialogbox informiert werden, wenn die GUI vorübergehend nicht reagiert.
+### **1.2. Generierte Hilfedatei (README)**
+Zu jedem Hauptskript (`.ps1`) wird eine separate `FL-README-<ScriptName>.md`-Datei als offizielle Dokumentation erstellt.
 
-### **Tab Pfad (SetupGUI)**
+* **Nutzen:** Stellt eine leicht zugängliche und lesbare Dokumentation für Anwender bereit, ohne dass diese den Skript-Code öffnen müssen.
+* **Inhalt:** Diese Markdown-Datei enthält die formatierten Inhalte des Skript-Headers (Synopsis, Beschreibung, Parameter, Beispiele etc.).
+* **Erstellung:** Die Datei kann bei Bedarf manuell oder durch einen Assistenten (wie Gemini) aus dem Skript-Header generiert werden.
 
-* **Pfade** auf diesen Tab sollen alle Pfade angegeben werden.
-* **Pfad-Auswahl:** Alle Pfad-Eingabefelder müssen einen \`Durchsuchen...\`-Button haben.  
+### **1.3. Einheitlicher Skript-Abschluss (Footer)**
+Jede Datei wird mit einem definierten Kommentar abgeschlossen.
 
-## **Weitere Funktions-Regeln**
+* **Nutzen:** Dies signalisiert klar das Ende der Datei und gibt bei Hauptskripten eine schnelle Übersicht über die relevanten Versionen.
 
-* **Logging:** Log-Meldungen müssen **ausschließlich auf Englisch** sein.  
-* **Windows Event Log:** ERROR und WARNING müssen ins Event Log geschrieben werden; dies muss über EnableEventLog: true/false deaktivierbar sein.  
-* **Archivierung:** Logs werden nach 30 Tagen komprimiert, Archive nach 90 Tagen gelöscht.  
-* **Mailversand:** Erfolgt über .NET (System.Net.Mail.SmtpClient) nach einem Test-NetConnection.
+**Footer für Hauptskripte (`.ps1`):**
+```powershell
+# --- End of Script --- old: v09.02.00 ; now: v09.03.00 ; Regelwerk: v7.2.0 ---
+```
 
-## **Skript-Struktur**
+**Footer für Moduldateien (`.psm1`):**
+```powershell
+# --- End of module --- v09.03.00 ; Regelwerk: v7.2.0 ---
+```
 
-### **Header (ISO/IEC/IEEE 26512/DIN)**
+### **1.4. Einheitliche Versionierung**
+Die Versionierung folgt dem klaren Schema `vX.Y.Z` (z.B. `v1.2.15`).
 
-Muss exakt folgendes Format haben:
+* **Nutzen:** Änderungen sind klar nachvollziehbar. Die Version wird im Header, in der globalen `$Global:ScriptVersion`-Variable und im Footer des Hauptskripts synchron gehalten.
 
-\<\#  
-.SYNOPSIS  
-\[DE\] Kurzbeschreibung der Skriptfunktion.
-\[EN\] Brief Description of Script Functionality
-.DESCRIPTION  
-\[DE\] Ausführliche Beschreibung inkl. Parameter, Voraussetzungen etc.
-\[EN\] Detailed Description incl. Parameters, Requirements, etc.
-.PARAMETER ParameterName
-\[DE\] Beschreibung mit Datentyp und Pflichtangabe.
-\[EN\] Description including data type and requirement status.
-.PARAMETER ...  
-.EXAMPLE  
-    \.\<ScriptName\>.ps1 -Parameter1 "Wert"\...
-    \[DE\] ...  
-    \[EN\] ...  
-.NOTES  
-    Author:         Flecki (Tom) Garnreiter  
-    Created on:     yyyy.MM.dd  
-    Last modified:  yyyy.MM.dd  
-    old Version:    vX.Y.Z  
-    Version now:    vX.Y.Z  
-    MUW-Regelwerk:  vX.Y.Z  
-    Notes:          \[DE\] ...  
-                    \[EN\] ...  
-    Copyright:      © 2025 Flecki Garnreiter  
-.DISCLAIMER  
-\[DE\] Die bereitgestellten Skripte und die zugehörige Dokumentation werden "wie besehen" ("as is")
-ohne ausdrückliche oder stillschweigende Gewährleistung jeglicher Art zur Verfügung gestellt.
-Insbesondere wird keinerlei Gewähr übernommen für die Marktgängigkeit, die Eignung für einen bestimmten Zweck
-oder die Nichtverletzung von Rechten Dritter.
-Es besteht keine Verpflichtung zur Wartung, Aktualisierung oder Unterstützung der Skripte. Jegliche Nutzung erfolgt auf eigenes Risiko.
-In keinem Fall haften Herr Flecki Garnreiter, sein Arbeitgeber oder die Mitwirkenden an der Erstellung,
-Entwicklung oder Verbreitung dieser Skripte für direkte, indirekte, zufällige, besondere oder Folgeschäden - einschließlich,
-aber nicht beschränkt auf entgangenen Gewinn, Betriebsunterbrechungen, Datenverlust oder sonstige wirtschaftliche Verluste -,
-selbst wenn sie auf die Möglichkeit solcher Schäden hingewiesen wurden.
-Durch die Nutzung der Skripte erklären Sie sich mit diesen Bedingungen einverstanden.
+### **1.5. Einheitliches Design der Benutzeroberfläche**
+Grafische Benutzeroberflächen (GUIs) folgen dem Corporate Design der MedUni Wien.
 
-\[EN\] The scripts and accompanying documentation are provided "as is," without warranty of any kind, either express or implied.
-Flecki Garnreiter and his employer disclaim all warranties, including but not limited to the implied warranties of merchantability,
-fitness for a particular purpose, and non-infringement.
-There is no obligation to provide maintenance, support, updates, or enhancements for the scripts.
-Use of these scripts is at your own risk. Under no circumstances shall Flecki Garnreiter, his employer, the authors,
-or any party involved in the creation, production, or distribution of the scripts be held liable for any damages whatever,
-including but not limited to direct, indirect, incidental, consequential, or special damages
-(such as loss of profits, business interruption, or loss of business data), even if advised of the possibility of such damages.
-By using these scripts, you agree to be bound by the above terms.
-\#>
+* **Nutzen:** Sorgt für ein professionelles und vertrautes Erscheinungsbild bei allen Skripten.
+* **Details:**
+    * **Farbschema:** Primäre Elemente nutzen Dunkelblau (`#111d4e`) mit weißer Schrift.
+    * **Fenstertitel:** Zeigt immer den Skriptnamen und die Version an (z.B. `SetupGUI MeinSkript - v1.2.15`).
+    * **Button-Anordnung:** `Abbrechen` steht immer links; `Anwenden` und `OK` stehen immer rechts.
 
-### **ScriptEnd**
+---
 
-**Der Kommentar am Ende \!\!\!\! Wichtig**
+## 2. Benutzerfreundlichkeit & Bedienbarkeit
 
-Jedes Skript muss mit einem statischen Kommentar enden, der die aktuellen Versionen widerspiegelt: das ist sehr wichtig für die Entwicklung des Scriptes
+*Skripte müssen so gestaltet sein, dass sie auch von technisch weniger versierten Personen einfach und sicher konfiguriert und bedient werden können.*
 
- \ #--- End of Script old: vX.Y.Z ; now: vX.Y.Z ; Regelwerk: vX.Y.Z---\#
+### **2.1. Einfache Konfiguration per GUI (`SetupGUI`)**
+Jedes Skript verfügt über eine grafische Oberfläche zur Konfiguration, die mit dem Parameter `-Setup` aufgerufen wird.
+
+* **Nutzen:** Einstellungen können bequem per Mausklick vorgenommen werden, ohne den Code ändern zu müssen.
+* **Automatische Ersteinrichtung:** Fehlt die Konfigurationsdatei, startet die GUI automatisch und führt den Anwender durch die Ersteinrichtung.
+
+### **2.2. Klare und sichere Umgebungssteuerung**
+In der GUI kann klar zwischen `DEV` (Test) und `PROD` (Produktiv) umgeschaltet werden.
+
+* **Nutzen:** Dies ist die wichtigste Sicherheitsfunktion. Sie verhindert, dass versehentlich Test-Einstellungen (z.B. Test-Empfänger für E-Mails) im produktiven Einsatz verwendet werden.
+* **Simulations-Modus (`WhatIf`):** Im DEV-Modus kann zusätzlich eine Simulation aktiviert werden. Das Skript zeigt dann nur an, was es tun würde, ohne Änderungen am System vorzunehmen.
+
+### **2.3. Verständliche Oberfläche**
+Die GUI ist selbsterklärend aufgebaut.
+
+* **Nutzen:** Reduziert Anwendungsfehler und Rückfragen.
+* **Details:**
+    * **Hilfetexte:** Kurze, informative Texte erklären die Funktion der jeweiligen Einstellungen direkt im Fenster.
+    * **Sprachauswahl:** Die Oberfläche kann zwischen Deutsch und Englisch umgeschaltet werden.
+    * **Dateipfade auswählen:** Alle Pfadangaben verfügen über einen "Durchsuchen..."-Button, um Fehleingaben zu vermeiden.
+
+---
+
+## 3. Stabilität & Wartbarkeit
+
+*Die technische Umsetzung muss robust, sicher und für andere Entwickler leicht nachvollziehbar sein.*
+
+### **3.1. Modularer Aufbau (Baukasten-System)**
+Zentrale Funktionen wie Logging, Konfigurations-Handling oder Mailversand werden in wiederverwendbare Module ausgelagert und im Unterordner `Modules` gespeichert.
+
+* **Nutzen:** Statt das Rad neu zu erfinden, nutzen alle Skripte die gleiche, bewährte Code-Basis. Das macht die Skripte schlanker, zuverlässiger und einfacher zu warten.
+
+### **3.2. Ausgelagerte Konfiguration**
+Alle Einstellungen werden in einer separaten JSON-Datei im `Config`-Ordner gespeichert (`Config-ScriptName.json`).
+
+* **Nutzen:** Die Konfiguration kann einfach gesichert oder angepasst werden, ohne den Programmcode zu berühren. Dies minimiert das Risiko, bei Änderungen Fehler zu verursachen.
+
+### **3.3. Aussagekräftiges Logging**
+Das Skript protokolliert seine Aktivitäten in Log-Dateien.
+
+* **Nutzen:** Im Fehlerfall kann schnell nachvollzogen werden, was passiert ist.
+* **Details:**
+    * **Sprache:** Alle Log-Einträge sind **ausschließlich auf Englisch**.
+    * **Dateiname:** Die Namen der Log-Dateien folgen einem klaren Schema: `[DEV|PROD]_<ScriptName>_yyyy-MM-dd.log`.
+    * **Event Log:** Kritische Fehler und Warnungen werden zusätzlich ins Windows Event Log geschrieben, um eine zentrale Überwachung zu ermöglichen.
+
+### **3.4. Automatische Archivierung**
+Alte Log-Dateien und Archive werden automatisch aufgeräumt.
+
+* **Nutzen:** Verhindert, dass der Speicherplatz mit alten Log-Dateien überfüllt wird.
+* **Details:** Logs werden nach 30 Tagen komprimiert, die Archive nach 90 Tagen gelöscht (Werte sind konfigurierbar).
