@@ -114,7 +114,16 @@ function Send-MailNotification {
     }
 }
 
-Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Set-TemplateVersion, Send-MailNotification
+function ConvertTo-Base64 {
+    param([Parameter(Mandatory=$true)][string]$String)
+    return [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($String))
+}
 
+function ConvertFrom-Base64 {
+    param([Parameter(Mandatory=$true)][string]$Base64String)
+    return [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($Base64String))
+}
+
+Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Set-TemplateVersion, Send-MailNotification, ConvertTo-Base64, ConvertFrom-Base64
 
 # --- End of module --- v11.2.1 ; Regelwerk: v8.2.0 ---

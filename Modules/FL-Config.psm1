@@ -44,7 +44,7 @@ including but not not limited to direct, indirect, incidental, consequential, or
 By using these scripts, you agree to be bound by the above terms.
 "@
 
-    return [PSCustomObject]@{
+    return [PSCustomObject]@{ 
         ScriptVersion          = $Global:ScriptVersion
         RulebookVersion        = $Global:RulebookVersion
         Language               = "en-US"
@@ -88,6 +88,7 @@ By using these scripts, you agree to be bound by the above terms.
             Branch   = "main"
             CachePath = (Join-Path $env:TEMP "GitProfileCache")
         }
+        NetworkProfiles        = @()
     }
 }
 
@@ -155,7 +156,7 @@ function Invoke-VersionControl {
                 elseif (($refValue -is [PSCustomObject]) -and -not ($targetValue -is [PSCustomObject])) {
                     Write-Log -Level WARNING -Message "Property '$key' has an incorrect type or is null. Overwriting with default structure."
                     $Target.$key = $refValue
-                    $updated = $true
+                    $updated = true
                 }
             }
         }
