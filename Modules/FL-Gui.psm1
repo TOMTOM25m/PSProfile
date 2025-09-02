@@ -208,6 +208,16 @@ function Show-MuwSetupGui {
                     <TextBox x:Name="prodRecipientTextBox" Grid.Row="4" Grid.Column="1" Margin="5"/>
                 </Grid>
             </TabItem>
+            <TabItem Header="Templates">
+                <DataGrid x:Name="templatesDataGrid" Margin="5" IsReadOnly="True" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Profile" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="3*"/>
+                        <DataGridTextColumn Header="Current Version" Binding="{Binding CurrentVersion}" Width="*"/>
+                        <DataGridTextColumn Header="Target Version" Binding="{Binding TargetVersion}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
         </TabControl>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
@@ -249,6 +259,9 @@ function Show-MuwSetupGui {
             devRecipientTextBox = $window.FindName('devRecipientTextBox');
             prodRecipientTextBox = $window.FindName('prodRecipientTextBox');
 
+            # Templates Tab
+            templatesDataGrid = $window.FindName('templatesDataGrid');
+
             # Main Buttons
             okButton = $window.FindName('okButton');
             cancelButton = $window.FindName('cancelButton');
@@ -278,6 +291,19 @@ function Show-MuwSetupGui {
             $controls.senderTextBox.Text = $config.Mail.Sender
             $controls.devRecipientTextBox.Text = $config.Mail.DevRecipient
             $controls.prodRecipientTextBox.Text = $config.Mail.ProdRecipient
+
+            # Templates
+            $templateData = [System.Collections.Generic.List[object]]::new()
+            $templateKeys = "Profile", "ProfileX", "ProfileMOD"
+            foreach ($key in $templateKeys) {
+                $templateData.Add([PSCustomObject]@{
+                    Name = $key
+                    Path = $config.TemplateFilePaths.$key
+                    CurrentVersion = $config.TemplateVersions.$key
+                    TargetVersion  = $config.TargetTemplateVersions.$key
+                })
+            }
+            $controls.templatesDataGrid.ItemsSource = $templateData
         }
 
         function Save-ConfigFromGui($config, $controls) {
