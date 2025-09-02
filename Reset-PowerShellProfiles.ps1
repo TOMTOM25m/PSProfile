@@ -21,12 +21,12 @@
 .NOTES
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.07.11
-    Last modified:  2025.09.01
-    old Version:    v10.5.0
-    Version now:    v11.0.0
-    MUW-Regelwerk:  v8.0.0
-    Notes:          [DE] Grosses Stabilitäts-Update: Vollständiges, synchronisiertes Release aller Module, um Fehler bei der Erst-Initialisierung zu beheben.
-                    [EN] Major stability update: Full, synchronized release of all modules to fix errors during initial setup.
+    Last modified:  2025.09.02
+    old Version:    v11.1.0
+    Version now:    v11.2.0
+    MUW-Regelwerk:  v8.2.0
+    Notes:          [DE] Stabilitäts-Fix: Die Logik für die Erst-Initialisierung wurde überarbeitet, um Fehler beim ersten Start ohne Konfigurationsdatei zu beheben.
+                    [EN] Stability fix: Reworked the initial setup logic to resolve errors on the first run without a configuration file.
     Copyright:      © 2025 Flecki Garnreiter
     License:        MIT License
 #>
@@ -41,8 +41,8 @@ param (
 
 #region ####################### [1. Initialization] ##############################
 $Global:ScriptName = $MyInvocation.MyCommand.Name
-$Global:ScriptVersion = "v11.0.0"
-$Global:RulebookVersion = "v8.0.0"
+$Global:ScriptVersion = "v11.2.0"
+$Global:RulebookVersion = "v8.2.0"
 $Global:ScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Path
 
 $configDir = Join-Path $Global:ScriptDirectory 'Config'
@@ -69,21 +69,21 @@ catch {
 }
 #endregion
 
-#region ####################### [5. Script Main Body] ##############################
+#region ####################### [3. Script Main Body] ##############################
 $oldVersion = try {
     (Get-Content -Path $MyInvocation.MyCommand.Path -TotalCount 30 -ErrorAction SilentlyContinue | Select-String 'Version now:\s*(v[\d\.]+)' | ForEach-Object { $_.Matches.Groups[1].Value })[0]
 } catch { "v0.0.0" }
 
 # --- Handle dedicated operational modes first ---
-if ($Setup.IsPresent -or (-not (Test-Path $Global:ConfigFile))) {
-    if (-not (Test-Path $Global:ConfigFile)) {
-        Write-Host "[WARNING] Configuration file not found. Creating a default and starting setup GUI." -ForegroundColor Yellow
-        $Global:Config = Get-DefaultConfig
-        Save-Config -Config $Global:Config -Path $Global:ConfigFile
-    }
+if ($Setup.IsPresent) {
     do {
         $restartGui = $false
         $Global:Config = Get-Config -Path $Global:ConfigFile
+        if ($null -eq $Global:Config) {
+             Write-Host "[WARNING] Configuration file not found. Creating a default and starting setup GUI." -ForegroundColor Yellow
+            $Global:Config = Get-DefaultConfig
+            Save-Config -Config $Global:Config -Path $Global:ConfigFile
+        }
         Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
         Initialize-LocalizationFiles -ConfigDirectory $configDir
         $guiResult = Show-MuwSetupGui -InitialConfig $Global:Config
@@ -111,8 +111,29 @@ $emailSubject, $emailBody = $null, $null
 try {
     $Global:Config = Get-Config -Path $Global:ConfigFile
     if ($null -eq $Global:Config) {
-        throw "Configuration file `"$Global:ConfigFile`" is corrupt. Please delete it or run with -Setup to fix it."
+        # Auto-Setup logic as per rules
+        Write-Host "[WARNING] Configuration file not found. Starting initial setup GUI automatically." -ForegroundColor Yellow
+        $Global:Config = Get-DefaultConfig
+        Save-Config -Config $Global:Config -Path $Global:ConfigFile
+        
+        # Re-read the config after saving to ensure it's a valid object before passing to GUI
+        $Global:Config = Get-Config -Path $Global:ConfigFile
+        
+        do {
+            $restartGui = $false
+            Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
+            Initialize-LocalizationFiles -ConfigDirectory $configDir
+            $guiResult = Show-MuwSetupGui -InitialConfig $Global:Config
+            if ($guiResult -eq 'Restart') { $restartGui = $true }
+        } while ($restartGui)
+        
+        Write-Log -Level INFO -Message "Initial configuration finished. Please run the script again to apply settings."
+        return
     }
+
+    # Always run version control to ensure config object is complete
+    Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
+
     if ($Global:Config.Environment -eq "DEV") {
         $VerbosePreference = 'Continue'
         $DebugPreference = 'Continue'
@@ -214,5 +235,5 @@ finally {
 }
 #endregion
 
-# --- End of Script --- old: v10.5.0 ; now: v11.0.0 ; Regelwerk: v8.0.0 ---
+# --- End of Script --- old: v11.1.0 ; now: v11.2.0 ; Regelwerk: v8.2.0 ---
 

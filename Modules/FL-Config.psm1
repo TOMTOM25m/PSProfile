@@ -1,132 +1,149 @@
 <#
 .SYNOPSIS
-    [EN] Module for handling script configuration.
-    [DE] Modul für die Handhabung der Skriptkonfiguration.
+    [DE] Modul für Konfigurationsmanagement.
+    [EN] Module for configuration management.
 .DESCRIPTION
-    [EN] This module contains functions related to loading, saving, and managing the JSON configuration for the Reset-PowerShellProfiles.ps1 script.
-    [DE] Dieses Modul enthält Funktionen zum Laden, Speichern und Verwalten der JSON-Konfiguration für das Skript Reset-PowerShellProfiles.ps1.
+    [DE] Enthält Funktionen zum Laden, Speichern und Verwalten der JSON-Konfigurationsdatei.
+    [EN] Contains functions for loading, saving, and managing the JSON configuration file.
 .NOTES
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.08.29
-    Last modified:  2025.08.29
-    Version:        v09.04.00
-    MUW-Regelwerk:  v7.3.0
+    Last modified:  2025.09.02
+    Version:        v11.2.0
+    MUW-Regelwerk:  v8.2.0
+    Notes:          [DE] Stabile Version nach Fix der Erst-Initialisierung.
+                    [EN] Stable version after initial setup fix.
     Copyright:      © 2025 Flecki Garnreiter
+    License:        MIT License
 #>
 
 function Get-DefaultConfig {
-    # This function doesn't write logs because $Global:Config might not exist yet.
-    return [PSCustomObject]@{ 
-        Version           = $Global:ScriptVersion
-        RulebookVersion   = "v7.3.0"
-        Language          = "de-DE"
-        LanguageFileVersions = @{
-            "de-DE" = "v1.0.0"
-            "en-US" = "v1.0.0"
-        }
-        Environment       = "DEV"
-        WhatIfMode        = $true
-        TemplateVersions  = @{
-            Profile    = "v23.0.1"
-            ProfileX   = "v6.0.0"
-            ProfileMOD = "v6.0.0"
-        }
-        TemplateFilePaths = @(
-            (Join-Path $Global:ScriptDirectory 'Profile-template.ps1'),
-            (Join-Path $Global:ScriptDirectory 'Profile-templateX.ps1'),
-            (Join-Path $Global:ScriptDirectory 'Profile-templateMOD.ps1')
-        )
-        UNCPaths          = @{
-            Logo = '\\itscmgmt03.srv.meduniwien.ac.at\iso\DEV\Images\Logo.ico'
-        }
-        Logging           = @{
+    Write-Log -Level DEBUG -Message "Creating default configuration object."
+    
+    $disclaimerDE = @"
+Die bereitgestellten Skripte und die zugehörige Dokumentation werden "wie besehen" ("as is")
+ohne ausdrückliche oder stillschweigende Gewährleistung jeglicher Art zur Verfügung gestellt.
+Insbesondere wird keinerlei Gewähr übernommen für die Marktgängigkeit, die Eignung für einen bestimmten Zweck
+oder die Nichtverletzung von Rechten Dritter.
+Es besteht keine Verpflichtung zur Wartung, Aktualisierung oder Unterstützung der Skripte. Jegliche Nutzung erfolgt auf eigenes Risiko.
+In keinem Fall haften Herr Flecki Garnreiter, sein Arbeitgeber oder die Mitwirkenden an der Erstellung,
+Entwicklung oder Verbreitung dieser Skripte für direkte, indirekte, zufällige, besondere oder Folgeschäden - einschließlich,
+aber nicht beschränkt auf entgangenen Gewinn, Betriebsunterbrechungen, Datenverlust oder sonstige wirtschaftliche Verluste -,
+selbst wenn sie auf die Möglichkeit solcher Schäden hingewiesen wurden.
+Durch die Nutzung der Skripte erklären Sie sich mit diesen Bedingungen einverstanden.
+"@
+    $disclaimerEN = @"
+The scripts and accompanying documentation are provided "as is," without warranty of any kind, either express or implied.
+Flecki Garnreiter and his employer disclaim all warranties, including but not limited to the implied warranties of merchantability,
+fitness for a particular purpose, and non-infringement.
+There is no obligation to provide maintenance, support, updates, or enhancements for the scripts.
+Use of these scripts is at your own risk. Under no circumstances shall Flecki Garnreiter, his employer, the authors,
+or any party involved in the creation, production, or distribution of the scripts be held liable for any damages whatever,
+including but not not limited to direct, indirect, incidental, consequential, or special damages
+(such as loss of profits, business interruption, or loss of business data), even if advised of the possibility of such damages.
+By using these scripts, you agree to be bound by the above terms.
+"@
+
+    return [PSCustomObject]@{
+        ScriptVersion          = $Global:ScriptVersion
+        RulebookVersion        = $Global:RulebookVersion
+        Language               = "en-US"
+        Environment            = "DEV"
+        WhatIfMode             = $true
+        Disclaimer             = @{ DE = $disclaimerDE; EN = $disclaimerEN }
+        Logging                = @{
             LogPath              = (Join-Path $Global:ScriptDirectory "LOG")
             ReportPath           = (Join-Path $Global:ScriptDirectory "Reports")
-            LogoPath             = (Join-Path $Global:ScriptDirectory "Images\Logo.ico")
-            EnableEventLog       = $true
             ArchiveLogs          = $true
+            EnableEventLog       = $true
             LogRetentionDays     = 30
             ArchiveRetentionDays = 90
             SevenZipPath         = "C:\Program Files\7-Zip\7z.exe"
         }
-        Backup            = @{
+        TemplateFilePaths      = @{
+            Profile    = Join-Path $Global:ScriptDirectory 'Profile-template.ps1';
+            ProfileX   = Join-Path $Global:ScriptDirectory 'Profile-templateX.ps1';
+            ProfileMOD = Join-Path $Global:ScriptDirectory 'Profile-templateMOD.ps1';
+        }
+        TemplateVersions       = @{ Profile = "v0.0.0"; ProfileX = "v0.0.0"; ProfileMOD = "v0.0.0" }
+        TargetTemplateVersions = @{ Profile = "v25.0.0"; ProfileX = "v8.0.0"; ProfileMOD = "v7.0.0" }
+        LanguageFileVersions   = @{ "de-DE" = "v1.0.0"; "en-US" = "v1.0.0" }
+        Backup                 = @{
             Enabled = $false
-            Path    = ""
+            Path    = (Join-Path $Global:ScriptDirectory "Backup")
         }
-        Mail              = @{
-            Enabled    = $false
-            SmtpServer = "smtpi.meduniwien.ac.at"
-            SmtpPort   = 25
-            UseSsl     = $false
-            Sender     = "$($env:COMPUTERNAME)@meduniwien.ac.at"
-            DevTo      = "Thomas.garnreiter@meduniwien.ac.at"
-            ProdTo     = "win-admin@meduniwien.ac.at;another.admin@meduniwien.ac.at"
+        Mail                   = @{
+            Enabled      = $false
+            SmtpServer   = "smtp.example.com"
+            Sender       = "powershell@example.com"
+            DevRecipient = "dev@example.com"
+            ProdRecipient = "prod@example.com"
         }
-        GitUpdate         = @{
-            Enabled        = $false
-            RepositoryUrl  = "https://your-git-server/user/powershell-profiles.git"
-            Branch         = "main"
-            LocalCachePath = (Join-Path $Global:ScriptDirectory "GitCache")
+        GitUpdate              = @{
+            Enabled  = $false
+            RepoUrl  = "https://github.com/user/repo.git"
+            Branch   = "main"
+            CachePath = (Join-Path $env:TEMP "GitProfileCache")
         }
-    }
-}
-
-function Save-Config {
-    [CmdletBinding(SupportsShouldProcess = $true)]
-    param([PSCustomObject]$Config, [string]$Path, [switch]$NoHostWrite)
-
-    try {
-        Write-Log -Level DEBUG -Message "Saving configuration to '$Path'." -NoHostWrite:$NoHostWrite
-        $Config.Version = $Global:ScriptVersion
-        $Config | ConvertTo-Json -Depth 5 | Set-Content -Path $Path -Encoding UTF8
-        return $true
-    }
-    catch {
-        Write-Log -Level ERROR -Message "Error saving configuration file: $($_.Exception.Message)" -NoHostWrite:$NoHostWrite
-        return $false
     }
 }
 
 function Get-Config {
     param([string]$Path)
-    if (-not (Test-Path $Path)) {
-        return $null
-    }
+    if (-not (Test-Path $Path)) { return $null }
     try {
-        $config = Get-Content -Path $Path -Raw | ConvertFrom-Json
-        return $config
+        return Get-Content -Path $Path -Raw | ConvertFrom-Json
     }
     catch {
-        Write-Log -Level WARNING -Message "Configuration file '$Path' is corrupt."
+        Write-Log -Level ERROR -Message "Configuration file '$Path' could not be read or is corrupt. Error: $($_.Exception.Message)"
         return $null
     }
 }
 
+function Save-Config {
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+        [Parameter(Mandatory = $true)][PSCustomObject]$Config,
+        [Parameter(Mandatory = $true)][string]$Path
+    )
+    if ($PSCmdlet.ShouldProcess($Path, "Save Configuration")) {
+        try {
+            Write-Log -Level DEBUG -Message "Saving configuration to '$Path'."
+            $Config | ConvertTo-Json -Depth 5 | Set-Content -Path $Path -Encoding UTF8
+        }
+        catch {
+            Write-Log -Level ERROR -Message "Error saving configuration file: $($_.Exception.Message)"
+        }
+    }
+}
+
 function Invoke-VersionControl {
-    param([PSCustomObject]$LoadedConfig, [string]$ConfigPath)
+    param(
+        [Parameter(Mandatory=$true)][PSCustomObject]$LoadedConfig,
+        [Parameter(Mandatory=$true)][string]$Path
+    )
     Write-Log -Level INFO -Message "Starting version control for configuration file..."
     $defaultConfig = Get-DefaultConfig
     $isUpdated = $false
+
     function Compare-AndUpdate($Reference, $Target) {
         $updated = $false
         foreach ($key in $Reference.PSObject.Properties.Name) {
-            # Robustly check if the target object has a property with the same name as the key from the reference object.
-            if (-not $Target.PSObject.Properties[$key]) {
-                Write-Log -Level WARNING -Message "Missing property in configuration found. Adding '$key'."
+            if (-not $Target.PSObject.Properties.Contains($key)) {
+                Write-Log -Level WARNING -Message "Missing property in configuration. Adding '$key'."
                 $Target | Add-Member -MemberType NoteProperty -Name $key -Value $Reference.$key
                 $updated = $true
             }
             elseif (($Reference.$key -is [PSCustomObject]) -and ($Target.$key -is [PSCustomObject])) {
-                # Recurse into nested objects
-                if (Compare-AndUpdate -Reference $Reference.$key -Target $Target.$key) { $updated = $true }
+                if (Compare-AndUpdate -Reference $Reference.$key -Target $Target.$key) {
+                    $updated = $true
+                }
             }
         }
         return $updated
     }
-    if (Compare-AndUpdate -Reference $defaultConfig -Target $LoadedConfig) { $isUpdated = $true }
-    if ($LoadedConfig.Version -ne $Global:ScriptVersion) {
-        Write-Log -Level WARNING -Message "Version conflict! Script is $($Global:ScriptVersion), Config was $($LoadedConfig.Version). Configuration will be updated."
-        $LoadedConfig.Version = $Global:ScriptVersion
+
+    if (Compare-AndUpdate -Reference $defaultConfig -Target $LoadedConfig) {
         $isUpdated = $true
     }
     if ($LoadedConfig.RulebookVersion -ne $Global:RulebookVersion) {
@@ -134,13 +151,18 @@ function Invoke-VersionControl {
         $LoadedConfig.RulebookVersion = $Global:RulebookVersion
         $isUpdated = $true
     }
+     if ($LoadedConfig.ScriptVersion -ne $Global:ScriptVersion) {
+        Write-Log -Level WARNING -Message "Version conflict! Script is $($Global:ScriptVersion), Config was $($LoadedConfig.ScriptVersion). Configuration will be updated."
+        $LoadedConfig.ScriptVersion = $Global:ScriptVersion
+        $isUpdated = $true
+    }
     if ($isUpdated) {
         Write-Log -Level INFO -Message "Configuration file has been updated. Saving changes."
-        Save-Config -Config $LoadedConfig -Path $ConfigPath
+        Save-Config -Config $LoadedConfig -Path $Path
+    } else {
+        Write-Log -Level INFO -Message "Configuration is up to date."
     }
-    else { Write-Log -Level INFO -Message "Configuration is up to date." }
 }
 
-Export-ModuleMember -Function Get-DefaultConfig, Save-Config, Get-Config, Invoke-VersionControl
+# --- End of module --- v11.2.0 ; Regelwerk: v8.2.0 ---
 
-# --- End of module --- v09.04.00 ; Regelwerk: v7.3.0 ---

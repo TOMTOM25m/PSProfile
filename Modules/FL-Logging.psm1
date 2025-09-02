@@ -1,17 +1,17 @@
 <#
 .SYNOPSIS
-    [EN] Module for handling logging.
-    [DE] Modul für die Handhabung des Loggings.
-.DESCRIPTION
-    [EN] This module contains functions for writing log messages to the console, to log files, and to the Windows Event Log.
-    [DE] Dieses Modul enthält Funktionen zum Schreiben von Log-Nachrichten in die Konsole, in Log-Dateien und in das Windows Event Log.
+    [DE] Modul für Logging-Funktionen.
+    [EN] Module for logging functions.
 .NOTES
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.08.29
-    Last modified:  2025.08.29
-    Version:        v09.04.00
-    MUW-Regelwerk:  v7.3.0
+    Last modified:  2025.09.02
+    Version:        v11.2.0
+    MUW-Regelwerk:  v8.2.0
+    Notes:          [DE] Versionsnummer für Release-Konsistenz aktualisiert.
+                    [EN] Updated version number for release consistency.
     Copyright:      © 2025 Flecki Garnreiter
+    License:        MIT License
 #>
 
 function Write-Log {
@@ -73,4 +73,4 @@ function Write-EventLogEntry {
 
 Export-ModuleMember -Function Write-Log, Write-EventLogEntry
 
-# --- End of module --- v09.04.00 ; Regelwerk: v7.3.0 ---
+# --- End of module --- v11.2.0 ; Regelwerk: v8.2.0 ---

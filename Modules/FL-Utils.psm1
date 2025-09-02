@@ -1,18 +1,19 @@
 <#
 .SYNOPSIS
-    [EN] Module for utility and helper functions.
-    [DE] Modul für Hilfs- und Unterstützungsfunktionen.
-.DESCRIPTION
-    [EN] This module contains various helper functions for profile path resolution, versioning, and email notifications.
-    [DE] Dieses Modul enthält verschiedene Hilfsfunktionen für die Auflösung von Profilpfaden, die Versionierung und E-Mail-Benachrichtigungen.
+    [DE] Modul für allgemeine Hilfsfunktionen.
+    [EN] Module for general utility functions.
 .NOTES
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.08.29
-    Last modified:  2025.08.29
-    Version:        v09.04.00
-    MUW-Regelwerk:  v7.3.0
+    Last modified:  2025.09.02
+    Version:        v11.2.0
+    MUW-Regelwerk:  v8.2.0
+    Notes:          [DE] Versionsnummer für Release-Konsistenz aktualisiert.
+                    [EN] Updated version number for release consistency.
     Copyright:      © 2025 Flecki Garnreiter
+    License:        MIT License
 #>
+# Functions for Utilities
 
 function Get-AllProfilePaths {
     Write-Log -Level DEBUG -Message "Querying all four potential profile paths."
@@ -106,4 +107,5 @@ function Send-MailNotification {
 
 Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Set-TemplateVersion, Send-MailNotification
 
-# --- End of module --- v09.04.00 ; Regelwerk: v7.3.0 ---
+
+# --- End of module --- v11.2.0 ; Regelwerk: v8.2.0 ---

@@ -1,17 +1,17 @@
 <#
 .SYNOPSIS
-    [EN] Module for handling maintenance tasks.
-    [DE] Modul für die Handhabung von Wartungsaufgaben.
-.DESCRIPTION
-    [EN] This module contains functions for log archiving, local asset initialization, and updating templates from Git.
-    [DE] Dieses Modul enthält Funktionen für die Log-Archivierung, die Initialisierung lokaler Assets und die Aktualisierung von Vorlagen aus Git.
+    [DE] Modul für Wartungsaufgaben wie Archivierung.
+    [EN] Module for maintenance tasks like archiving.
 .NOTES
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.08.29
-    Last modified:  2025.08.29
-    Version:        v09.04.00
-    MUW-Regelwerk:  v7.3.0
+    Last modified:  2025.09.02
+    Version:        v11.2.0
+    MUW-Regelwerk:  v8.2.0
+    Notes:          [DE] Versionsnummer für Release-Konsistenz aktualisiert.
+                    [EN] Updated version number for release consistency.
     Copyright:      © 2025 Flecki Garnreiter
+    License:        MIT License
 #>
 
 function Invoke-ArchiveMaintenance {
@@ -132,4 +132,4 @@ function Invoke-GitUpdate {
 
 Export-ModuleMember -Function Invoke-ArchiveMaintenance, Initialize-LocalAssets, Invoke-GitUpdate
 
-# --- End of module --- v09.04.00 ; Regelwerk: v7.3.0 ---
+# --- End of module --- v11.2.0 ; Regelwerk: v8.2.0 ---
