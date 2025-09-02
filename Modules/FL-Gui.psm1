@@ -22,7 +22,7 @@ function Get-DefaultConfig {
         RulebookVersion        = $Global:RulebookVersion
         Language               = "en-US"
         Environment            = "DEV"
-        WhatIfMode             = $true
+        WhatIfMode             = $false
         Logging                = @{
             LogPath              = (Join-Path $Global:ScriptDirectory "LOG")
             ReportPath           = (Join-Path $Global:ScriptDirectory "Reports")
@@ -86,48 +86,6 @@ function Save-Config {
         catch {
             Write-Log -Level ERROR -Message "Error saving configuration file: $($_.Exception.Message)"
         }
-    }
-}
-
-function Invoke-VersionControl {
-    param(
-        [Parameter(Mandatory=$true)][PSCustomObject]$LoadedConfig,
-        [Parameter(Mandatory=$true)][string]$Path
-    )
-    Write-Log -Level INFO -Message "Starting version control for configuration file..."
-    $defaultConfig = Get-DefaultConfig
-    $isUpdated = $false
-
-    function Compare-AndUpdate($Reference, $Target) {
-        $updated = $false
-        foreach ($key in $Reference.PSObject.Properties.Name) {
-            if (-not $Target.PSObject.Properties.Contains($key)) {
-                Write-Log -Level WARNING -Message "Missing property in configuration. Adding '$key'."
-                $Target | Add-Member -MemberType NoteProperty -Name $key -Value $Reference.$key
-                $updated = $true
-            }
-            elseif (($Reference.$key -is [PSCustomObject]) -and ($Target.$key -is [PSCustomObject])) {
-                if (Compare-AndUpdate -Reference $Reference.$key -Target $Target.$key) {
-                    $updated = $true
-                }
-            }
-        }
-        return $updated
-    }
-
-    if (Compare-AndUpdate -Reference $defaultConfig -Target $LoadedConfig) {
-        $isUpdated = $true
-    }
-    if ($LoadedConfig.RulebookVersion -ne $Global:RulebookVersion) {
-        Write-Log -Level WARNING -Message "Rulebook version conflict! Script requires $($Global:RulebookVersion), Config has $($LoadedConfig.RulebookVersion). Updating."
-        $LoadedConfig.RulebookVersion = $Global:RulebookVersion
-        $isUpdated = $true
-    }
-    if ($isUpdated) {
-        Write-Log -Level INFO -Message "Configuration file has been updated. Saving changes."
-        Save-Config -Config $LoadedConfig -Path $Path
-    } else {
-        Write-Log -Level INFO -Message "Configuration is up to date."
     }
 }
 

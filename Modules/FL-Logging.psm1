@@ -33,13 +33,17 @@ function Write-Log {
     try {
         if ($Global:Config -and $Global:Config.Logging.LogPath) {
             $logPath = $Global:Config.Logging.LogPath
-            if (-not (Test-Path $logPath)) { New-Item -Path $logPath -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null }
+            if (-not (Test-Path $logPath)) { 
+                # Logging ist kritisch und wird immer ausgeführt, unabhängig vom WhatIf-Modus
+                New-Item -Path $logPath -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null 
+            }
             
             $logFileBaseName = $Global:ScriptName -replace '\.ps1', ''
             $logFileName = if ($isDev) { "DEV_$($logFileBaseName)_$(Get-Date -Format 'yyyy-MM-dd').log" } else { "PROD_$($logFileBaseName)_$(Get-Date -Format 'yyyy-MM-dd').log" }
             $logFile = Join-Path $logPath $logFileName
             
-            Add-Content -Path $logFile -Value $logEntry
+            # Logging erfolgt immer, unabhängig vom WhatIf-Modus
+            Add-Content -Path $logFile -Value $logEntry -Force
         }
     }
     catch { Write-Warning "Could not write to log file. Reason: $($_.Exception.Message)" }
@@ -50,7 +54,7 @@ function Write-Log {
 }
 
 function Write-EventLogEntry {
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param([string]$Level, [string]$Message)
     
     if (-not ($Global:Config -and $Global:Config.Logging.EnableEventLog)) {
@@ -60,10 +64,9 @@ function Write-EventLogEntry {
 
     try {
         if (-not (Get-EventLog -LogName Application -Source $Global:ScriptName -ErrorAction SilentlyContinue)) {
-            if ($PSCmdlet.ShouldProcess("EventLog Source: $Global:ScriptName", "Create")) {
-                New-EventLog -LogName Application -Source $Global:ScriptName -ErrorAction Stop
-                Write-Log -Level INFO -Message "Event Log Source '$($Global:ScriptName)' was registered successfully."
-            }
+            # Event Log Source-Erstellung ist kritisch und sollte immer ausgeführt werden
+            New-EventLog -LogName Application -Source $Global:ScriptName -ErrorAction Stop
+            Write-Log -Level INFO -Message "Event Log Source '$($Global:ScriptName)' was registered successfully."
         }
         $typeMap = @{ ERROR = 'Error'; WARNING = 'Warning' }
         Write-EventLog -LogName Application -Source $Global:ScriptName -Message $Message -EventId 1000 -EntryType $typeMap[$Level] -ErrorAction Stop

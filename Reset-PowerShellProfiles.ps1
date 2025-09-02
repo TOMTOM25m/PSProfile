@@ -22,11 +22,11 @@
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.07.11
     Last modified:  2025.09.02
-    old Version:    v11.1.0
-    Version now:    v11.2.0
+    old Version:    v11.2.0
+    Version now:    v11.2.1
     MUW-Regelwerk:  v8.2.0
-    Notes:          [DE] Stabilitäts-Fix: Die Logik für die Erst-Initialisierung wurde überarbeitet, um Fehler beim ersten Start ohne Konfigurationsdatei zu beheben.
-                    [EN] Stability fix: Reworked the initial setup logic to resolve errors on the first run without a configuration file.
+    Notes:          [DE] Stabilitäts-Fix: Die Erst-Initialisierung wird nun mittels `-WhatIf:$false` erzwungen, um Fehler im DEV-Modus zu beheben.
+                    [EN] Stability fix: Initial setup is now forced with `-WhatIf:$false` to resolve errors in DEV mode.
     Copyright:      © 2025 Flecki Garnreiter
     License:        MIT License
 #>
@@ -41,7 +41,7 @@ param (
 
 #region ####################### [1. Initialization] ##############################
 $Global:ScriptName = $MyInvocation.MyCommand.Name
-$Global:ScriptVersion = "v11.2.0"
+$Global:ScriptVersion = "v11.2.1"
 $Global:RulebookVersion = "v8.2.0"
 $Global:ScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Path
 
@@ -71,24 +71,28 @@ catch {
 
 #region ####################### [3. Script Main Body] ##############################
 $oldVersion = try {
-    (Get-Content -Path $MyInvocation.MyCommand.Path -TotalCount 30 -ErrorAction SilentlyContinue | Select-String 'Version now:\s*(v[\d\.]+)' | ForEach-Object { $_.Matches.Groups[1].Value })[0]
+    (Get-Content -Path $MyInvocation.MyCommand.Path -TotalCount 30 -ErrorAction SilentlyContinue | Select-String 'old Version:\s*(v[\d\.]+)' | ForEach-Object { $_.Matches.Groups[1].Value })[0]
 } catch { "v0.0.0" }
 
 # --- Handle dedicated operational modes first ---
 if ($Setup.IsPresent) {
+    $Global:Config = Get-Config -Path $Global:ConfigFile
+    if ($null -eq $Global:Config) {
+        Write-Host "[WARNING] Configuration file not found. Creating a default and starting setup GUI." -ForegroundColor Yellow
+        $Global:Config = Get-DefaultConfig
+        # FIX: Force writing the initial config file, ignoring the script's WhatIf preference.
+        Save-Config -Config $Global:Config -Path $Global:ConfigFile -WhatIf:$false
+    }
+    
     do {
         $restartGui = $false
-        $Global:Config = Get-Config -Path $Global:ConfigFile
-        if ($null -eq $Global:Config) {
-             Write-Host "[WARNING] Configuration file not found. Creating a default and starting setup GUI." -ForegroundColor Yellow
-            $Global:Config = Get-DefaultConfig
-            Save-Config -Config $Global:Config -Path $Global:ConfigFile
-        }
         Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
         Initialize-LocalizationFiles -ConfigDirectory $configDir
         $guiResult = Show-MuwSetupGui -InitialConfig $Global:Config
         if ($guiResult -eq 'Restart') {
             $restartGui = $true
+            # Reload config if GUI saved changes and requested a restart.
+            $Global:Config = Get-Config -Path $Global:ConfigFile
         }
     } while ($restartGui)
     Write-Log -Level INFO -Message "Configuration finished. Script will exit."
@@ -114,17 +118,19 @@ try {
         # Auto-Setup logic as per rules
         Write-Host "[WARNING] Configuration file not found. Starting initial setup GUI automatically." -ForegroundColor Yellow
         $Global:Config = Get-DefaultConfig
-        Save-Config -Config $Global:Config -Path $Global:ConfigFile
+        # FIX: Force writing the initial config file, ignoring the script's WhatIf preference.
+        Save-Config -Config $Global:Config -Path $Global:ConfigFile -WhatIf:$false
         
-        # Re-read the config after saving to ensure it's a valid object before passing to GUI
-        $Global:Config = Get-Config -Path $Global:ConfigFile
-        
+        # The $Global:Config object is now valid and backed by a file. Proceed to GUI.
         do {
             $restartGui = $false
             Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
             Initialize-LocalizationFiles -ConfigDirectory $configDir
             $guiResult = Show-MuwSetupGui -InitialConfig $Global:Config
-            if ($guiResult -eq 'Restart') { $restartGui = $true }
+            if ($guiResult -eq 'Restart') { 
+                $restartGui = $true
+                $Global:Config = Get-Config -Path $Global:ConfigFile
+            }
         } while ($restartGui)
         
         Write-Log -Level INFO -Message "Initial configuration finished. Please run the script again to apply settings."
@@ -140,6 +146,8 @@ try {
         if ($Global:Config.WhatIfMode) {
             $WhatIfPreference = $true
             Write-Log -Level WARNING -Message "SCRIPT IS RUNNING IN SIMULATION (WhatIf) MODE. NO CHANGES WILL BE MADE."
+        } else {
+            $WhatIfPreference = $false
         }
     } else {
         $VerbosePreference = 'SilentlyContinue'
@@ -202,6 +210,8 @@ try {
     foreach ($templateKey in $templateMapping.Keys) {
         $templatePath = $Global:Config.TemplateFilePaths[$templateKey]
         $destinationPath = $templateMapping[$templateKey]
+        if ($null -eq $Global:Config.TemplateVersions) { $Global:Config.TemplateVersions = @{} }
+        if ($null -eq $Global:Config.TargetTemplateVersions) { $Global:Config.TargetTemplateVersions = @{} }
         $oldTemplateVersion = $Global:Config.TemplateVersions[$templateKey]
         $versionToSet = $Global:Config.TargetTemplateVersions[$templateKey]
         if ($PSCmdlet.ShouldProcess($destinationPath, "Create Profile from $($templatePath | Split-Path -Leaf)")) {
@@ -235,5 +245,4 @@ finally {
 }
 #endregion
 
-# --- End of Script --- old: v11.1.0 ; now: v11.2.0 ; Regelwerk: v8.2.0 ---
-
+# --- End of Script --- old: v11.2.0 ; now: v11.2.1 ; Regelwerk: v8.2.0 ---

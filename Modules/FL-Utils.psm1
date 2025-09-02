@@ -41,8 +41,8 @@ function Set-TemplateVersion {
             $content = Get-Content -Path $FilePath -Raw
             $content = $content -replace "(old Version:\s*v)[\d\.]+", "`$1$OldVersion"
             $content = $content -replace "(Version now:\s*v)[\d\.]+", "`$1$($NewVersion.TrimStart('v'))"
-            $content = $content -replace "(End of Script now: v)[\d\.]+", "`$1$($NewVersion.TrimStart('v'))"
-            $content = $content -replace "(; old: v)[\d\.]+", "`$1$OldVersion"
+            # This regex is more robust to handle different footer formats
+            $content = $content -replace "(old:\s*v)[\d\.]+(\s*;\s*now:\s*v)[\d\.]+", "`$1$OldVersion`$2$($NewVersion.TrimStart('v'))"
             
             $encoding = if ($PSVersionTable.PSVersion.Major -ge 6) { 'UTF8BOM' } else { 'UTF8' }
             Set-Content -Path $FilePath -Value $content -Encoding $encoding -Force
@@ -70,6 +70,7 @@ function Send-MailNotification {
     }
 
     Write-Log -Level DEBUG -Message "Testing connection to SMTP server $($mailSettings.SmtpServer) on port $($mailSettings.SmtpPort)..."
+    # E-Mail-Verbindungstests werden immer ausgeführt, unabhängig vom WhatIf-Modus
     if (-not (Test-NetConnection -ComputerName $mailSettings.SmtpServer -Port $mailSettings.SmtpPort -WarningAction SilentlyContinue)) {
         Write-Log -Level WARNING -Message "SMTP server unreachable. Email could not be sent."
         return
@@ -87,6 +88,7 @@ function Send-MailNotification {
     $recipientLogString = $recipients -join ', '
     Write-Log -Level INFO -Message "Sending email notification to '$recipientLogString'"
     try {
+        # E-Mail-Versand wird immer ausgeführt, unabhängig vom WhatIf-Modus
         $smtpClient = New-Object System.Net.Mail.SmtpClient($mailSettings.SmtpServer, $mailSettings.SmtpPort)
         $smtpClient.EnableSsl = $mailSettings.UseSsl
         $mailMessage = New-Object System.Net.Mail.MailMessage
@@ -95,6 +97,7 @@ function Send-MailNotification {
         $mailMessage.Subject = $Subject
         $mailMessage.Body = $Body
         
+        # E-Mail wird immer gesendet, unabhängig vom WhatIf-Modus
         $smtpClient.Send($mailMessage)
         Write-Log -Level INFO -Message "Email sent successfully."
     }

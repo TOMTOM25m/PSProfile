@@ -15,7 +15,7 @@
 #>
 
 function Invoke-ArchiveMaintenance {
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param()
     if (-not $Global:Config.Logging.ArchiveLogs) {
         Write-Log -Level INFO -Message "Log archiving is disabled."
@@ -32,30 +32,28 @@ function Invoke-ArchiveMaintenance {
         $archivePath = Join-Path $logConf.LogPath $archiveName
         Write-Log -Level INFO -Message "Archiving $($logsToArchive.Count) log files to '$archivePath'..."
         try {
-            if ($PSCmdlet.ShouldProcess($archivePath, "Create Archive")) {
-                if ($use7Zip) {
-                    $filesString = $logsToArchive.FullName -join '" "'
-                    Start-Process -FilePath $logConf.SevenZipPath -ArgumentList "a -tzip `"$archivePath`" `"$filesString`"" -Wait -NoNewWindow
-                }
-                else {
-                    Compress-Archive -Path $logsToArchive.FullName -DestinationPath $archivePath -Update
-                }
-                $logsToArchive | Remove-Item -Force
+            # Log-Archivierung wird immer ausgeführt, unabhängig vom WhatIf-Modus
+            if ($use7Zip) {
+                $filesString = $logsToArchive.FullName -join '" "'
+                Start-Process -FilePath $logConf.SevenZipPath -ArgumentList "a -tzip `"$archivePath`" `"$filesString`"" -Wait -NoNewWindow
             }
+            else {
+                Compress-Archive -Path $logsToArchive.FullName -DestinationPath $archivePath -Update
+            }
+            $logsToArchive | Remove-Item -Force
         }
         catch { Write-Log -Level ERROR -Message "Archiving failed: $($_.Exception.Message)" }
     }
     $archiveCutoffDate = (Get-Date).AddDays(-$logConf.ArchiveRetentionDays)
     Get-ChildItem -Path $logConf.LogPath -Filter "*.zip" | Where-Object { $_.LastWriteTime -lt $archiveCutoffDate } | ForEach-Object {
         Write-Log -Level INFO -Message "Deleting old archive: $($_.FullName)"
-        if ($PSCmdlet.ShouldProcess($_.FullName, "Delete old archive")) {
-            $_ | Remove-Item -Force
-        }
+        # Alte Archive werden immer gelöscht, unabhängig vom WhatIf-Modus
+        $_ | Remove-Item -Force
     }
 }
 
 function Initialize-LocalAssets {
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param()
     
     $logoPath = $Global:Config.Logging.LogoPath
@@ -65,18 +63,16 @@ function Initialize-LocalAssets {
         Write-Log -Level INFO -Message "Local logo not found. Attempting to copy from UNC path: $logoUncPath"
         $localImageDir = Split-Path $logoPath -Parent
         if (-not (Test-Path $localImageDir)) {
-            if ($PSCmdlet.ShouldProcess($localImageDir, "Create Image Directory")) {
-                New-Item -Path $localImageDir -ItemType Directory | Out-Null
-            }
+            # Ressourcen-Verzeichnisse werden immer erstellt, unabhängig vom WhatIf-Modus
+            New-Item -Path $localImageDir -ItemType Directory | Out-Null
         }
-        if ($PSCmdlet.ShouldProcess($logoPath, "Copy Logo from UNC")) {
-            try {
-                Copy-Item -Path $logoUncPath -Destination $logoPath -Force -ErrorAction Stop
-                Write-Log -Level INFO -Message "Logo successfully copied to $logoPath"
-            }
-            catch {
-                Write-Log -Level WARNING -Message "Could not copy logo from UNC path: $($_.Exception.Message)"
-            }
+        try {
+            # Logo wird immer kopiert, unabhängig vom WhatIf-Modus
+            Copy-Item -Path $logoUncPath -Destination $logoPath -Force -ErrorAction Stop
+            Write-Log -Level INFO -Message "Logo successfully copied to $logoPath"
+        }
+        catch {
+            Write-Log -Level WARNING -Message "Could not copy logo from UNC path: $($_.Exception.Message)"
         }
     }
 }

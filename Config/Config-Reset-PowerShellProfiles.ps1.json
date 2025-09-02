@@ -1,0 +1,52 @@
+{
+  "ScriptVersion": "v11.2.1",
+  "RulebookVersion": "v8.2.0",
+  "Language": "en-US",
+  "Environment": "DEV",
+  "WhatIfMode": false,
+  "Logging": {
+    "LogRetentionDays": 30,
+    "ArchiveLogs": true,
+    "EnableEventLog": true,
+    "SevenZipPath": "C:\\Program Files\\7-Zip\\7z.exe",
+    "ReportPath": "F:\\DEV\\repositories\\ResetProfile\\Reports",
+    "ArchiveRetentionDays": 90,
+    "LogPath": "F:\\DEV\\repositories\\ResetProfile\\LOG"
+  },
+  "TemplateFilePaths": {
+    "ProfileX": "F:\\DEV\\repositories\\ResetProfile\\Profile-templateX.ps1",
+    "ProfileMOD": "F:\\DEV\\repositories\\ResetProfile\\Profile-templateMOD.ps1",
+    "Profile": "F:\\DEV\\repositories\\ResetProfile\\Profile-template.ps1"
+  },
+  "TemplateVersions": {
+    "ProfileX": "v0.0.0",
+    "ProfileMOD": "v0.0.0",
+    "Profile": "v0.0.0"
+  },
+  "TargetTemplateVersions": {
+    "ProfileX": "v8.0.0",
+    "ProfileMOD": "v7.0.0",
+    "Profile": "v25.0.0"
+  },
+  "LanguageFileVersions": {
+    "en-US": "v1.0.0",
+    "de-DE": "v1.0.0"
+  },
+  "Backup": {
+    "Path": "F:\\DEV\\repositories\\ResetProfile\\Backup",
+    "Enabled": false
+  },
+  "Mail": {
+    "Enabled": false,
+    "ProdRecipient": "prod@example.com",
+    "Sender": "powershell@example.com",
+    "SmtpServer": "smtp.example.com",
+    "DevRecipient": "dev@example.com"
+  },
+  "GitUpdate": {
+    "Enabled": false,
+    "CachePath": "F:\\VSCode\\data\\tmp\\GitProfileCache",
+    "RepoUrl": "https://github.com/user/repo.git",
+    "Branch": "main"
+  }
+}

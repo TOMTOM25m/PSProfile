@@ -49,7 +49,7 @@ By using these scripts, you agree to be bound by the above terms.
         RulebookVersion        = $Global:RulebookVersion
         Language               = "en-US"
         Environment            = "DEV"
-        WhatIfMode             = $true
+        WhatIfMode             = $false
         Disclaimer             = @{ DE = $disclaimerDE; EN = $disclaimerEN }
         Logging                = @{
             LogPath              = (Join-Path $Global:ScriptDirectory "LOG")
@@ -101,19 +101,22 @@ function Get-Config {
 }
 
 function Save-Config {
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)][PSCustomObject]$Config,
         [Parameter(Mandatory = $true)][string]$Path
     )
-    if ($PSCmdlet.ShouldProcess($Path, "Save Configuration")) {
-        try {
-            Write-Log -Level DEBUG -Message "Saving configuration to '$Path'."
-            $Config | ConvertTo-Json -Depth 5 | Set-Content -Path $Path -Encoding UTF8
-        }
-        catch {
-            Write-Log -Level ERROR -Message "Error saving configuration file: $($_.Exception.Message)"
-        }
+    if ([string]::IsNullOrEmpty($Path)) {
+        Write-Log -Level ERROR -Message "Save-Config was called with an empty path. Configuration cannot be saved."
+        return
+    }
+    
+    try {
+        Write-Log -Level DEBUG -Message "Saving configuration to '$Path'."
+        $Config | ConvertTo-Json -Depth 5 | Set-Content -Path $Path -Encoding UTF8
+    }
+    catch {
+        Write-Log -Level ERROR -Message "Error saving configuration file: $($_.Exception.Message)"
     }
 }
 
@@ -129,7 +132,7 @@ function Invoke-VersionControl {
     function Compare-AndUpdate($Reference, $Target) {
         $updated = $false
         foreach ($key in $Reference.PSObject.Properties.Name) {
-            if (-not $Target.PSObject.Properties.Contains($key)) {
+            if (-not ($Target.PSObject.Properties.Name -contains $key)) {
                 Write-Log -Level WARNING -Message "Missing property in configuration. Adding '$key'."
                 $Target | Add-Member -MemberType NoteProperty -Name $key -Value $Reference.$key
                 $updated = $true
