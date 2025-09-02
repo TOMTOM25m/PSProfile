@@ -59,5 +59,6 @@
     "ProfileMOD": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-templateMOD.ps1",
     "Profile": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-template.ps1",
     "ProfileX": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-templateX.ps1"
-  }
+  },
+  "NetworkProfiles": []
 }
