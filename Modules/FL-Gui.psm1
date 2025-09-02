@@ -44,13 +44,14 @@ function Show-MuwSetupGui {
     try {
         Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
 
-         $windowTitle = "SetupGUI $($Global:ScriptName -replace '.ps1', '') Version : $($Global:ScriptVersion)"
+        $windowTitle = "SetupGUI $($Global:ScriptName -replace '.ps1', '') Version : $($Global:ScriptVersion)"
 
         #region --- XAML Definition ---
         $xaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SetupGUI ${$Global:ScriptName -replace '.ps1', ''} Version : ${$Global:ScriptVersion}" Height="600" Width="800" MinHeight="500" MinWidth="700"
+        Title="Setup"
+        Height="600" Width="800" MinHeight="500" MinWidth="700"
         WindowStartupLocation="CenterScreen" ShowInTaskbar="True" Background="#F0F0F0">
     <Window.Resources>
         <SolidColorBrush x:Key="PrimaryBrush" Color="#111d4e"/>
@@ -220,6 +221,31 @@ function Show-MuwSetupGui {
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
+            <TabItem Header="GitHub/GitLab">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0" Content="Enable Git Update:"/>
+                    <CheckBox x:Name="gitEnabledCheckBox" Grid.Row="0" Grid.Column="1" Margin="5"/>
+
+                    <Label Grid.Row="1" Grid.Column="0" Content="Repository URL:"/>
+                    <TextBox x:Name="repoUrlTextBox" Grid.Row="1" Grid.Column="1" Margin="5"/>
+
+                    <Label Grid.Row="2" Grid.Column="0" Content="Branch:"/>
+                    <TextBox x:Name="branchTextBox" Grid.Row="2" Grid.Column="1" Margin="5"/>
+
+                    <Label Grid.Row="3" Grid.Column="0" Content="Cache Path:"/>
+                    <TextBox x:Name="cachePathTextBox" Grid.Row="3" Grid.Column="1" Margin="5"/>
+                    <Button x:Name="browseCachePathButton" Grid.Row="3" Grid.Column="2" Content="..."/>
+                </Grid>
+            </TabItem>
         </TabControl>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
@@ -234,9 +260,8 @@ function Show-MuwSetupGui {
 
         $reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$xaml)
         $window = [System.Windows.Markup.XamlReader]::Load($reader)
+        $window.Title = $windowTitle
         
-          $window.Title = $windowTitle
-          
         #region --- Control Discovery ---
         $controls = @{
             # General Tab
@@ -265,6 +290,13 @@ function Show-MuwSetupGui {
 
             # Templates Tab
             templatesDataGrid = $window.FindName('templatesDataGrid');
+
+            # GitHub/GitLab Tab
+            gitEnabledCheckBox = $window.FindName('gitEnabledCheckBox');
+            repoUrlTextBox = $window.FindName('repoUrlTextBox');
+            branchTextBox = $window.FindName('branchTextBox');
+            cachePathTextBox = $window.FindName('cachePathTextBox');
+            browseCachePathButton = $window.FindName('browseCachePathButton');
 
             # Main Buttons
             okButton = $window.FindName('okButton');
@@ -308,6 +340,12 @@ function Show-MuwSetupGui {
                 })
             }
             $controls.templatesDataGrid.ItemsSource = $templateData
+
+            # GitHub/GitLab
+            $controls.gitEnabledCheckBox.IsChecked = $config.GitUpdate.Enabled
+            $controls.repoUrlTextBox.Text = $config.GitUpdate.RepoUrl
+            $controls.branchTextBox.Text = $config.GitUpdate.Branch
+            $controls.cachePathTextBox.Text = $config.GitUpdate.CachePath
         }
 
         function Set-GuiDataAsConfig($config, $controls) {
@@ -331,6 +369,12 @@ function Show-MuwSetupGui {
             $config.Mail.Sender = $controls.senderTextBox.Text
             $config.Mail.DevRecipient = $controls.devRecipientTextBox.Text
             $config.Mail.ProdRecipient = $controls.prodRecipientTextBox.Text
+
+            # GitHub/GitLab
+            $config.GitUpdate.Enabled = $controls.gitEnabledCheckBox.IsChecked
+            $config.GitUpdate.RepoUrl = $controls.repoUrlTextBox.Text
+            $config.GitUpdate.Branch = $controls.branchTextBox.Text
+            $config.GitUpdate.CachePath = $controls.cachePathTextBox.Text
             return $config
         }
 
@@ -382,6 +426,9 @@ function Show-MuwSetupGui {
         })
         $controls.browse7ZipPathButton.add_Click({
             $controls.sevenZipPathTextBox.Text = Select-Path -initialPath $controls.sevenZipPathTextBox.Text -isFile $true
+        })
+        $controls.browseCachePathButton.add_Click({
+            $controls.cachePathTextBox.Text = Select-Path -initialPath $controls.cachePathTextBox.Text -isFile $false
         })
 
         #endregion --- Event Handlers ---

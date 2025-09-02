@@ -129,7 +129,7 @@ function Invoke-GitUpdate {
     }
     Write-Log -Level DEBUG -Message "Found git.exe at: $($gitPath.Source)"
 
-    $cachePath = $gitConfig.LocalCachePath
+    $cachePath = $gitConfig.CachePath
     if (-not (Test-Path $cachePath)) {
         if ($PSCmdlet.ShouldProcess($cachePath, "Create Git cache directory")) {
             New-Item -Path $cachePath -ItemType Directory -Force | Out-Null
@@ -139,9 +139,9 @@ function Invoke-GitUpdate {
     $repoDir = Join-Path $cachePath "repository"
 
     if (-not (Test-Path (Join-Path $repoDir ".git"))) {
-        Write-Log -Level INFO -Message "Local repository not found. Cloning from $($gitConfig.RepositoryUrl)..."
-        $cloneArgs = "clone --branch $($gitConfig.Branch) --single-branch `"$($gitConfig.RepositoryUrl)`" `"$repoDir`""
-        if ($PSCmdlet.ShouldProcess($gitConfig.RepositoryUrl, "Clone Repository")) {
+        Write-Log -Level INFO -Message "Local repository not found. Cloning from $($gitConfig.RepoUrl)..."
+        $cloneArgs = "clone --branch $($gitConfig.Branch) --single-branch `"$($gitConfig.RepoUrl)`" `"$repoDir`""
+        if ($PSCmdlet.ShouldProcess($gitConfig.RepoUrl, "Clone Repository")) {
             $process = Start-Process -FilePath $gitPath.Source -ArgumentList $cloneArgs -Wait -PassThru -NoNewWindow -ErrorAction Stop
             if ($process.ExitCode -ne 0) { throw "Git clone failed with exit code $($process.ExitCode)." }
             Write-Log -Level INFO -Message "Repository cloned successfully."
