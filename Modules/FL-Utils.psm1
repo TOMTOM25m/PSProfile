@@ -36,6 +36,12 @@ function Get-SystemwideProfilePath {
 function Set-TemplateVersion {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param([string]$FilePath, [string]$NewVersion, [string]$OldVersion)
+
+    if ([string]::IsNullOrEmpty($NewVersion) -or [string]::IsNullOrEmpty($OldVersion)) {
+        Write-Log -Level WARNING -Message "Skipping versioning for '$FilePath' due to missing version information."
+        return
+    }
+
     if ($PSCmdlet.ShouldProcess($FilePath, "Set Version to $NewVersion")) {
         try {
             $content = Get-Content -Path $FilePath -Raw

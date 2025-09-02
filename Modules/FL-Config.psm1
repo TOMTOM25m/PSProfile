@@ -60,11 +60,6 @@ By using these scripts, you agree to be bound by the above terms.
             ArchiveRetentionDays = 90
             SevenZipPath         = "C:\Program Files\7-Zip\7z.exe"
         }
-        TemplateFilePaths      = @{
-            Profile    = Join-Path $Global:ScriptDirectory 'Profile-template.ps1';
-            ProfileX   = Join-Path $Global:ScriptDirectory 'Profile-templateX.ps1';
-            ProfileMOD = Join-Path $Global:ScriptDirectory 'Profile-templateMOD.ps1';
-        }
         TemplateVersions       = @{ Profile = "v0.0.0"; ProfileX = "v0.0.0"; ProfileMOD = "v0.0.0" }
         TargetTemplateVersions = @{ Profile = "v25.0.0"; ProfileX = "v8.0.0"; ProfileMOD = "v7.0.0" }
         LanguageFileVersions   = @{ "de-DE" = "v1.0.0"; "en-US" = "v1.0.0" }
@@ -132,13 +127,24 @@ function Invoke-VersionControl {
     function Compare-AndUpdate($Reference, $Target) {
         $updated = $false
         foreach ($key in $Reference.PSObject.Properties.Name) {
-            if (-not ($Target.PSObject.Properties.Name -contains $key)) {
+            $refValue = $Reference.$key
+            $targetHasProperty = $Target.PSObject.Properties.Name -contains $key
+            
+            if (-not $targetHasProperty) {
                 Write-Log -Level WARNING -Message "Missing property in configuration. Adding '$key'."
-                $Target | Add-Member -MemberType NoteProperty -Name $key -Value $Reference.$key
+                $Target | Add-Member -MemberType NoteProperty -Name $key -Value $refValue
                 $updated = $true
             }
-            elseif (($Reference.$key -is [PSCustomObject]) -and ($Target.$key -is [PSCustomObject])) {
-                if (Compare-AndUpdate -Reference $Reference.$key -Target $Target.$key) {
+            else {
+                $targetValue = $Target.$key
+                if (($refValue -is [PSCustomObject]) -and ($targetValue -is [PSCustomObject])) {
+                    if (Compare-AndUpdate -Reference $refValue -Target $targetValue) {
+                        $updated = $true
+                    }
+                }
+                elseif (($refValue -is [PSCustomObject]) -and -not ($targetValue -is [PSCustomObject])) {
+                    Write-Log -Level WARNING -Message "Property '$key' has an incorrect type or is null. Overwriting with default structure."
+                    $Target.$key = $refValue
                     $updated = $true
                 }
             }

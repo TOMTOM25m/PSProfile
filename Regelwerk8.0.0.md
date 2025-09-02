@@ -57,11 +57,11 @@ Dieser Abschnitt dient als technische Kurzübersicht für die KI-Assistenz.
 
 Das Skript ist in mehrere Module unterteilt, um die Wartbarkeit und Übersichtlichkeit zu verbessern. Jedes Modul hat eine klare Zuständigkeit:
 
-*   **FL-Config.psm1:** Zentrales Modul für das Laden, Speichern und Verwalten der Konfiguration. Enthält die `Invoke-VersionControl`-Funktion.
-*   **FL-Gui.psm1:** Enthält alle Funktionen zur Erstellung und Verwaltung der grafischen Benutzeroberfläche (GUI). Dieses Modul sollte keine eigene Konfigurationslogik enthalten.
-*   **FL-Logging.psm1:** Zuständig für das Schreiben von Log-Dateien und Windows Event Log-Einträgen.
-*   **FL-Maintenance.psm1:** Enthält Wartungsaufgaben wie die Archivierung von Log-Dateien.
-*   **FL-Utils.psm1:** Sammlung allgemeiner Hilfsfunktionen, die von anderen Modulen verwendet werden.
+* **FL-Config.psm1:** Zentrales Modul für das Laden, Speichern und Verwalten der Konfiguration. Enthält die `Invoke-VersionControl`-Funktion.
+* **FL-Gui.psm1:** Enthält alle Funktionen zur Erstellung und Verwaltung der grafischen Benutzeroberfläche (GUI). Dieses Modul sollte keine eigene Konfigurationslogik enthalten.
+* **FL-Logging.psm1:** Zuständig für das Schreiben von Log-Dateien und Windows Event Log-Einträgen.
+* **FL-Maintenance.psm1:** Enthält Wartungsaufgaben wie die Archivierung von Log-Dateien.
+* **FL-Utils.psm1:** Sammlung allgemeiner Hilfsfunktionen, die von anderen Modulen verwendet werden.
 
 Durch diese klare Trennung wird vermieden, dass Funktionen doppelt implementiert werden, was zu Fehlern und Inkonsistenzen führen kann.
 
