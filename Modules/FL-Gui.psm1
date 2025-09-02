@@ -177,51 +177,53 @@ function Show-SetupGUI {
 
         #region --- Find Controls ---
         Write-Log -Level DEBUG "Finding GUI controls..."
-        $controls = @{}
-        $controlNames = @(
-            'languageComboBox',
-            'environmentComboBox', 
-            'whatIfCheckBox',
-            'networkProfilesDataGrid',
-            'addNetworkProfileButton',
-            'enableMailCheckBox',
-            'smtpServerTextBox',
-            'senderTextBox',
-            'devRecipientTextBox',
-            'prodRecipientTextBox',
-            'cancelButton',
-            'applyButton',
-            'okButton'
-        )
+        $languageComboBox = $window.FindName('languageComboBox')
+        $environmentComboBox = $window.FindName('environmentComboBox')
+        $whatIfCheckBox = $window.FindName('whatIfCheckBox')
+        $networkProfilesDataGrid = $window.FindName('networkProfilesDataGrid')
+        $addNetworkProfileButton = $window.FindName('addNetworkProfileButton')
+        $enableMailCheckBox = $window.FindName('enableMailCheckBox')
+        $smtpServerTextBox = $window.FindName('smtpServerTextBox')
+        $senderTextBox = $window.FindName('senderTextBox')
+        $devRecipientTextBox = $window.FindName('devRecipientTextBox')
+        $prodRecipientTextBox = $window.FindName('prodRecipientTextBox')
+        $cancelButton = $window.FindName('cancelButton')
+        $applyButton = $window.FindName('applyButton')
+        $okButton = $window.FindName('okButton')
 
-        foreach ($controlName in $controlNames) {
-            $control = $window.FindName($controlName)
-            if ($control) {
-                $controls[$controlName] = $control
-                Write-Log -Level DEBUG "Found control: $controlName"
-            } else {
-                Write-Log -Level WARNING "Control not found: $controlName"
-            }
-        }
+        # Log found controls
+        if ($languageComboBox) { Write-Log -Level DEBUG "Found control: languageComboBox" }
+        if ($environmentComboBox) { Write-Log -Level DEBUG "Found control: environmentComboBox" }
+        if ($whatIfCheckBox) { Write-Log -Level DEBUG "Found control: whatIfCheckBox" }
+        if ($networkProfilesDataGrid) { Write-Log -Level DEBUG "Found control: networkProfilesDataGrid" }
+        if ($addNetworkProfileButton) { Write-Log -Level DEBUG "Found control: addNetworkProfileButton" }
+        if ($enableMailCheckBox) { Write-Log -Level DEBUG "Found control: enableMailCheckBox" }
+        if ($smtpServerTextBox) { Write-Log -Level DEBUG "Found control: smtpServerTextBox" }
+        if ($senderTextBox) { Write-Log -Level DEBUG "Found control: senderTextBox" }
+        if ($devRecipientTextBox) { Write-Log -Level DEBUG "Found control: devRecipientTextBox" }
+        if ($prodRecipientTextBox) { Write-Log -Level DEBUG "Found control: prodRecipientTextBox" }
+        if ($cancelButton) { Write-Log -Level DEBUG "Found control: cancelButton" }
+        if ($applyButton) { Write-Log -Level DEBUG "Found control: applyButton" }
+        if ($okButton) { Write-Log -Level DEBUG "Found control: okButton" }
         #endregion
 
         #region --- Initialize Data ---
         Write-Log -Level DEBUG "Initializing GUI data..."
         
         # Set initial values
-        $controls['languageComboBox'].SelectedIndex = if ($InitialConfig.Language -eq "de-DE") { 1 } else { 0 }
-        $controls['environmentComboBox'].SelectedIndex = if ($InitialConfig.Environment -eq "PROD") { 1 } else { 0 }
-        $controls['whatIfCheckBox'].IsChecked = $InitialConfig.WhatIfMode
+        if ($languageComboBox) { $languageComboBox.SelectedIndex = if ($InitialConfig.Language -eq "de-DE") { 1 } else { 0 } }
+        if ($environmentComboBox) { $environmentComboBox.SelectedIndex = if ($InitialConfig.Environment -eq "PROD") { 1 } else { 0 } }
+        if ($whatIfCheckBox) { $whatIfCheckBox.IsChecked = $InitialConfig.WhatIfMode }
 
         # Mail settings
-        $controls['enableMailCheckBox'].IsChecked = $InitialConfig.Mail.Enabled
-        $controls['smtpServerTextBox'].Text = $InitialConfig.Mail.SmtpServer
-        $controls['senderTextBox'].Text = $InitialConfig.Mail.Sender
-        $controls['devRecipientTextBox'].Text = $InitialConfig.Mail.DevRecipient
-        $controls['prodRecipientTextBox'].Text = $InitialConfig.Mail.ProdRecipient
+        if ($enableMailCheckBox) { $enableMailCheckBox.IsChecked = $InitialConfig.Mail.Enabled }
+        if ($smtpServerTextBox) { $smtpServerTextBox.Text = $InitialConfig.Mail.SmtpServer }
+        if ($senderTextBox) { $senderTextBox.Text = $InitialConfig.Mail.Sender }
+        if ($devRecipientTextBox) { $devRecipientTextBox.Text = $InitialConfig.Mail.DevRecipient }
+        if ($prodRecipientTextBox) { $prodRecipientTextBox.Text = $InitialConfig.Mail.ProdRecipient }
 
         # Network Profiles
-        if ($InitialConfig.NetworkProfiles) {
+        if ($InitialConfig.NetworkProfiles -and $networkProfilesDataGrid) {
             $networkProfiles = @()
             foreach ($profile in $InitialConfig.NetworkProfiles) {
                 $networkProfiles += [PSCustomObject]@{
@@ -231,7 +233,7 @@ function Show-SetupGUI {
                     Username = $profile.Username
                 }
             }
-            $controls['networkProfilesDataGrid'].ItemsSource = $networkProfiles
+            $networkProfilesDataGrid.ItemsSource = $networkProfiles
         }
 
         #endregion
@@ -240,33 +242,41 @@ function Show-SetupGUI {
         Write-Log -Level DEBUG "Setting up event handlers..."
 
         # Add Network Profile button
-        $controls['addNetworkProfileButton'].Add_Click({
-            $result = Show-NetworkProfileDialog
-            if ($result) {
-                $currentProfiles = @($controls['networkProfilesDataGrid'].ItemsSource)
-                $currentProfiles += $result
-                $controls['networkProfilesDataGrid'].ItemsSource = $currentProfiles
-                $controls['networkProfilesDataGrid'].Items.Refresh()
-            }
-        })
+        if ($addNetworkProfileButton) {
+            $addNetworkProfileButton.Add_Click({
+                $result = Show-NetworkProfileDialog
+                if ($result) {
+                    $currentProfiles = @($networkProfilesDataGrid.ItemsSource)
+                    $currentProfiles += $result
+                    $networkProfilesDataGrid.ItemsSource = $currentProfiles
+                    $networkProfilesDataGrid.Items.Refresh()
+                }
+            })
+        }
 
         # OK Button
-        $controls['okButton'].Add_Click({
-            $window.DialogResult = $true
-            $window.Close()
-        })
+        if ($okButton) {
+            $okButton.Add_Click({
+                $window.DialogResult = $true
+                $window.Close()
+            })
+        }
 
         # Apply Button
-        $controls['applyButton'].Add_Click({
-            # Apply changes without closing
-            Write-Log -Level INFO "Apply button clicked - saving configuration..."
-        })
+        if ($applyButton) {
+            $applyButton.Add_Click({
+                # Apply changes without closing
+                Write-Log -Level INFO "Apply button clicked - saving configuration..."
+            })
+        }
 
         # Cancel Button
-        $controls['cancelButton'].Add_Click({
-            $window.DialogResult = $false
-            $window.Close()
-        })
+        if ($cancelButton) {
+            $cancelButton.Add_Click({
+                $window.DialogResult = $false
+                $window.Close()
+            })
+        }
 
         #endregion
 
@@ -294,13 +304,15 @@ function Show-SetupGUI {
 
             # Update network profiles
             $networkProfiles = @()
-            foreach ($item in $controls['networkProfilesDataGrid'].ItemsSource) {
-                $networkProfiles += @{
-                    Enabled = $item.Enabled
-                    Name = $item.Name
-                    Path = $item.Path
-                    Username = $item.Username
-                    EncryptedPassword = ""  # Will be set separately
+            if ($controls['networkProfilesDataGrid'].ItemsSource) {
+                foreach ($item in $controls['networkProfilesDataGrid'].ItemsSource) {
+                    $networkProfiles += @{
+                        Enabled = $item.Enabled
+                        Name = $item.Name
+                        Path = $item.Path
+                        Username = $item.Username
+                        EncryptedPassword = ""  # Will be set separately
+                    }
                 }
             }
             $updatedConfig.NetworkProfiles = $networkProfiles
@@ -329,8 +341,8 @@ function Show-NetworkProfileDialog {
         $dialogXaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Network Profile" Height="300" Width="500"
-        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize">
+        Title="Network Profile" Height="450" Width="550" MinHeight="400" MinWidth="500"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="CanResize">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -347,27 +359,27 @@ function Show-NetworkProfileDialog {
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <CheckBox x:Name="enabledCheckBox" Grid.Row="0" Grid.ColumnSpan="2" Content="Enabled" Margin="0,0,0,10" IsChecked="True"/>
+        <CheckBox x:Name="enabledCheckBox" Grid.Row="0" Grid.ColumnSpan="2" Content="Enabled" Margin="0,0,0,15" IsChecked="True"/>
 
         <Label Grid.Row="1" Grid.Column="0" Content="Name:" VerticalAlignment="Center"/>
-        <TextBox x:Name="nameTextBox" Grid.Row="1" Grid.Column="1" Margin="5" Height="25"/>
+        <TextBox x:Name="nameTextBox" Grid.Row="1" Grid.Column="1" Margin="10,5" Height="25"/>
 
         <Label Grid.Row="2" Grid.Column="0" Content="UNC Path:" VerticalAlignment="Center"/>
-        <TextBox x:Name="pathTextBox" Grid.Row="2" Grid.Column="1" Margin="5" Height="25"/>
+        <TextBox x:Name="pathTextBox" Grid.Row="2" Grid.Column="1" Margin="10,5" Height="25"/>
 
         <Label Grid.Row="3" Grid.Column="0" Content="Username:" VerticalAlignment="Center"/>
-        <TextBox x:Name="usernameTextBox" Grid.Row="3" Grid.Column="1" Margin="5" Height="25"/>
+        <TextBox x:Name="usernameTextBox" Grid.Row="3" Grid.Column="1" Margin="10,5" Height="25"/>
 
         <Label Grid.Row="4" Grid.Column="0" Content="Password:" VerticalAlignment="Center"/>
-        <PasswordBox x:Name="passwordBox" Grid.Row="4" Grid.Column="1" Margin="5" Height="25"/>
+        <PasswordBox x:Name="passwordBox" Grid.Row="4" Grid.Column="1" Margin="10,5" Height="25"/>
 
-        <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10">
-            <Button x:Name="testConnectionButton" Content="Test Connection" Width="120" Height="30" Margin="0,0,10,0"/>
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,20,0,10">
+            <Button x:Name="testConnectionButton" Content="Test Connection" Width="140" Height="35" Margin="0,0,10,0"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button x:Name="okButton" Content="OK" Width="80" Height="30" Margin="0,0,10,0" IsDefault="True"/>
-            <Button x:Name="cancelButton" Content="Cancel" Width="80" Height="30"/>
+        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,25,0,0">
+            <Button x:Name="cancelButton" Content="Cancel" Width="90" Height="35" Margin="0,0,10,0"/>
+            <Button x:Name="okButton" Content="OK" Width="90" Height="35" Margin="0,0,0,0" IsDefault="True"/>
         </StackPanel>
     </Grid>
 </Window>
