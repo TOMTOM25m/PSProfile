@@ -2,7 +2,7 @@
   "ScriptVersion": "v11.2.1",
   "RulebookVersion": "v8.2.0",
   "Language": "en-US",
-  "Environment": "PROD",
+  "Environment": "DEV",
   "WhatIfMode": false,
   "Disclaimer": {
     "DE": "Die bereitgestellten Skripte und die zugehÃ¶rige Dokumentation werden \"wie besehen\" (\"as is\")\nohne ausdrÃ¼ckliche oder stillschweigende GewÃ¤hrleistung jeglicher Art zur VerfÃ¼gung gestellt.\nInsbesondere wird keinerlei GewÃ¤hr Ã¼bernommen fÃ¼r die MarktgÃ¤ngigkeit, die Eignung fÃ¼r einen bestimmten Zweck\noder die Nichtverletzung von Rechten Dritter.\nEs besteht keine Verpflichtung zur Wartung, Aktualisierung oder UnterstÃ¼tzung der Skripte. Jegliche Nutzung erfolgt auf eigenes Risiko.\nIn keinem Fall haften Herr Flecki Garnreiter, sein Arbeitgeber oder die Mitwirkenden an der Erstellung,\nEntwicklung oder Verbreitung dieser Skripte fÃ¼r direkte, indirekte, zufÃ¤llige, besondere oder FolgeschÃ¤den - einschlieÃŸlich,\naber nicht beschrÃ¤nkt auf entgangenen Gewinn, Betriebsunterbrechungen, Datenverlust oder sonstige wirtschaftliche Verluste -,\nselbst wenn sie auf die MÃ¶glichkeit solcher SchÃ¤den hingewiesen wurden.\nDurch die Nutzung der Skripte erklÃ¤ren Sie sich mit diesen Bedingungen einverstanden.",
@@ -56,8 +56,8 @@
     "RepoUrl": "https://github.com/TOMTOM25m/PSProfile.git"
   },
   "TemplateFilePaths": {
-    "ProfileMOD": "F:\\DEV\\repositories\\ResetProfile\\Profile-templateMOD.ps1",
-    "Profile": "F:\\DEV\\repositories\\ResetProfile\\Profile-template.ps1",
-    "ProfileX": "F:\\DEV\\repositories\\ResetProfile\\Profile-templateX.ps1"
+    "ProfileMOD": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-templateMOD.ps1",
+    "Profile": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-template.ps1",
+    "ProfileX": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-templateX.ps1"
   }
 }
