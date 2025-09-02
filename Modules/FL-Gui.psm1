@@ -42,7 +42,7 @@ function Show-MuwSetupGui {
     Write-Log -Level INFO "GUI mode started. Loading setup window..."
 
     try {
-        Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
+        Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
 
         #region --- XAML Definition ---
         $xaml = @'
@@ -222,12 +222,39 @@ function Show-MuwSetupGui {
 
         $reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$xaml)
         $window = [System.Windows.Markup.XamlReader]::Load($reader)
-        $controls = @{}
-        $window.FindName -and {
-            foreach ($element in $window.FindName.GetInvocationList().Invoke() | Where-Object { $_.Name -ne '' }) {
-                $controls[$element.Name] = $element
-            }
+        
+        #region --- Control Discovery ---
+        $controls = @{
+            # General Tab
+            languageComboBox = $window.FindName('languageComboBox');
+            environmentComboBox = $window.FindName('environmentComboBox');
+            whatIfCheckBox = $window.FindName('whatIfCheckBox');
+            
+            # Logging Tab
+            logPathTextBox = $window.FindName('logPathTextBox');
+            browseLogPathButton = $window.FindName('browseLogPathButton');
+            reportPathTextBox = $window.FindName('reportPathTextBox');
+            browseReportPathButton = $window.FindName('browseReportPathButton');
+            sevenZipPathTextBox = $window.FindName('sevenZipPathTextBox');
+            browse7ZipPathButton = $window.FindName('browse7ZipPathButton');
+            archiveLogsCheckBox = $window.FindName('archiveLogsCheckBox');
+            enableEventLogCheckBox = $window.FindName('enableEventLogCheckBox');
+            logRetentionDaysTextBox = $window.FindName('logRetentionDaysTextBox');
+            archiveRetentionDaysTextBox = $window.FindName('archiveRetentionDaysTextBox');
+
+            # Mail Tab
+            enableMailCheckBox = $window.FindName('enableMailCheckBox');
+            smtpServerTextBox = $window.FindName('smtpServerTextBox');
+            senderTextBox = $window.FindName('senderTextBox');
+            devRecipientTextBox = $window.FindName('devRecipientTextBox');
+            prodRecipientTextBox = $window.FindName('prodRecipientTextBox');
+
+            # Main Buttons
+            okButton = $window.FindName('okButton');
+            cancelButton = $window.FindName('cancelButton');
+            applyButton = $window.FindName('applyButton');
         }
+        #endregion --- Control Discovery ---
 
         #region --- Helper Functions ---
         function Load-ConfigIntoGui($config, $controls) {
@@ -278,12 +305,17 @@ function Show-MuwSetupGui {
         }
 
         function Select-Path($initialPath, $isFile) {
+            Add-Type -AssemblyName System.Windows.Forms
             if ($isFile) {
                 $dialog = New-Object Microsoft.Win32.OpenFileDialog
-                $dialog.InitialDirectory = $initialPath
+                if (-not [string]::IsNullOrEmpty($initialPath) -and (Test-Path (Split-Path $initialPath -Parent))) {
+                    $dialog.InitialDirectory = (Split-Path $initialPath -Parent)
+                }
             } else {
                 $dialog = New-Object System.Windows.Forms.FolderBrowserDialog
-                $dialog.SelectedPath = $initialPath
+                if (-not [string]::IsNullOrEmpty($initialPath) -and (Test-Path $initialPath)) {
+                    $dialog.SelectedPath = $initialPath
+                }
             }
             if ($dialog.ShowDialog() -eq $true) {
                 return if ($isFile) { $dialog.FileName } else { $dialog.SelectedPath }

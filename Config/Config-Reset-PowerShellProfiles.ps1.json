@@ -25,9 +25,9 @@
     "ArchiveLogs": true
   },
   "TemplateVersions": {
-    "ProfileMOD": "v0.0.0",
-    "Profile": "v0.0.0",
-    "ProfileX": "v0.0.0"
+    "ProfileMOD": "v7.0.0",
+    "Profile": "v25.0.0",
+    "ProfileX": "v8.0.0"
   },
   "TargetTemplateVersions": {
     "ProfileMOD": "v7.0.0",
@@ -54,5 +54,10 @@
     "Branch": "main",
     "CachePath": "F:\\VSCode\\data\\tmp\\GitProfileCache",
     "RepoUrl": "https://github.com/TOMTOM25m/PSProfile.git"
+  },
+  "TemplateFilePaths": {
+    "ProfileMOD": "F:\\DEV\\repositories\\ResetProfile\\Profile-templateMOD.ps1",
+    "Profile": "F:\\DEV\\repositories\\ResetProfile\\Profile-template.ps1",
+    "ProfileX": "F:\\DEV\\repositories\\ResetProfile\\Profile-templateX.ps1"
   }
 }
