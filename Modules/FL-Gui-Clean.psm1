@@ -211,14 +211,14 @@ function Show-SetupGUI {
         # Set initial values
         $controls['languageComboBox'].SelectedIndex = if ($InitialConfig.Language -eq "de-DE") { 1 } else { 0 }
         $controls['environmentComboBox'].SelectedIndex = if ($InitialConfig.Environment -eq "PROD") { 1 } else { 0 }
-        $controls['whatIfCheckBox'].IsChecked = $InitialConfig.WhatIfMode
+        $controls['whatIfCheckBox'].IsChecked = $InitialConfig.WhatIf
 
         # Mail settings
         $controls['enableMailCheckBox'].IsChecked = $InitialConfig.Mail.Enabled
-        $controls['smtpServerTextBox'].Text = $InitialConfig.Mail.SmtpServer
-        $controls['senderTextBox'].Text = $InitialConfig.Mail.Sender
-        $controls['devRecipientTextBox'].Text = $InitialConfig.Mail.DevRecipient
-        $controls['prodRecipientTextBox'].Text = $InitialConfig.Mail.ProdRecipient
+        $controls['smtpServerTextBox'].Text = $InitialConfig.Mail.SMTPServer
+        $controls['senderTextBox'].Text = $InitialConfig.Mail.From
+        $controls['devRecipientTextBox'].Text = $InitialConfig.Mail.To.DEV
+        $controls['prodRecipientTextBox'].Text = $InitialConfig.Mail.To.PROD
 
         # Network Profiles
         if ($InitialConfig.NetworkProfiles) {
@@ -283,7 +283,7 @@ function Show-SetupGUI {
             # Update basic settings
             $updatedConfig.Language = if ($controls['languageComboBox'].SelectedIndex -eq 1) { "de-DE" } else { "en-US" }
             $updatedConfig.Environment = if ($controls['environmentComboBox'].SelectedIndex -eq 1) { "PROD" } else { "DEV" }
-            $updatedConfig.WhatIfMode = $controls['whatIfCheckBox'].IsChecked
+            $updatedConfig.WhatIf = $controls['whatIfCheckBox'].IsChecked
 
             # Update mail settings
             $updatedConfig.Mail.Enabled = $controls['enableMailCheckBox'].IsChecked

@@ -87,8 +87,8 @@ if ($Setup.IsPresent) {
     do {
         $restartGui = $false
         Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
-        Initialize-LocalizationFiles
-        $guiResult = Show-MuwSetupGui -InitialConfig $Global:Config
+        # Initialize-LocalizationFiles  # TODO: Implement if needed
+        $guiResult = Show-SetupGUI -InitialConfig $Global:Config
         if ($guiResult -eq 'Restart') {
             $restartGui = $true
             # Reload config if GUI saved changes and requested a restart.
