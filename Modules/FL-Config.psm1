@@ -44,7 +44,7 @@ including but not not limited to direct, indirect, incidental, consequential, or
 By using these scripts, you agree to be bound by the above terms.
 "@
 
-    return [PSCustomObject]@{ 
+    return [PSCustomObject]@{
         ScriptVersion          = $Global:ScriptVersion
         RulebookVersion        = $Global:RulebookVersion
         Language               = "en-US"
@@ -56,7 +56,7 @@ By using these scripts, you agree to be bound by the above terms.
             IconPath = (Join-Path $Global:ScriptDirectory "Config\MedUniWien_logo.ico")
         }
         UNCPaths               = @{
-            AssetDirectory = "\\\\itscmgmt03.srv.meduniwien.ac.at\\iso\\MUWLogo"
+            AssetDirectory = "\\\\itscmgmt03.srv.meduniwien.ac.at\iso\MUWLogo"
         }
         Logging                = @{
             LogPath              = (Join-Path $Global:ScriptDirectory "LOG")
@@ -67,6 +67,7 @@ By using these scripts, you agree to be bound by the above terms.
             ArchiveRetentionDays = 90
             SevenZipPath         = "C:\Program Files\7-Zip\7z.exe"
         }
+        TemplateFilePaths      = @{}
         TemplateVersions       = @{ Profile = "v0.0.0"; ProfileX = "v0.0.0"; ProfileMOD = "v0.0.0" }
         TargetTemplateVersions = @{ Profile = "v25.0.0"; ProfileX = "v8.0.0"; ProfileMOD = "v7.0.0" }
         LanguageFileVersions   = @{ "de-DE" = "v1.0.0"; "en-US" = "v1.0.0" }
