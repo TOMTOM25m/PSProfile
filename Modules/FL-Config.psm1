@@ -88,7 +88,15 @@ By using these scripts, you agree to be bound by the above terms.
             Branch   = "main"
             CachePath = (Join-Path $env:TEMP "GitProfileCache")
         }
-        NetworkProfiles        = @()
+        NetworkProfiles        = @(
+            @{
+                Name = "Example Network Share"
+                Path = "\\\\server\\share"
+                Enabled = $false
+                Username = ""
+                EncryptedPassword = ""
+            }
+        )
     }
 }
 
