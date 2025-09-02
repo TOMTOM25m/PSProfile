@@ -44,11 +44,14 @@ function Show-MuwSetupGui {
     try {
         Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
 
+        $windowTitle = "SetupGUI $($Global:ScriptName -replace '.ps1', '') Version : $($Global:ScriptVersion)"
+
         #region --- XAML Definition ---
         $xaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SetupGUI $($Global:ScriptName -replace '.ps1', '') Version : $($Global:ScriptVersion)" Height="600" Width="800" MinHeight="500" MinWidth="700"
+        Title="Setup"
+        Height="600" Width="800" MinHeight="500" MinWidth="700"
         WindowStartupLocation="CenterScreen" ShowInTaskbar="True" Background="#F0F0F0">
     <Window.Resources>
         <SolidColorBrush x:Key="PrimaryBrush" Color="#111d4e"/>
@@ -232,6 +235,7 @@ function Show-MuwSetupGui {
 
         $reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$xaml)
         $window = [System.Windows.Markup.XamlReader]::Load($reader)
+        $window.Title = $windowTitle
         
         #region --- Control Discovery ---
         $controls = @{
@@ -306,7 +310,7 @@ function Show-MuwSetupGui {
             $controls.templatesDataGrid.ItemsSource = $templateData
         }
 
-        function Get-GuiDataAsConfig($config, $controls) {
+        function Set-GuiDataAsConfig($config, $controls) {
             # General
             $config.Language = if ($controls.languageComboBox.SelectedIndex -eq 1) { 'de-DE' } else { 'en-US' }
             $config.Environment = $controls.environmentComboBox.SelectedItem.Content
@@ -354,7 +358,7 @@ function Show-MuwSetupGui {
         #region --- Event Handlers ---
         $applyLogic = {
             Write-Log -Level INFO "Applying GUI changes..."
-            $Global:Config = Get-GuiDataAsConfig -config $Global:Config -controls $controls
+            $Global:Config = Set-GuiDataAsConfig -config $Global:Config -controls $controls
             Save-Config -Config $Global:Config -Path $Global:ConfigFile
             Write-Log -Level INFO "Configuration saved."
         }
