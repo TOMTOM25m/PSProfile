@@ -1,6 +1,6 @@
 # MUW-Regelwerk für PowerShell-Skripte
 
-**Version:** 8.0.1
+**Version:** 8.0.2
 **Autor:** © Flecki Garnreiter
 
 ---
@@ -34,6 +34,7 @@ Dieser Abschnitt dient als technische Kurzübersicht für die KI-Assistenz.
   * **Auto-Start:** Erfolgt, wenn `config.json` fehlt oder korrupt ist.
   * **Design:** Primärfarbe ist `#111d4e` (Dunkelblau) mit weißer Schrift.
   * **Buttons:** `[Abbrechen]` links, `[Anwenden]` und `[OK]` rechts.
+  * **Dynamischer Fenstertitel:** Der Titel muss zur Laufzeit zugewiesen werden, um Probleme mit der Variablenerweiterung in XAML-Here-Strings zu vermeiden. Erstellen Sie den Titel in einer PS-Variable und weisen Sie ihn nach dem Laden des XAML dem `$window.Title`-Property zu.
 * **Logging:**
   * **Sprache:** Alle Log-Meldungen, die in Dateien oder das EventLog geschrieben werden, müssen auf Englisch sein.
   * **Dateinamen:** `DEV_<ScriptName>_yyyy-MM-dd.log` für Entwicklung, `PROD_<ScriptName>_yyyy-MM-dd.log` für Produktivbetrieb.
@@ -230,5 +231,4 @@ Bestimmte Funktionen sind vom WhatIf-Modus ausgenommen, um die Betriebssicherhei
   * **Logging:** Logeinträge werden immer geschrieben, auch im WhatIf-Modus.
   * **Konfiguration:** Das Speichern der Konfigurationsdatei wird immer durchgeführt, auch im WhatIf-Modus.
   * **E-Mail-Benachrichtigungen:** Statusmails werden immer versendet, auch im WhatIf-Modus.
-  * **Archivierung:** Die Archivierung von Logs wird immer durchgeführt, unabhängig vom WhatIf-Modus
-  
+  * **Archivierung:** Die Archivierung von Logs wird immer durchgeführt, unabhängig vom WhatIf-Modus.

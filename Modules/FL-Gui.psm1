@@ -44,14 +44,13 @@ function Show-MuwSetupGui {
     try {
         Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
 
-        $windowTitle = "SetupGUI $($Global:ScriptName -replace '.ps1', '') Version : $($Global:ScriptVersion)"
+         $windowTitle = "SetupGUI $($Global:ScriptName -replace '.ps1', '') Version : $($Global:ScriptVersion)"
 
         #region --- XAML Definition ---
         $xaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Setup"
-        Height="600" Width="800" MinHeight="500" MinWidth="700"
+        Title="SetupGUI ${$Global:ScriptName -replace '.ps1', ''} Version : ${$Global:ScriptVersion}" Height="600" Width="800" MinHeight="500" MinWidth="700"
         WindowStartupLocation="CenterScreen" ShowInTaskbar="True" Background="#F0F0F0">
     <Window.Resources>
         <SolidColorBrush x:Key="PrimaryBrush" Color="#111d4e"/>
@@ -235,8 +234,9 @@ function Show-MuwSetupGui {
 
         $reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$xaml)
         $window = [System.Windows.Markup.XamlReader]::Load($reader)
-        $window.Title = $windowTitle
         
+          $window.Title = $windowTitle
+          
         #region --- Control Discovery ---
         $controls = @{
             # General Tab
