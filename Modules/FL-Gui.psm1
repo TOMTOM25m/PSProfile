@@ -287,10 +287,10 @@ function Show-SetupGUI {
 
             # Update mail settings
             $updatedConfig.Mail.Enabled = $controls['enableMailCheckBox'].IsChecked
-            $updatedConfig.Mail.SMTPServer = $controls['smtpServerTextBox'].Text
-            $updatedConfig.Mail.From = $controls['senderTextBox'].Text
-            $updatedConfig.Mail.To.DEV = $controls['devRecipientTextBox'].Text
-            $updatedConfig.Mail.To.PROD = $controls['prodRecipientTextBox'].Text
+            $updatedConfig.Mail.SmtpServer = $controls['smtpServerTextBox'].Text
+            $updatedConfig.Mail.Sender = $controls['senderTextBox'].Text
+            $updatedConfig.Mail.DevRecipient = $controls['devRecipientTextBox'].Text
+            $updatedConfig.Mail.ProdRecipient = $controls['prodRecipientTextBox'].Text
 
             # Update network profiles
             $networkProfiles = @()
@@ -386,6 +386,14 @@ function Show-NetworkProfileDialog {
         $okButton = $dialog.FindName("okButton")
         $cancelButton = $dialog.FindName("cancelButton")
 
+        # Debug: Check if controls were found
+        Write-Log -Level DEBUG "Controls found: EnabledCheckBox=$($enabledCheckBox -ne $null), NameTextBox=$($nameTextBox -ne $null), OkButton=$($okButton -ne $null), CancelButton=$($cancelButton -ne $null)"
+
+        if (-not $okButton -or -not $cancelButton) {
+            Write-Log -Level ERROR "Critical controls not found in Network Profile dialog"
+            return $null
+        }
+
         # Set existing values if editing
         if ($ExistingProfile) {
             $enabledCheckBox.IsChecked = $ExistingProfile.Enabled
@@ -395,43 +403,49 @@ function Show-NetworkProfileDialog {
         }
 
         # Event handlers
-        $testConnectionButton.Add_Click({
-            $path = $pathTextBox.Text
-            $username = $usernameTextBox.Text
-            $password = $passwordBox.SecurePassword
+        if ($testConnectionButton) {
+            $testConnectionButton.Add_Click({
+                $path = $pathTextBox.Text
+                $username = $usernameTextBox.Text
+                $password = $passwordBox.SecurePassword
 
-            if ([string]::IsNullOrWhiteSpace($path)) {
-                [System.Windows.MessageBox]::Show("Please enter a UNC path.", "Validation Error", "OK", "Warning")
-                return
-            }
+                if ([string]::IsNullOrWhiteSpace($path)) {
+                    [System.Windows.MessageBox]::Show("Please enter a UNC path.", "Validation Error", "OK", "Warning")
+                    return
+                }
 
-            try {
-                # Test connection logic here
-                [System.Windows.MessageBox]::Show("Connection test successful!", "Test Result", "OK", "Information")
-            } catch {
-                [System.Windows.MessageBox]::Show("Connection test failed: $($_.Exception.Message)", "Test Result", "OK", "Error")
-            }
-        })
+                try {
+                    # Test connection logic here
+                    [System.Windows.MessageBox]::Show("Connection test successful!", "Test Result", "OK", "Information")
+                } catch {
+                    [System.Windows.MessageBox]::Show("Connection test failed: $($_.Exception.Message)", "Test Result", "OK", "Error")
+                }
+            })
+        }
 
-        $okButton.Add_Click({
-            # Validate input
-            if ([string]::IsNullOrWhiteSpace($nameTextBox.Text)) {
-                [System.Windows.MessageBox]::Show("Please enter a profile name.", "Validation Error", "OK", "Warning")
-                return
-            }
-            if ([string]::IsNullOrWhiteSpace($pathTextBox.Text)) {
-                [System.Windows.MessageBox]::Show("Please enter a UNC path.", "Validation Error", "OK", "Warning")
-                return
-            }
+        if ($okButton) {
+            $okButton.Add_Click({
+                # Validate input
+                if ([string]::IsNullOrWhiteSpace($nameTextBox.Text)) {
+                    [System.Windows.MessageBox]::Show("Please enter a profile name.", "Validation Error", "OK", "Warning")
+                    return
+                }
+                if ([string]::IsNullOrWhiteSpace($pathTextBox.Text)) {
+                    [System.Windows.MessageBox]::Show("Please enter a UNC path.", "Validation Error", "OK", "Warning")
+                    return
+                }
 
-            $dialog.DialogResult = $true
-            $dialog.Close()
-        })
+                $dialog.DialogResult = $true
+                $dialog.Close()
+            })
+        }
 
-        $cancelButton.Add_Click({
-            $dialog.DialogResult = $false
-            $dialog.Close()
-        })
+        if ($cancelButton) {
+            $cancelButton.Add_Click({
+                $dialog.DialogResult = $false
+                $dialog.Close()
+            })
+        }
 
         $result = $dialog.ShowDialog()
 
