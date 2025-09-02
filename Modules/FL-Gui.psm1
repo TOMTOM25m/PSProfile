@@ -45,7 +45,7 @@ function Show-MuwSetupGui {
         Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
 
         #region --- XAML Definition ---
-        $xaml = @"
+        $xaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="SetupGUI $($Global:ScriptName -replace '.ps1', '') Version : $($Global:ScriptVersion)" Height="600" Width="800" MinHeight="500" MinWidth="700"
@@ -227,7 +227,7 @@ function Show-MuwSetupGui {
         </StackPanel>
     </Grid>
 </Window>
-"@
+'@
         #endregion --- XAML Definition ---
 
         $reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$xaml)
@@ -270,7 +270,7 @@ function Show-MuwSetupGui {
         #endregion --- Control Discovery ---
 
         #region --- Helper Functions ---
-        function Load-ConfigIntoGui($config, $controls) {
+        function Initialize-GuiFromConfig($config, $controls) {
             # General
             $controls.languageComboBox.SelectedIndex = if ($config.Language -eq 'de-DE') { 1 } else { 0 }
             $controls.environmentComboBox.SelectedItem = $config.Environment
@@ -306,7 +306,7 @@ function Show-MuwSetupGui {
             $controls.templatesDataGrid.ItemsSource = $templateData
         }
 
-        function Save-ConfigFromGui($config, $controls) {
+        function Get-GuiDataAsConfig($config, $controls) {
             # General
             $config.Language = if ($controls.languageComboBox.SelectedIndex -eq 1) { 'de-DE' } else { 'en-US' }
             $config.Environment = $controls.environmentComboBox.SelectedItem.Content
@@ -354,7 +354,7 @@ function Show-MuwSetupGui {
         #region --- Event Handlers ---
         $applyLogic = {
             Write-Log -Level INFO "Applying GUI changes..."
-            $Global:Config = Save-ConfigFromGui -config $Global:Config -controls $controls
+            $Global:Config = Get-GuiDataAsConfig -config $Global:Config -controls $controls
             Save-Config -Config $Global:Config -Path $Global:ConfigFile
             Write-Log -Level INFO "Configuration saved."
         }
@@ -383,7 +383,7 @@ function Show-MuwSetupGui {
         #endregion --- Event Handlers ---
 
         # Load initial data and show the window
-        Load-ConfigIntoGui -config $InitialConfig -controls $controls
+        Initialize-GuiFromConfig -config $InitialConfig -controls $controls
         $window.ShowDialog() | Out-Null
     }
     catch {
