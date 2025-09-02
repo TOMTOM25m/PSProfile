@@ -291,21 +291,21 @@ function Show-SetupGUI {
             $updatedConfig = $InitialConfig.PSObject.Copy()
             
             # Update basic settings
-            $updatedConfig.Language = if ($controls['languageComboBox'].SelectedIndex -eq 1) { "de-DE" } else { "en-US" }
-            $updatedConfig.Environment = if ($controls['environmentComboBox'].SelectedIndex -eq 1) { "PROD" } else { "DEV" }
-            $updatedConfig.WhatIfMode = $controls['whatIfCheckBox'].IsChecked
+            if ($languageComboBox) { $updatedConfig.Language = if ($languageComboBox.SelectedIndex -eq 1) { "de-DE" } else { "en-US" } }
+            if ($environmentComboBox) { $updatedConfig.Environment = if ($environmentComboBox.SelectedIndex -eq 1) { "PROD" } else { "DEV" } }
+            if ($whatIfCheckBox) { $updatedConfig.WhatIfMode = $whatIfCheckBox.IsChecked }
 
             # Update mail settings
-            $updatedConfig.Mail.Enabled = $controls['enableMailCheckBox'].IsChecked
-            $updatedConfig.Mail.SmtpServer = $controls['smtpServerTextBox'].Text
-            $updatedConfig.Mail.Sender = $controls['senderTextBox'].Text
-            $updatedConfig.Mail.DevRecipient = $controls['devRecipientTextBox'].Text
-            $updatedConfig.Mail.ProdRecipient = $controls['prodRecipientTextBox'].Text
+            if ($enableMailCheckBox) { $updatedConfig.Mail.Enabled = $enableMailCheckBox.IsChecked }
+            if ($smtpServerTextBox) { $updatedConfig.Mail.SmtpServer = $smtpServerTextBox.Text }
+            if ($senderTextBox) { $updatedConfig.Mail.Sender = $senderTextBox.Text }
+            if ($devRecipientTextBox) { $updatedConfig.Mail.DevRecipient = $devRecipientTextBox.Text }
+            if ($prodRecipientTextBox) { $updatedConfig.Mail.ProdRecipient = $prodRecipientTextBox.Text }
 
             # Update network profiles
             $networkProfiles = @()
-            if ($controls['networkProfilesDataGrid'].ItemsSource) {
-                foreach ($item in $controls['networkProfilesDataGrid'].ItemsSource) {
+            if ($networkProfilesDataGrid -and $networkProfilesDataGrid.ItemsSource) {
+                foreach ($item in $networkProfilesDataGrid.ItemsSource) {
                     $networkProfiles += @{
                         Enabled = $item.Enabled
                         Name = $item.Name
