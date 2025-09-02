@@ -6,7 +6,7 @@
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.08.29
     Last modified:  2025.09.02
-    Version:        v11.2.0
+    Version:        v11.2.1
     MUW-Regelwerk:  v8.2.0
     Notes:          [DE] Versionsnummer für Release-Konsistenz aktualisiert.
                     [EN] Updated version number for release consistency.
@@ -117,4 +117,4 @@ function Send-MailNotification {
 Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Set-TemplateVersion, Send-MailNotification
 
 
-# --- End of module --- v11.2.0 ; Regelwerk: v8.2.0 ---
+# --- End of module --- v11.2.1 ; Regelwerk: v8.2.0 ---

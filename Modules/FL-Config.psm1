@@ -9,7 +9,7 @@
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.08.29
     Last modified:  2025.09.02
-    Version:        v11.2.0
+    Version:        v11.2.1
     MUW-Regelwerk:  v8.2.0
     Notes:          [DE] Stabile Version nach Fix der Erst-Initialisierung.
                     [EN] Stable version after initial setup fix.
@@ -44,13 +44,20 @@ including but not not limited to direct, indirect, incidental, consequential, or
 By using these scripts, you agree to be bound by the above terms.
 "@
 
-    return [PSCustomObject]@{
+    return [PSCustomObject]@{ 
         ScriptVersion          = $Global:ScriptVersion
         RulebookVersion        = $Global:RulebookVersion
         Language               = "en-US"
         Environment            = "DEV"
         WhatIfMode             = $false
         Disclaimer             = @{ DE = $disclaimerDE; EN = $disclaimerEN }
+        GuiAssets              = @{
+            LogoPath = (Join-Path $Global:ScriptDirectory "Config\MedUniWien_logo.png")
+            IconPath = (Join-Path $Global:ScriptDirectory "Config\MedUniWien_logo.ico")
+        }
+        UNCPaths               = @{
+            AssetDirectory = "\\\\itscmgmt03.srv.meduniwien.ac.at\\iso\\MUWLogo"
+        }
         Logging                = @{
             LogPath              = (Join-Path $Global:ScriptDirectory "LOG")
             ReportPath           = (Join-Path $Global:ScriptDirectory "Reports")
@@ -96,7 +103,7 @@ function Get-Config {
 }
 
 function Save-Config {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param(
         [Parameter(Mandatory = $true)][PSCustomObject]$Config,
         [Parameter(Mandatory = $true)][string]$Path
@@ -107,8 +114,10 @@ function Save-Config {
     }
     
     try {
-        Write-Log -Level DEBUG -Message "Saving configuration to '$Path'."
-        $Config | ConvertTo-Json -Depth 5 | Set-Content -Path $Path -Encoding UTF8
+        if ($PSCmdlet.ShouldProcess($Path, "Save Configuration")) {
+            Write-Log -Level DEBUG -Message "Saving configuration to '$Path'."
+            $Config | ConvertTo-Json -Depth 5 | Set-Content -Path $Path -Encoding UTF8
+        }
     }
     catch {
         Write-Log -Level ERROR -Message "Error saving configuration file: $($_.Exception.Message)"
@@ -139,7 +148,7 @@ function Invoke-VersionControl {
                 $targetValue = $Target.$key
                 if (($refValue -is [PSCustomObject]) -and ($targetValue -is [PSCustomObject])) {
                     if (Compare-AndUpdate -Reference $refValue -Target $targetValue) {
-                        $updated = $true
+                        $updated = true
                     }
                 }
                 elseif (($refValue -is [PSCustomObject]) -and -not ($targetValue -is [PSCustomObject])) {
@@ -173,5 +182,4 @@ function Invoke-VersionControl {
     }
 }
 
-# --- End of module --- v11.2.0 ; Regelwerk: v8.2.0 ---
-
+# --- End of module --- v11.2.1 ; Regelwerk: v8.2.0 ---

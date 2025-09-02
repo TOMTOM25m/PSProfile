@@ -9,7 +9,7 @@
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.08.29
     Last modified:  2025.09.02
-    Version:        v11.2.0
+    Version:        v11.2.1
     MUW-Regelwerk:  v8.2.0
     Copyright:      © 2025 Flecki Garnreiter
     License:        MIT License
@@ -35,7 +35,10 @@ function Initialize-LocalizationFiles {
 
 function Show-MuwSetupGui {
     [CmdletBinding()]
-    param()
+    param(
+        [Parameter(Mandatory = $true)]
+        [PSCustomObject]$InitialConfig
+    )
     Write-Log -Level INFO -Message "GUI mode started. Loading setup window..."
     # Placeholder for the actual WPF GUI code.
     # This would typically involve loading a XAML file and attaching event handlers.
@@ -55,4 +58,4 @@ function Show-MuwSetupGui {
 
 Export-ModuleMember -Function Initialize-LocalizationFiles, Show-MuwSetupGui
 
-# --- End of module --- v11.2.0 ; Regelwerk: v8.2.0 ---
+# --- End of module --- v11.2.1 ; Regelwerk: v8.2.0 ---

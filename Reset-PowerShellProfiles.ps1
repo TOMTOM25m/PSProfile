@@ -87,7 +87,7 @@ if ($Setup.IsPresent) {
     do {
         $restartGui = $false
         Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
-        Initialize-LocalizationFiles -ConfigDirectory $configDir
+        Initialize-LocalizationFiles
         $guiResult = Show-MuwSetupGui -InitialConfig $Global:Config
         if ($guiResult -eq 'Restart') {
             $restartGui = $true
@@ -125,7 +125,7 @@ try {
         do {
             $restartGui = $false
             Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
-            Initialize-LocalizationFiles -ConfigDirectory $configDir
+            Initialize-LocalizationFiles
             $guiResult = Show-MuwSetupGui -InitialConfig $Global:Config
             if ($guiResult -eq 'Restart') { 
                 $restartGui = $true
@@ -212,14 +212,19 @@ try {
         $destinationPath = $templateMapping[$templateKey]
         if ($null -eq $Global:Config.TemplateVersions) { $Global:Config.TemplateVersions = @{} }
         if ($null -eq $Global:Config.TargetTemplateVersions) { $Global:Config.TargetTemplateVersions = @{} }
-        $oldTemplateVersion = $Global:Config.TemplateVersions[$templateKey]
-        $versionToSet = $Global:Config.TargetTemplateVersions[$templateKey]
+        
+        # Correctly access properties on the PSCustomObject from JSON
+        $oldTemplateVersion = $Global:Config.TemplateVersions.PSObject.Properties[$templateKey].Value
+        $versionToSet = $Global:Config.TargetTemplateVersions.PSObject.Properties[$templateKey].Value
+
         if ($PSCmdlet.ShouldProcess($destinationPath, "Create Profile from $($templatePath | Split-Path -Leaf)")) {
             try {
                 Copy-Item -Path $templatePath -Destination $destinationPath -Force -ErrorAction Stop
                 Write-Log -Level INFO -Message "  - Created: $destinationPath"
                 Set-TemplateVersion -FilePath $destinationPath -NewVersion $versionToSet -OldVersion $oldTemplateVersion
-                $Global:Config.TemplateVersions[$templateKey] = $versionToSet
+                
+                # Correctly assign the new version back to the PSCustomObject
+                $Global:Config.TemplateVersions.PSObject.Properties[$templateKey].Value = $versionToSet
             }
             catch { Write-Log -Level ERROR -Message "Error creating '$destinationPath': $($_.Exception.Message)" }
         }

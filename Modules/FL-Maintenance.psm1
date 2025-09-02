@@ -6,7 +6,7 @@
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.08.29
     Last modified:  2025.09.02
-    Version:        v11.2.0
+    Version:        v11.2.1
     MUW-Regelwerk:  v8.2.0
     Notes:          [DE] Versionsnummer für Release-Konsistenz aktualisiert.
                     [EN] Updated version number for release consistency.
@@ -55,24 +55,58 @@ function Invoke-ArchiveMaintenance {
 function Initialize-LocalAssets {
     [CmdletBinding()]
     param()
-    
-    $logoPath = $Global:Config.Logging.LogoPath
-    $logoUncPath = $Global:Config.UNCPaths.Logo
+    Write-Log -Level DEBUG -Message "Initializing local assets..."
 
-    if (-not (Test-Path $logoPath) -and (Test-Path $logoUncPath)) {
-        Write-Log -Level INFO -Message "Local logo not found. Attempting to copy from UNC path: $logoUncPath"
-        $localImageDir = Split-Path $logoPath -Parent
-        if (-not (Test-Path $localImageDir)) {
-            # Ressourcen-Verzeichnisse werden immer erstellt, unabhängig vom WhatIf-Modus
-            New-Item -Path $localImageDir -ItemType Directory | Out-Null
+    if (-not ($Global:Config.GuiAssets -and $Global:Config.UNCPaths)) {
+        Write-Log -Level DEBUG -Message "GuiAssets or UNCPaths not defined in config. Skipping asset initialization."
+        return
+    }
+
+    # Define assets to check and copy
+    $assets = @{
+        Logo = @{
+            Dest = $Global:Config.GuiAssets.LogoPath
+            File = "MedUniWien_logo.png"
         }
-        try {
-            # Logo wird immer kopiert, unabhängig vom WhatIf-Modus
-            Copy-Item -Path $logoUncPath -Destination $logoPath -Force -ErrorAction Stop
-            Write-Log -Level INFO -Message "Logo successfully copied to $logoPath"
+        Icon = @{
+            Dest = $Global:Config.GuiAssets.IconPath
+            File = "MedUniWien_logo.ico"
         }
-        catch {
-            Write-Log -Level WARNING -Message "Could not copy logo from UNC path: $($_.Exception.Message)"
+    }
+
+    foreach ($assetName in $assets.Keys) {
+        $asset = $assets[$assetName]
+        $destPath = $asset.Dest
+        
+        if ($null -eq $destPath) {
+            Write-Log -Level DEBUG -Message "Destination path for asset '$assetName' is null. Skipping."
+            continue
+        }
+
+        if (-not (Test-Path $destPath)) {
+            $uncDir = $Global:Config.UNCPaths.AssetDirectory
+            if ($null -eq $uncDir) {
+                Write-Log -Level DEBUG -Message "UNC asset directory not configured. Cannot copy '$assetName'."
+                continue
+            }
+
+            $sourcePath = Join-Path $uncDir $asset.File
+            if (Test-Path $sourcePath) {
+                Write-Log -Level INFO -Message "Local $assetName not found. Attempting to copy from UNC path: $sourcePath"
+                $localDir = Split-Path $destPath -Parent
+                if (-not (Test-Path $localDir)) {
+                    New-Item -Path $localDir -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
+                }
+                try {
+                    Copy-Item -Path $sourcePath -Destination $destPath -Force -ErrorAction Stop
+                    Write-Log -Level INFO -Message "$assetName successfully copied to $destPath"
+                }
+                catch {
+                    Write-Log -Level WARNING -Message "Could not copy $assetName from UNC path: $($_.Exception.Message)"
+                }
+            } else {
+                Write-Log -Level WARNING -Message "Source asset '$sourcePath' not found on UNC path. Cannot copy."
+            }
         }
     }
 }
@@ -128,4 +162,4 @@ function Invoke-GitUpdate {
 
 Export-ModuleMember -Function Invoke-ArchiveMaintenance, Initialize-LocalAssets, Invoke-GitUpdate
 
-# --- End of module --- v11.2.0 ; Regelwerk: v8.2.0 ---
+# --- End of module --- v11.2.1 ; Regelwerk: v8.2.0 ---
