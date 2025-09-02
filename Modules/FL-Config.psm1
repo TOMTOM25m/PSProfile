@@ -69,14 +69,14 @@ By using these scripts, you agree to be bound by the above terms.
         }
         Mail                   = @{
             Enabled      = $false
-            SmtpServer   = "smtp.example.com"
-            Sender       = "powershell@example.com"
-            DevRecipient = "dev@example.com"
-            ProdRecipient = "prod@example.com"
+            SmtpServer   = "smtpi.meduniwien.ac.at"
+            Sender       = "${env:COMPUTERNAME}@meduniwien.ac.at"
+            DevRecipient = "thomas.garnreiter@meduniwien.ac.at"
+            ProdRecipient = "win-admin@meduniwien.ac.at"
         }
         GitUpdate              = @{
             Enabled  = $false
-            RepoUrl  = "https://github.com/user/repo.git"
+            RepoUrl  = "https://github.com/TOMTOM25m/PSProfile.git"
             Branch   = "main"
             CachePath = (Join-Path $env:TEMP "GitProfileCache")
         }
