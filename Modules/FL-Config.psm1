@@ -70,7 +70,7 @@ By using these scripts, you agree to be bound by the above terms.
         Mail                   = @{
             Enabled      = $false
             SmtpServer   = "smtpi.meduniwien.ac.at"
-            Sender       = "${env:COMPUTERNAME}@meduniwien.ac.at"
+            Sender       = "${env:computername}@meduniwien.ac.at"
             DevRecipient = "thomas.garnreiter@meduniwien.ac.at"
             ProdRecipient = "win-admin@meduniwien.ac.at"
         }

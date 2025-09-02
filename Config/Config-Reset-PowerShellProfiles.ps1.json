@@ -14,9 +14,9 @@
     "LogPath": "F:\\DEV\\repositories\\ResetProfile\\LOG"
   },
   "TemplateFilePaths": {
-    "ProfileX": "F:\\DEV\\repositories\\ResetProfile\\Profile-templateX.ps1",
     "ProfileMOD": "F:\\DEV\\repositories\\ResetProfile\\Profile-templateMOD.ps1",
-    "Profile": "F:\\DEV\\repositories\\ResetProfile\\Profile-template.ps1"
+    "Profile": "F:\\DEV\\repositories\\ResetProfile\\Profile-template.ps1",
+    "ProfileX": "F:\\DEV\\repositories\\ResetProfile\\Profile-templateX.ps1"
   },
   "TemplateVersions": {
     "ProfileX": "v0.0.0",
