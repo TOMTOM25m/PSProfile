@@ -9,7 +9,7 @@
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.08.29
     Last modified:  2025.09.02
-    Version:        v11.2.1
+    Version:        v11.2.2
     MUW-Regelwerk:  v8.2.0
     Copyright:      © 2025 Flecki Garnreiter
     License:        MIT License
@@ -150,14 +150,20 @@ function Show-MuwSetupGui {
                 </Grid>
             </TabItem>
             <TabItem Header="Logging">
-                 <Grid Margin="10">
+                <Grid Margin="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Label Grid.Row="0" Grid.Column="0" Content="Log Path:"/>
@@ -186,13 +192,17 @@ function Show-MuwSetupGui {
                 </Grid>
             </TabItem>
             <TabItem Header="Mail">
-                 <Grid Margin="10">
+                <Grid Margin="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Label Grid.Row="0" Grid.Column="0" Content="Enable Mail:"/>
@@ -705,4 +715,4 @@ function Show-NetworkProfileDialog {
 
 Export-ModuleMember -Function Initialize-LocalizationFiles, Show-MuwSetupGui, Show-NetworkProfileDialog
 
-# --- End of module --- v11.2.1 ; Regelwerk: v8.2.0 ---
+# --- End of module --- v11.2.2 ; Regelwerk: v8.2.0 ---

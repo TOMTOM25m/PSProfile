@@ -22,11 +22,11 @@
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.07.11
     Last modified:  2025.09.02
-    old Version:    v11.2.0
-    Version now:    v11.2.1
+    old Version:    v11.2.1
+    Version now:    v11.2.2
     MUW-Regelwerk:  v8.2.0
-    Notes:          [DE] Stabilitäts-Fix: Die Erst-Initialisierung wird nun mittels `-WhatIf:$false` erzwungen, um Fehler im DEV-Modus zu beheben.
-                    [EN] Stability fix: Initial setup is now forced with `-WhatIf:$false` to resolve errors in DEV mode.
+    Notes:          [DE] Network Profiles-Feature hinzugefügt: Konfigurierbare Netzwerkpfade mit verschlüsselten Credentials für Profile-TemplateX.ps1.
+                    [EN] Added Network Profiles feature: Configurable network paths with encrypted credentials for Profile-TemplateX.ps1.
     Copyright:      © 2025 Flecki Garnreiter
     License:        MIT License
 #>
@@ -41,7 +41,7 @@ param (
 
 #region ####################### [1. Initialization] ##############################
 $Global:ScriptName = $MyInvocation.MyCommand.Name
-$Global:ScriptVersion = "v11.2.1"
+$Global:ScriptVersion = "v11.2.2"
 $Global:RulebookVersion = "v8.2.0"
 $Global:ScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Path
 
@@ -256,4 +256,4 @@ finally {
 }
 #endregion
 
-# --- End of Script --- old: v11.2.0 ; now: v11.2.1 ; Regelwerk: v8.2.0 ---
+# --- End of Script --- old: v11.2.1 ; now: v11.2.2 ; Regelwerk: v8.2.0 ---

@@ -1,5 +1,7 @@
 <#
-.SYNOPSIS
+.SYN    Last modified:  2025.09.02
+    Version:        v11.2.2
+    MUW-Regelwerk:  v8.2.0IS
     [DE] Modul für allgemeine Hilfsfunktionen.
     [EN] Module for general utility functions.
 .NOTES
@@ -167,4 +169,4 @@ function Update-NetworkPathsInTemplate {
 
 Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Set-TemplateVersion, Send-MailNotification, ConvertTo-Base64, ConvertFrom-Base64, Update-NetworkPathsInTemplate
 
-# --- End of module --- v11.2.1 ; Regelwerk: v8.2.0 ---
+# --- End of module --- v11.2.2 ; Regelwerk: v8.2.0 ---
