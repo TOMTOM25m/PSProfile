@@ -214,13 +214,52 @@ function Show-MuwSetupGui {
             <TabItem Header="Templates">
                 <DataGrid x:Name="templatesDataGrid" Margin="5" IsReadOnly="True" AutoGenerateColumns="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Profile" Binding="{Binding Name}" Width="*"/>
-                        <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="3*"/>
-                        <DataGridTextColumn Header="Current Version" Binding="{Binding CurrentVersion}" Width="*"/>
-                        <DataGridTextColumn Header="Target Version" Binding="{Binding TargetVersion}" Width="*"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="100"/>
+                        <DataGridTextColumn Header="Path" Binding="{Binding Path}" Width="200"/>
+                        <DataGridTextColumn Header="Current Version" Binding="{Binding CurrentVersion}" Width="120"/>
+                        <DataGridTextColumn Header="Target Version" Binding="{Binding TargetVersion}" Width="120"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
+            <TabItem Header="Network Profiles">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <DataGrid x:Name="networkProfilesDataGrid" Grid.Row="0" Margin="5" AutoGenerateColumns="False" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding Enabled}" Width="60"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150"/>
+                            <DataGridTextColumn Header="UNC Path" Binding="{Binding Path}" Width="250"/>
+                            <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="120"/>
+                            <DataGridTemplateColumn Header="Password" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <PasswordBox x:Name="passwordBox" Password="••••••••" Width="80"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Actions" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Content="Test" Width="40" Height="25" Margin="2" Click="TestNetworkProfile_Click"/>
+                                            <Button Content="Delete" Width="50" Height="25" Margin="2" Click="DeleteNetworkProfile_Click"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="5">
+                        <Button x:Name="addNetworkProfileButton" Content="Add Profile" Width="100" Height="30"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
             <TabItem Header="GitHub/GitLab">
                 <Grid Margin="10">
                     <Grid.ColumnDefinitions>
@@ -290,6 +329,10 @@ function Show-MuwSetupGui {
 
             # Templates Tab
             templatesDataGrid = $window.FindName('templatesDataGrid');
+            
+            # Network Profiles Tab
+            networkProfilesDataGrid = $window.FindName('networkProfilesDataGrid');
+            addNetworkProfileButton = $window.FindName('addNetworkProfileButton');
 
             # GitHub/GitLab Tab
             gitEnabledCheckBox = $window.FindName('gitEnabledCheckBox');
@@ -341,6 +384,19 @@ function Show-MuwSetupGui {
             }
             $controls.templatesDataGrid.ItemsSource = $templateData
 
+            # Network Profiles
+            $networkProfilesData = [System.Collections.ObjectModel.ObservableCollection[object]]::new()
+            foreach ($netProfile in $config.NetworkProfiles) {
+                $networkProfilesData.Add([PSCustomObject]@{
+                    Enabled = $netProfile.Enabled
+                    Name = $netProfile.Name
+                    Path = $netProfile.Path
+                    Username = $netProfile.Username
+                    EncryptedPassword = $netProfile.EncryptedPassword
+                })
+            }
+            $controls.networkProfilesDataGrid.ItemsSource = $networkProfilesData
+
             # GitHub/GitLab
             $controls.gitEnabledCheckBox.IsChecked = $config.GitUpdate.Enabled
             $controls.repoUrlTextBox.Text = $config.GitUpdate.RepoUrl
@@ -369,6 +425,21 @@ function Show-MuwSetupGui {
             $config.Mail.Sender = $controls.senderTextBox.Text
             $config.Mail.DevRecipient = $controls.devRecipientTextBox.Text
             $config.Mail.ProdRecipient = $controls.prodRecipientTextBox.Text
+
+            # Network Profiles
+            $config.NetworkProfiles = @()
+            $networkProfilesData = $controls.networkProfilesDataGrid.ItemsSource
+            if ($networkProfilesData) {
+                foreach ($item in $networkProfilesData) {
+                    $config.NetworkProfiles += @{
+                        Enabled = $item.Enabled
+                        Name = $item.Name
+                        Path = $item.Path
+                        Username = $item.Username
+                        EncryptedPassword = $item.EncryptedPassword
+                    }
+                }
+            }
 
             # GitHub/GitLab
             $config.GitUpdate.Enabled = $controls.gitEnabledCheckBox.IsChecked
@@ -431,6 +502,25 @@ function Show-MuwSetupGui {
             $controls.cachePathTextBox.Text = Select-Path -initialPath $controls.cachePathTextBox.Text -isFile $false
         })
 
+        # Network Profiles Event Handlers
+        $controls.addNetworkProfileButton.add_Click({
+            $newProfileDialog = Show-NetworkProfileDialog
+            if ($newProfileDialog.Result -eq $true) {
+                $networkProfilesData = $controls.networkProfilesDataGrid.ItemsSource
+                if (-not $networkProfilesData) {
+                    $networkProfilesData = [System.Collections.ObjectModel.ObservableCollection[object]]::new()
+                    $controls.networkProfilesDataGrid.ItemsSource = $networkProfilesData
+                }
+                $networkProfilesData.Add([PSCustomObject]@{
+                    Enabled = $newProfileDialog.Profile.Enabled
+                    Name = $newProfileDialog.Profile.Name
+                    Path = $newProfileDialog.Profile.Path
+                    Username = $newProfileDialog.Profile.Username
+                    EncryptedPassword = $newProfileDialog.Profile.EncryptedPassword
+                })
+            }
+        })
+
         #endregion --- Event Handlers ---
 
         # Load initial data and show the window
@@ -442,6 +532,177 @@ function Show-MuwSetupGui {
     }
 }
 
-Export-ModuleMember -Function Initialize-LocalizationFiles, Show-MuwSetupGui
+function Show-NetworkProfileDialog {
+    [CmdletBinding()]
+    param(
+        [PSCustomObject]$ExistingProfile = $null
+    )
+    
+    try {
+        Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
+        
+        $dialogXaml = @"
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Network Profile Configuration" Height="300" Width="500" MinHeight="250" MinWidth="400"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Background="#F0F0F0">
+    <Window.Resources>
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#111d4e"/>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="MinWidth" Value="80"/>
+        </Style>
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <Label Grid.Row="0" Grid.Column="0" Content="Enabled:" VerticalAlignment="Center"/>
+            <CheckBox x:Name="enabledCheckBox" Grid.Row="0" Grid.Column="1" Margin="5" VerticalAlignment="Center"/>
+            
+            <Label Grid.Row="1" Grid.Column="0" Content="Name:" VerticalAlignment="Center"/>
+            <TextBox x:Name="nameTextBox" Grid.Row="1" Grid.Column="1" Margin="5"/>
+            
+            <Label Grid.Row="2" Grid.Column="0" Content="UNC Path:" VerticalAlignment="Center"/>
+            <TextBox x:Name="pathTextBox" Grid.Row="2" Grid.Column="1" Margin="5"/>
+            
+            <Label Grid.Row="3" Grid.Column="0" Content="Username:" VerticalAlignment="Center"/>
+            <TextBox x:Name="usernameTextBox" Grid.Row="3" Grid.Column="1" Margin="5"/>
+            
+            <Label Grid.Row="4" Grid.Column="0" Content="Password:" VerticalAlignment="Center"/>
+            <PasswordBox x:Name="passwordBox" Grid.Row="4" Grid.Column="1" Margin="5"/>
+            
+            <Button x:Name="testConnectionButton" Grid.Row="5" Grid.Column="1" Content="Test Connection" Width="120" HorizontalAlignment="Left" Margin="5"/>
+        </Grid>
+        
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button x:Name="cancelDialogButton" Content="Cancel" />
+            <Button x:Name="okDialogButton" Content="OK" Style="{StaticResource PrimaryButton}" IsDefault="True"/>
+        </StackPanel>
+    </Grid>
+</Window>
+"@
+        
+        $reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$dialogXaml)
+        $dialogWindow = [System.Windows.Markup.XamlReader]::Load($reader)
+        
+        $dialogControls = @{
+            enabledCheckBox = $dialogWindow.FindName('enabledCheckBox')
+            nameTextBox = $dialogWindow.FindName('nameTextBox')
+            pathTextBox = $dialogWindow.FindName('pathTextBox')
+            usernameTextBox = $dialogWindow.FindName('usernameTextBox')
+            passwordBox = $dialogWindow.FindName('passwordBox')
+            testConnectionButton = $dialogWindow.FindName('testConnectionButton')
+            okDialogButton = $dialogWindow.FindName('okDialogButton')
+            cancelDialogButton = $dialogWindow.FindName('cancelDialogButton')
+        }
+        
+        # Load existing data if editing
+        if ($ExistingProfile) {
+            $dialogControls.enabledCheckBox.IsChecked = $ExistingProfile.Enabled
+            $dialogControls.nameTextBox.Text = $ExistingProfile.Name
+            $dialogControls.pathTextBox.Text = $ExistingProfile.Path
+            $dialogControls.usernameTextBox.Text = $ExistingProfile.Username
+            if (-not [string]::IsNullOrEmpty($ExistingProfile.EncryptedPassword)) {
+                $dialogControls.passwordBox.Password = "••••••••"
+            }
+        } else {
+            $dialogControls.enabledCheckBox.IsChecked = $true
+        }
+        
+        $result = @{ Result = $false; Profile = $null }
+        
+        $dialogControls.okDialogButton.add_Click({
+            if ([string]::IsNullOrWhiteSpace($dialogControls.nameTextBox.Text) -or 
+                [string]::IsNullOrWhiteSpace($dialogControls.pathTextBox.Text)) {
+                [System.Windows.MessageBox]::Show("Please fill in all required fields (Name and UNC Path).", "Validation Error", "OK", "Warning")
+                return
+            }
+            
+            $encryptedPassword = ""
+            if (-not [string]::IsNullOrEmpty($dialogControls.passwordBox.Password) -and $dialogControls.passwordBox.Password -ne "••••••••") {
+                $encryptedPassword = ConvertTo-SecureCredential -PlainTextPassword $dialogControls.passwordBox.Password
+            } elseif ($ExistingProfile -and -not [string]::IsNullOrEmpty($ExistingProfile.EncryptedPassword)) {
+                $encryptedPassword = $ExistingProfile.EncryptedPassword
+            }
+            
+            $result.Profile = [PSCustomObject]@{
+                Enabled = $dialogControls.enabledCheckBox.IsChecked
+                Name = $dialogControls.nameTextBox.Text.Trim()
+                Path = $dialogControls.pathTextBox.Text.Trim()
+                Username = $dialogControls.usernameTextBox.Text.Trim()
+                EncryptedPassword = $encryptedPassword
+            }
+            $result.Result = $true
+            $dialogWindow.Close()
+        })
+        
+        $dialogControls.cancelDialogButton.add_Click({
+            $dialogWindow.Close()
+        })
+        
+        $dialogControls.testConnectionButton.add_Click({
+            try {
+                $testPath = $dialogControls.pathTextBox.Text.Trim()
+                if ([string]::IsNullOrWhiteSpace($testPath)) {
+                    [System.Windows.MessageBox]::Show("Please enter a UNC path first.", "Test Connection", "OK", "Warning")
+                    return
+                }
+                
+                $testCredential = $null
+                if (-not [string]::IsNullOrEmpty($dialogControls.usernameTextBox.Text) -and 
+                    -not [string]::IsNullOrEmpty($dialogControls.passwordBox.Password)) {
+                    $securePassword = ConvertTo-SecureString -String $dialogControls.passwordBox.Password -AsPlainText -Force
+                    $testCredential = New-Object System.Management.Automation.PSCredential($dialogControls.usernameTextBox.Text, $securePassword)
+                }
+                
+                $testResult = if ($testCredential) {
+                    Test-Path -Path $testPath -Credential $testCredential
+                } else {
+                    Test-Path -Path $testPath
+                }
+                
+                if ($testResult) {
+                    [System.Windows.MessageBox]::Show("Connection successful!", "Test Connection", "OK", "Information")
+                } else {
+                    [System.Windows.MessageBox]::Show("Connection failed. Please check the path and credentials.", "Test Connection", "OK", "Error")
+                }
+            }
+            catch {
+                [System.Windows.MessageBox]::Show("Connection test failed: $($_.Exception.Message)", "Test Connection", "OK", "Error")
+            }
+        })
+        
+        $dialogWindow.ShowDialog() | Out-Null
+        return $result
+    }
+    catch {
+        Write-Log -Level ERROR -Message "Error showing network profile dialog: $($_.Exception.Message)"
+        return @{ Result = $false; Profile = $null }
+    }
+}
+
+Export-ModuleMember -Function Initialize-LocalizationFiles, Show-MuwSetupGui, Show-NetworkProfileDialog
 
 # --- End of module --- v11.2.1 ; Regelwerk: v8.2.0 ---

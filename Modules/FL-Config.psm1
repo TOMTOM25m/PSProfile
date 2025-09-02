@@ -9,10 +9,10 @@
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.08.29
     Last modified:  2025.09.02
-    Version:        v11.2.1
+    Version:        v11.2.2
     MUW-Regelwerk:  v8.2.0
-    Notes:          [DE] Stabile Version nach Fix der Erst-Initialisierung.
-                    [EN] Stable version after initial setup fix.
+    Notes:          [DE] Network Profiles-Feature hinzugefügt mit verschlüsselten Credentials.
+                    [EN] Added Network Profiles feature with encrypted credentials.
     Copyright:      © 2025 Flecki Garnreiter
     License:        MIT License
 #>
@@ -192,4 +192,40 @@ function Invoke-VersionControl {
     }
 }
 
-# --- End of module --- v11.2.1 ; Regelwerk: v8.2.0 ---
+function ConvertTo-SecureCredential {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)][string]$PlainTextPassword
+    )
+    try {
+        $secureString = ConvertTo-SecureString -String $PlainTextPassword -AsPlainText -Force
+        return ConvertFrom-SecureString -SecureString $secureString
+    }
+    catch {
+        Write-Log -Level ERROR -Message "Error encrypting credential: $($_.Exception.Message)"
+        return ""
+    }
+}
+
+function ConvertFrom-SecureCredential {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)][string]$EncryptedPassword,
+        [Parameter(Mandatory = $true)][string]$Username
+    )
+    try {
+        if ([string]::IsNullOrEmpty($EncryptedPassword) -or [string]::IsNullOrEmpty($Username)) {
+            return $null
+        }
+        $secureString = ConvertTo-SecureString -String $EncryptedPassword
+        return New-Object System.Management.Automation.PSCredential($Username, $secureString)
+    }
+    catch {
+        Write-Log -Level ERROR -Message "Error decrypting credential for user '$Username': $($_.Exception.Message)"
+        return $null
+    }
+}
+
+Export-ModuleMember -Function Get-DefaultConfig, Get-Config, Save-Config, Invoke-VersionControl, ConvertTo-SecureCredential, ConvertFrom-SecureCredential
+
+# --- End of module --- v11.2.2 ; Regelwerk: v8.2.0 ---

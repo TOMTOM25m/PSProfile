@@ -124,6 +124,47 @@ function ConvertFrom-Base64 {
     return [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($Base64String))
 }
 
-Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Set-TemplateVersion, Send-MailNotification, ConvertTo-Base64, ConvertFrom-Base64
+function Update-NetworkPathsInTemplate {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)][string]$TemplateFilePath,
+        [Parameter(Mandatory = $true)][array]$NetworkProfiles
+    )
+    
+    try {
+        if (-not (Test-Path $TemplateFilePath)) {
+            Write-Log -Level ERROR -Message "Template file not found: $TemplateFilePath"
+            return
+        }
+        
+        $content = Get-Content -Path $TemplateFilePath -Raw
+        
+        # Generate the network paths array as simple strings for the existing logic
+        $networkPathsList = @()
+        $enabledProfiles = $NetworkProfiles | Where-Object { $_.Enabled -eq $true }
+        
+        foreach ($netProfile in $enabledProfiles) {
+            $networkPathsList += "'$($netProfile.Path)'"
+        }
+        
+        $networkPathsCode = if ($networkPathsList.Count -gt 0) {
+            "`$networkPaths = @(`n    $($networkPathsList -join ",`n    ")`n)"
+        } else {
+            "`$networkPaths = @()"
+        }
+        
+        # Replace the placeholder with the generated code
+        $content = $content -replace '\$networkPaths = #NETWORK_PATHS_PLACEHOLDER#', $networkPathsCode
+        
+        $encoding = if ($PSVersionTable.PSVersion.Major -ge 6) { 'UTF8BOM' } else { 'UTF8' }
+        Set-Content -Path $TemplateFilePath -Value $content -Encoding $encoding -Force
+        Write-Log -Level DEBUG -Message "Network paths updated in template: $TemplateFilePath (Total: $($networkPathsList.Count) paths)"
+    }
+    catch {
+        Write-Log -Level ERROR -Message "Error updating network paths in template '$TemplateFilePath': $($_.Exception.Message)"
+    }
+}
+
+Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Set-TemplateVersion, Send-MailNotification, ConvertTo-Base64, ConvertFrom-Base64, Update-NetworkPathsInTemplate
 
 # --- End of module --- v11.2.1 ; Regelwerk: v8.2.0 ---

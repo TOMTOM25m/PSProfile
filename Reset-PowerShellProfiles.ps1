@@ -183,6 +183,12 @@ try {
     }
     Write-Log -Level DEBUG -Message 'All template files found.'
 
+    # Update network paths in ProfileX template if network profiles are configured
+    if ($Global:Config.NetworkProfiles -and $Global:Config.NetworkProfiles.Count -gt 0) {
+        Write-Log -Level INFO -Message 'Updating network paths in ProfileX template...'
+        Update-NetworkPathsInTemplate -TemplateFilePath $Global:Config.TemplateFilePaths.ProfileX -NetworkProfiles $Global:Config.NetworkProfiles
+    }
+
     Write-Log -Level INFO -Message 'Deleting existing PowerShell profiles...'
     Get-AllProfilePaths | ForEach-Object {
         if (Test-Path $_) {
