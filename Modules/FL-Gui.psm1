@@ -45,7 +45,7 @@ function Show-MuwSetupGui {
         Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
 
         #region --- XAML Definition ---
-        $xaml = @'
+        $xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="SetupGUI $($Global:ScriptName -replace '.ps1', '') Version : $($Global:ScriptVersion)" Height="600" Width="800" MinHeight="500" MinWidth="700"
@@ -227,7 +227,7 @@ function Show-MuwSetupGui {
         </StackPanel>
     </Grid>
 </Window>
-'@
+"@
         #endregion --- XAML Definition ---
 
         $reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$xaml)

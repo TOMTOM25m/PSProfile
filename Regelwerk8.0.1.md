@@ -230,4 +230,5 @@ Bestimmte Funktionen sind vom WhatIf-Modus ausgenommen, um die Betriebssicherhei
   * **Logging:** Logeinträge werden immer geschrieben, auch im WhatIf-Modus.
   * **Konfiguration:** Das Speichern der Konfigurationsdatei wird immer durchgeführt, auch im WhatIf-Modus.
   * **E-Mail-Benachrichtigungen:** Statusmails werden immer versendet, auch im WhatIf-Modus.
-  * **Archivierung:** Die Archivierung von Logs wird immer durchgeführt, unabhängig vom WhatIf-Modus.
+  * **Archivierung:** Die Archivierung von Logs wird immer durchgeführt, unabhängig vom WhatIf-Modus
+  
