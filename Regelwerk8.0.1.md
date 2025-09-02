@@ -1,6 +1,6 @@
 # MUW-Regelwerk für PowerShell-Skripte
 
-**Version:** 8.0.0
+**Version:** 8.0.1
 **Autor:** © Flecki Garnreiter
 
 ---
@@ -152,7 +152,7 @@ Grafische Benutzeroberflächen (GUIs) folgen dem Corporate Design der MedUni Wie
 * **Nutzen:** Sorgt für ein professionelles und vertrautes Erscheinungsbild.
 * **Details:**
   * **Farbschema:** Primäre Elemente nutzen Dunkelblau (`#111d4e`) mit weißer Schrift.
-  * **Fenstertitel:** Zeigt immer den Skriptnamen und die Version an (z.B. `SetupGUI <ScriptName> - v1.2.15`).
+  * **Fenstertitel:** Zeigt immer den Skriptnamen und die Version an (z.B. `SetupGUI <ScriptName> Version : vXX.YY.ZZ`).
   * **Button-Anordnung:** `Abbrechen` steht immer links; `Anwenden` und `OK` stehen immer rechts.
 
 ## 2. Benutzerfreundlichkeit & Bedienbarkeit
@@ -230,4 +230,4 @@ Bestimmte Funktionen sind vom WhatIf-Modus ausgenommen, um die Betriebssicherhei
   * **Logging:** Logeinträge werden immer geschrieben, auch im WhatIf-Modus.
   * **Konfiguration:** Das Speichern der Konfigurationsdatei wird immer durchgeführt, auch im WhatIf-Modus.
   * **E-Mail-Benachrichtigungen:** Statusmails werden immer versendet, auch im WhatIf-Modus.
-  * **Archivierung:** Die Archivierung von Logs wird immer durchgeführt, auch im WhatIf-Modus.
+  * **Archivierung:** Die Archivierung von Logs wird immer durchgeführt, unabhängig vom WhatIf-Modus.
