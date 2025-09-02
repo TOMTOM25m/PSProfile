@@ -57,11 +57,11 @@ $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 #region ####################### [2. Module Import] #################################################
 try {
     $modulePath = Join-Path $Global:ScriptDirectory "Modules"
-    Import-Module (Join-Path $modulePath "FL-Config.psm1") -ErrorAction Stop
-    Import-Module (Join-Path $modulePath "FL-Logging.psm1") -ErrorAction Stop
-    Import-Module (Join-Path $modulePath "FL-Gui.psm1") -ErrorAction Stop
-    Import-Module (Join-Path $modulePath "FL-Maintenance.psm1") -ErrorAction Stop
-    Import-Module (Join-Path $modulePath "FL-Utils.psm1") -ErrorAction Stop
+    Import-Module (Join-Path $modulePath "FL-Config.psm1") -ErrorAction Stop -Force
+    Import-Module (Join-Path $modulePath "FL-Logging.psm1") -ErrorAction Stop -Force
+    Import-Module (Join-Path $modulePath "FL-Gui.psm1") -ErrorAction Stop -Force
+    Import-Module (Join-Path $modulePath "FL-Maintenance.psm1") -ErrorAction Stop -Force
+    Import-Module (Join-Path $modulePath "FL-Utils.psm1") -ErrorAction Stop -Force
 }
 catch {
     Write-Error "A critical error occurred while loading essential modules: $($_.ToString())"
