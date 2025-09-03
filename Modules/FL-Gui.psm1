@@ -237,9 +237,11 @@ function Show-SetupGUI {
                     Name = $profile.Name
                     Path = $profile.Path
                     Username = $profile.Username
+                    EncryptedPassword = $profile.EncryptedPassword
                 }
             }
             $networkProfilesDataGrid.ItemsSource = $networkProfiles
+            Write-Log -Level DEBUG "Loaded $($networkProfiles.Count) network profiles into DataGrid"
         }
 
         #endregion
@@ -286,6 +288,50 @@ function Show-SetupGUI {
             $applyButton.Add_Click({
                 # Apply changes without closing
                 Write-Log -Level INFO "Apply button clicked - saving configuration..."
+                
+                try {
+                    # Create updated configuration (same logic as OK button)
+                    $updatedConfig = $InitialConfig.PSObject.Copy()
+                    
+                    # Update basic settings
+                    if ($languageComboBox) { $updatedConfig.Language = if ($languageComboBox.SelectedIndex -eq 1) { "de-DE" } else { "en-US" } }
+                    if ($environmentComboBox) { $updatedConfig.Environment = if ($environmentComboBox.SelectedIndex -eq 1) { "PROD" } else { "DEV" } }
+                    if ($whatIfCheckBox) { $updatedConfig.WhatIfMode = $whatIfCheckBox.IsChecked }
+
+                    # Update mail settings
+                    if ($enableMailCheckBox) { $updatedConfig.Mail.Enabled = $enableMailCheckBox.IsChecked }
+                    if ($smtpServerTextBox) { $updatedConfig.Mail.SmtpServer = $smtpServerTextBox.Text }
+                    if ($senderTextBox) { $updatedConfig.Mail.Sender = $senderTextBox.Text }
+                    if ($devRecipientTextBox) { $updatedConfig.Mail.DevRecipient = $devRecipientTextBox.Text }
+                    if ($prodRecipientTextBox) { $updatedConfig.Mail.ProdRecipient = $prodRecipientTextBox.Text }
+
+                    # Update network profiles
+                    $networkProfiles = @()
+                    if ($networkProfilesDataGrid -and $networkProfilesDataGrid.ItemsSource) {
+                        foreach ($item in $networkProfilesDataGrid.ItemsSource) {
+                            $networkProfiles += @{
+                                Enabled = $item.Enabled
+                                Name = $item.Name
+                                Path = $item.Path
+                                Username = $item.Username
+                                EncryptedPassword = $item.EncryptedPassword
+                            }
+                        }
+                    }
+                    $updatedConfig.NetworkProfiles = $networkProfiles
+
+                    # Save the configuration
+                    Save-Config -Config $updatedConfig -Path (Join-Path $Global:ScriptDirectory "Config\Config-Reset-PowerShellProfiles.ps1.json")
+                    
+                    # Update global config
+                    $Global:Config = $updatedConfig
+                    
+                    Write-Log -Level INFO "Configuration applied and saved successfully."
+                    [System.Windows.MessageBox]::Show("Configuration saved successfully!", "Apply Changes", "OK", "Information")
+                } catch {
+                    Write-Log -Level ERROR "Error applying configuration: $($_.Exception.Message)"
+                    [System.Windows.MessageBox]::Show("Error applying configuration: $($_.Exception.Message)", "Error", "OK", "Error")
+                }
             })
         }
 

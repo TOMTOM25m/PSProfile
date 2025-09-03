@@ -60,5 +60,13 @@
     "Profile": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-template.ps1",
     "ProfileMOD": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-templateMOD.ps1"
   },
-  "NetworkProfiles": []
+  "NetworkProfiles": [
+    {
+      "EncryptedPassword": "01000000d08c9ddf0115d1118c7a00c04fc297eb01000000bc796cf1e70d084d9d60ea2fd482a30e000000000200000000001066000000010000200000009e9fe6559334451dffe68b4e6ec9d82be90b5243f39dbf0ea95344dd25913d23000000000e80000000020000200000001c23e9e08b37bf271eb9bf5708b106c352347281010e3f3d9baaf2348e1bf31620000000d604e0d400f38da6ec41a7574fe36829622e85290fe9218804f2ccf394ce8d6a40000000ea9ce41d1bd1466b5b49013a1d80ce3d4ce61e706c6ad1ccc06dad88ed26fe096a8dbef09a7212cee5cd1ac03d1b9b1e34f1f33da094cf4f4e86a01c643deae0",
+      "Path": "\\\\itscmgmt03.srv.meduniwien.ac.at\\iso",
+      "Enabled": true,
+      "Username": "Administrator",
+      "Name": "ISA"
+    }
+  ]
 }
