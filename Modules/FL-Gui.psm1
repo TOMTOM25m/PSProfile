@@ -107,8 +107,8 @@ function Show-SetupGUI {
 
         #region --- XAML Definition ---
         $xaml = @'
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" # DevSkim: ignore DS137138
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" # DevSkim: ignore DS137138
         Title="SetupGUI Reset-PowerShellProfiles Version : v11.2.2" Height="600" Width="800" MinHeight="500" MinWidth="700"
         WindowStartupLocation="CenterScreen" ShowInTaskbar="True" Background="#F0F0F0"
         Topmost="True" ShowActivated="True" Focusable="True" WindowState="Normal">
@@ -321,13 +321,13 @@ function Show-SetupGUI {
         # Network Profiles
         if ($InitialConfig.NetworkProfiles -and $networkProfilesDataGrid) {
             $networkProfiles = @()
-            foreach ($profile in $InitialConfig.NetworkProfiles) {
+            foreach ($prof in $InitialConfig.NetworkProfiles) {
                 $networkProfiles += [PSCustomObject]@{
-                    Enabled = $profile.Enabled
-                    Name = $profile.Name
-                    Path = $profile.Path
-                    Username = $profile.Username
-                    EncryptedPassword = $profile.EncryptedPassword
+                    Enabled = $prof.Enabled
+                    Name = $prof.Name
+                    Path = $prof.Path
+                    Username = $prof.Username
+                    EncryptedPassword = $prof.EncryptedPassword
                 }
             }
             $networkProfilesDataGrid.ItemsSource = $networkProfiles
@@ -547,8 +547,8 @@ function Show-NetworkProfileDialog {
 
     try {
         $dialogXaml = @'
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" # DevSkim: ignore DS137138
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" # DevSkim: ignore DS137138
         Title="Network Profile" Height="450" Width="550" MinHeight="400" MinWidth="500"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="CanResize">
     <Grid Margin="15">
