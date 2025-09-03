@@ -106,9 +106,10 @@ function Show-SetupGUI {
         $windowTitle = "SetupGUI $($Global:ScriptName -replace '.ps1', '') Version : $($Global:ScriptVersion)"
 
         #region --- XAML Definition ---
+        # DevSkim: ignore DS137138 - XAML namespace URLs are required for WPF functionality
         $xaml = @'
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" # DevSkim: ignore DS137138
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" # DevSkim: ignore DS137138
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="SetupGUI Reset-PowerShellProfiles Version : v11.2.2" Height="600" Width="800" MinHeight="500" MinWidth="700"
         WindowStartupLocation="CenterScreen" ShowInTaskbar="True" Background="#F0F0F0"
         Topmost="True" ShowActivated="True" Focusable="True" WindowState="Normal">
@@ -546,9 +547,10 @@ function Show-NetworkProfileDialog {
     )
 
     try {
+        # DevSkim: ignore DS137138 - XAML namespace URLs are required for WPF functionality
         $dialogXaml = @'
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" # DevSkim: ignore DS137138
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" # DevSkim: ignore DS137138
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Network Profile" Height="450" Width="550" MinHeight="400" MinWidth="500"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="CanResize">
     <Grid Margin="15">

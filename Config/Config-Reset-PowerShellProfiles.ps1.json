@@ -2,71 +2,71 @@
     "ScriptVersion":  "v11.2.2",
     "RulebookVersion":  "v8.2.0",
     "Language":  "en-US",
-    "Environment":  "DEV",
+    "Environment":  "PROD",
     "WhatIfMode":  false,
     "Disclaimer":  {
-                       "DE":  "Die bereitgestellten Skripte und die zugehÃƒÆ’Ã‚Â¶rige Dokumentation werden \"wie besehen\" (\"as is\")\nohne ausdrÃƒÆ’Ã‚Â¼ckliche oder stillschweigende GewÃƒÆ’Ã‚Â¤hrleistung jeglicher Art zur VerfÃƒÆ’Ã‚Â¼gung gestellt.\nInsbesondere wird keinerlei GewÃƒÆ’Ã‚Â¤hr ÃƒÆ’Ã‚Â¼bernommen fÃƒÆ’Ã‚Â¼r die MarktgÃƒÆ’Ã‚Â¤ngigkeit, die Eignung fÃƒÆ’Ã‚Â¼r einen bestimmten Zweck\noder die Nichtverletzung von Rechten Dritter.\nEs besteht keine Verpflichtung zur Wartung, Aktualisierung oder UnterstÃƒÆ’Ã‚Â¼tzung der Skripte. Jegliche Nutzung erfolgt auf eigenes Risiko.\nIn keinem Fall haften Herr Flecki Garnreiter, sein Arbeitgeber oder die Mitwirkenden an der Erstellung,\nEntwicklung oder Verbreitung dieser Skripte fÃƒÆ’Ã‚Â¼r direkte, indirekte, zufÃƒÆ’Ã‚Â¤llige, besondere oder FolgeschÃƒÆ’Ã‚Â¤den - einschlieÃƒÆ’Ã…Â¸lich,\naber nicht beschrÃƒÆ’Ã‚Â¤nkt auf entgangenen Gewinn, Betriebsunterbrechungen, Datenverlust oder sonstige wirtschaftliche Verluste -,\nselbst wenn sie auf die MÃƒÆ’Ã‚Â¶glichkeit solcher SchÃƒÆ’Ã‚Â¤den hingewiesen wurden.\nDurch die Nutzung der Skripte erklÃƒÆ’Ã‚Â¤ren Sie sich mit diesen Bedingungen einverstanden.",
+                       "DE":  "Die bereitgestellten Skripte und die zugehÃ¶rige Dokumentation werden \"wie besehen\" (\"as is\")\nohne ausdrÃ¼ckliche oder stillschweigende GewÃ¤hrleistung jeglicher Art zur VerfÃ¼gung gestellt.\nInsbesondere wird keinerlei GewÃ¤hr Ã¼bernommen fÃ¼r die MarktgÃ¤ngigkeit, die Eignung fÃ¼r einen bestimmten Zweck\noder die Nichtverletzung von Rechten Dritter.\nEs besteht keine Verpflichtung zur Wartung, Aktualisierung oder UnterstÃ¼tzung der Skripte. Jegliche Nutzung erfolgt auf eigenes Risiko.\nIn keinem Fall haften Herr Flecki Garnreiter, sein Arbeitgeber oder die Mitwirkenden an der Erstellung,\nEntwicklung oder Verbreitung dieser Skripte fÃ¼r direkte, indirekte, zufÃ¤llige, besondere oder FolgeschÃ¤den - einschlieÃŸlich,\naber nicht beschrÃ¤nkt auf entgangenen Gewinn, Betriebsunterbrechungen, Datenverlust oder sonstige wirtschaftliche Verluste -,\nselbst wenn sie auf die MÃ¶glichkeit solcher SchÃ¤den hingewiesen wurden.\nDurch die Nutzung der Skripte erklÃ¤ren Sie sich mit diesen Bedingungen einverstanden.",
                        "EN":  "The scripts and accompanying documentation are provided \"as is,\" without warranty of any kind, either express or implied.\nFlecki Garnreiter and his employer disclaim all warranties, including but not limited to the implied warranties of merchantability,\nfitness for a particular purpose, and non-infringement.\nThere is no obligation to provide maintenance, support, updates, or enhancements for the scripts.\nUse of these scripts is at your own risk. Under no circumstances shall Flecki Garnreiter, his employer, the authors,\nor any party involved in the creation, production, or distribution of the scripts be held liable for any damages whatever,\nincluding but not not limited to direct, indirect, incidental, consequential, or special damages\n(such as loss of profits, business interruption, or loss of business data), even if advised of the possibility of such damages.\nBy using these scripts, you agree to be bound by the above terms."
                    },
     "GuiAssets":  {
-                      "IconPath":  "F:\\DEV\\repositories\\ResetProfile\\Config\\MedUniWien_logo.ico",
-                      "LogoPath":  "F:\\DEV\\repositories\\ResetProfile\\Config\\MedUniWien_logo.png"
+                      "LogoPath":  "F:\\DEV\\repositories\\ResetProfile\\Config\\MedUniWien_logo.png",
+                      "IconPath":  "F:\\DEV\\repositories\\ResetProfile\\Config\\MedUniWien_logo.ico"
                   },
     "UNCPaths":  {
-                     "AssetDirectory":  "\\\\\\\\itscmgmt03.srv.meduniwien.ac.at\\\\iso\\\\MUWLogo"
+                     "AssetDirectory":  "\\\\\\\\itscmgmt03.srv.meduniwien.ac.at\\iso\\MUWLogo"
                  },
     "Logging":  {
-                    "ArchiveRetentionDays":  90,
-                    "LogPath":  "F:\\DEV\\repositories\\ResetProfile\\LOG",
-                    "LogRetentionDays":  30,
-                    "EnableEventLog":  true,
-                    "SevenZipPath":  "C:\\Program Files\\7-Zip\\7z.exe",
                     "ReportPath":  "F:\\DEV\\repositories\\ResetProfile\\Reports",
-                    "ArchiveLogs":  true
+                    "LogRetentionDays":  30,
+                    "ArchiveLogs":  true,
+                    "ArchiveRetentionDays":  90,
+                    "SevenZipPath":  "C:\\Program Files\\7-Zip\\7z.exe",
+                    "EnableEventLog":  true,
+                    "LogPath":  "F:\\DEV\\repositories\\ResetProfile\\LOG"
                 },
+    "TemplateFilePaths":  {
+                              "Profile":  "F:\\DEV\\repositories\\ResetProfile\\Profile-template.ps1",
+                              "ProfileX":  "F:\\DEV\\repositories\\ResetProfile\\Profile-templateX.ps1",
+                              "ProfileMOD":  "F:\\DEV\\repositories\\ResetProfile\\Profile-templateMOD.ps1"
+                          },
     "TemplateVersions":  {
-                             "ProfileMOD":  "v7.0.0",
+                             "ProfileX":  "v8.0.0",
                              "Profile":  "v25.0.0",
-                             "ProfileX":  "v8.0.0"
+                             "ProfileMOD":  "v7.0.0"
                          },
     "TargetTemplateVersions":  {
-                                   "ProfileMOD":  "v7.0.0",
+                                   "ProfileX":  "v8.0.0",
                                    "Profile":  "v25.0.0",
-                                   "ProfileX":  "v8.0.0"
+                                   "ProfileMOD":  "v7.0.0"
                                },
     "LanguageFileVersions":  {
-                                 "de-DE":  "v1.0.0",
-                                 "en-US":  "v1.0.0"
+                                 "en-US":  "v1.0.0",
+                                 "de-DE":  "v1.0.0"
                              },
     "Backup":  {
-                   "Enabled":  false,
-                   "Path":  "F:\\DEV\\repositories\\ResetProfile\\Backup"
+                   "Path":  "F:\\DEV\\repositories\\ResetProfile\\Backup",
+                   "Enabled":  false
                },
     "Mail":  {
-                 "DevRecipient":  "thomas.garnreiter@meduniwien.ac.at",
-                 "Enabled":  false,
                  "Sender":  "ITSC020@meduniwien.ac.at",
+                 "ProdRecipient":  "win-admin@meduniwien.ac.at",
                  "SmtpServer":  "smtpi.meduniwien.ac.at",
-                 "ProdRecipient":  "win-admin@meduniwien.ac.at"
+                 "DevRecipient":  "thomas.garnreiter@meduniwien.ac.at",
+                 "Enabled":  false
              },
     "GitUpdate":  {
-                      "Enabled":  true,
                       "Branch":  "main",
-                      "CachePath":  "F:\\DEV\\repositories\\GitCache",
+                      "Enabled":  false,
+                      "CachePath":  "F:\\VSCode\\data\\tmp\\GitProfileCache",
                       "RepoUrl":  "https://github.com/TOMTOM25m/PSProfile.git"
                   },
-    "TemplateFilePaths":  {
-                              "Profile":  "F:\\DEV\\repositories\\GitCache\\repository\\Profile-template.ps1",
-                              "ProfileX":  "F:\\DEV\\repositories\\GitCache\\repository\\Profile-templateX.ps1",
-                              "ProfileMOD":  "F:\\DEV\\repositories\\GitCache\\repository\\Profile-templateMOD.ps1"
-                          },
     "NetworkProfiles":  [
                             {
-                                "EncryptedPassword":  "01000000d08c9ddf0115d1118c7a00c04fc297eb01000000bc796cf1e70d084d9d60ea2fd482a30e000000000200000000001066000000010000200000007c0aa1d7d842c7e662bfaf62222c0e8299ae8ad19c9cf31177c8c81d7d73aced000000000e800000000200002000000017a11706c6355590eb1e26a5027973b5ba6791992c3273fb1ee7ac971a1e3ead2000000092cd48587ebfe6355afc746c1fe145361a5ec66c3a96ac805934f8ce88c27cb0400000004f92283e532cf1d5cf63ec1868f1451d2c3a9ccae60a555e7c3d85afc31ea2729e98d42269a83c77c19e7e4537eba0916471a619ab2a8feb7c3101dcd4034d7b",
-                                "Path":  "\\\\itscmgmt03.srv.meduniwien.ac.at\\iso",
-                                "Enabled":  true,
-                                "Username":  "ITSCMGMT03\\Administrator",
-                                "Name":  "ISA"
+                                "EncryptedPassword":  "",
+                                "Path":  "\\\\\\\\server\\\\share",
+                                "Enabled":  false,
+                                "Username":  "",
+                                "Name":  "Example Network Share"
                             }
                         ]
 }
