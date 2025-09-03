@@ -47,7 +47,7 @@ function Show-SetupGUI {
     try {
         Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
 
-        $windowTitle = "SetupGUI $($Global:ScriptName -replace '.ps1', '') Version : $($Global:ScriptVersion)"
+        $windowTitle = "SetupGUI Reset-PowerShellProfiles Version : v11.2.2"
 
         #region --- XAML Definition ---
         $xaml = @'
