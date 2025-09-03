@@ -308,12 +308,25 @@ function Show-SetupGUI {
             $networkProfilesTab.Header = Get-LocalizedText -Key "TabNetworkProfiles" -Language $currentLanguage
         }
         
+        $templatesTab = $window.FindName('templatesTab')
+        if ($templatesTab) { 
+            $templatesTab.Header = Get-LocalizedText -Key "TabTemplates" -Language $currentLanguage
+        }
+        
         # Localize Network Profiles buttons
         if ($addNetworkProfileButton) { 
             $addNetworkProfileButton.Content = Get-LocalizedText -Key "BtnAddProfile" -Language $currentLanguage
         }
         if ($deleteNetworkProfileButton) { 
             $deleteNetworkProfileButton.Content = Get-LocalizedText -Key "BtnDeleteProfile" -Language $currentLanguage
+        }
+        
+        # Localize Templates buttons
+        if ($addTemplateButton) { 
+            $addTemplateButton.Content = Get-LocalizedText -Key "BtnAddTemplate" -Language $currentLanguage
+        }
+        if ($deleteTemplateButton) { 
+            $deleteTemplateButton.Content = Get-LocalizedText -Key "BtnDeleteTemplate" -Language $currentLanguage
         }
         
         # Localize main buttons
@@ -876,8 +889,185 @@ function Show-NetworkProfileDialog {
     }
 }
 
+function Show-TemplateDialog {
+    param(
+        [PSCustomObject]$ExistingTemplate = $null,
+        [string]$Language = "en-US"
+    )
+
+    try {
+        # DevSkim: ignore DS137138 - XAML namespace URLs are required for WPF functionality
+        $dialogXaml = @'
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Template Configuration" Height="350" Width="600" MinHeight="300" MinWidth="500"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="CanResize"
+        Topmost="True" ShowActivated="True" Focusable="True" WindowState="Normal">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <CheckBox x:Name="enabledCheckBox" Grid.Row="0" Grid.ColumnSpan="3" Content="Enabled" Margin="0,0,0,10" IsChecked="True"/>
+
+        <Label Grid.Row="1" Grid.Column="0" Content="Name:" VerticalAlignment="Center"/>
+        <TextBox x:Name="nameTextBox" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Height="25"/>
+
+        <Label Grid.Row="2" Grid.Column="0" Content="File Path:" VerticalAlignment="Center"/>
+        <TextBox x:Name="filePathTextBox" Grid.Row="2" Grid.Column="1" Margin="5" Height="25"/>
+        <Button x:Name="browseButton" Grid.Row="2" Grid.Column="2" Content="Browse..." Width="80" Height="25" Margin="5,5,0,5"/>
+
+        <Label Grid.Row="3" Grid.Column="0" Content="Description:" VerticalAlignment="Top" Margin="0,5,0,0"/>
+        <TextBox x:Name="descriptionTextBox" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" Height="60" 
+                 AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10">
+            <Button x:Name="testTemplateButton" Content="Test Template" Width="120" Height="30" Margin="0,0,10,0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="6" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button x:Name="okButton" Content="OK" Width="80" Height="30" Margin="0,0,10,0" IsDefault="True"/>
+            <Button x:Name="cancelButton" Content="Cancel" Width="80" Height="30"/>
+        </StackPanel>
+    </Grid>
+</Window>
+'@
+
+        $reader = [System.Xml.XmlNodeReader]::new([xml]$dialogXaml)
+        $dialog = [Windows.Markup.XamlReader]::Load($reader)
+
+        # Find controls
+        $enabledCheckBox = $dialog.FindName("enabledCheckBox")
+        $nameTextBox = $dialog.FindName("nameTextBox")
+        $filePathTextBox = $dialog.FindName("filePathTextBox")
+        $browseButton = $dialog.FindName("browseButton")
+        $descriptionTextBox = $dialog.FindName("descriptionTextBox")
+        $testTemplateButton = $dialog.FindName("testTemplateButton")
+        $okButton = $dialog.FindName("okButton")
+        $cancelButton = $dialog.FindName("cancelButton")
+
+        # Localize dialog
+        $dialog.Title = Get-LocalizedText -Key "TitleTemplateDialog" -Language $Language
+        if ($enabledCheckBox) { $enabledCheckBox.Content = Get-LocalizedText -Key "LblEnabled" -Language $Language }
+        if ($browseButton) { $browseButton.Content = Get-LocalizedText -Key "BtnBrowse" -Language $Language }
+        if ($testTemplateButton) { $testTemplateButton.Content = Get-LocalizedText -Key "BtnTestTemplate" -Language $Language }
+        if ($okButton) { $okButton.Content = Get-LocalizedText -Key "BtnOK" -Language $Language }
+        if ($cancelButton) { $cancelButton.Content = Get-LocalizedText -Key "BtnCancel" -Language $Language }
+
+        # Set existing values if editing
+        if ($ExistingTemplate) {
+            $enabledCheckBox.IsChecked = $ExistingTemplate.Enabled
+            $nameTextBox.Text = $ExistingTemplate.Name
+            $filePathTextBox.Text = $ExistingTemplate.FilePath
+            $descriptionTextBox.Text = $ExistingTemplate.Description
+        }
+
+        # Event handlers
+        $browseButton.Add_Click({
+            try {
+                $openFileDialog = New-Object Microsoft.Win32.OpenFileDialog
+                $openFileDialog.Filter = "PowerShell Scripts (*.ps1)|*.ps1|All Files (*.*)|*.*"
+                $openFileDialog.InitialDirectory = "$PSScriptRoot\..\Templates"
+                
+                if ($openFileDialog.ShowDialog() -eq $true) {
+                    $filePathTextBox.Text = $openFileDialog.FileName
+                    
+                    # Auto-generate name from filename if empty
+                    if ([string]::IsNullOrWhiteSpace($nameTextBox.Text)) {
+                        $nameTextBox.Text = [System.IO.Path]::GetFileNameWithoutExtension($openFileDialog.FileName)
+                    }
+                }
+            } catch {
+                Write-Log -Level ERROR "Error browsing for template file: $($_.Exception.Message)"
+                $errorMsg = Get-LocalizedText -Key "MsgErrorBrowsingFile" -Language $Language -FormatArgs @($_.Exception.Message)
+                $errorTitle = Get-LocalizedText -Key "MsgError" -Language $Language
+                [System.Windows.MessageBox]::Show($errorMsg, $errorTitle, "OK", "Error")
+            }
+        })
+
+        $testTemplateButton.Add_Click({
+            $filePath = $filePathTextBox.Text
+
+            if ([string]::IsNullOrWhiteSpace($filePath)) {
+                $msgText = Get-LocalizedText -Key "MsgEnterFilePath" -Language $Language
+                $msgTitle = Get-LocalizedText -Key "MsgValidationError" -Language $Language
+                [System.Windows.MessageBox]::Show($msgText, $msgTitle, "OK", "Warning")
+                return
+            }
+
+            try {
+                if (Test-Path $filePath) {
+                    $successMsg = Get-LocalizedText -Key "MsgTemplateTestSuccess" -Language $Language
+                    $successTitle = Get-LocalizedText -Key "MsgTestResult" -Language $Language
+                    [System.Windows.MessageBox]::Show($successMsg, $successTitle, "OK", "Information")
+                } else {
+                    $errorMsg = Get-LocalizedText -Key "MsgTemplateNotFound" -Language $Language -FormatArgs @($filePath)
+                    $errorTitle = Get-LocalizedText -Key "MsgTestResult" -Language $Language
+                    [System.Windows.MessageBox]::Show($errorMsg, $errorTitle, "OK", "Warning")
+                }
+            } catch {
+                $errorMsg = Get-LocalizedText -Key "MsgTemplateTestFailed" -Language $Language -FormatArgs @($_.Exception.Message)
+                $errorTitle = Get-LocalizedText -Key "MsgTestResult" -Language $Language
+                [System.Windows.MessageBox]::Show($errorMsg, $errorTitle, "OK", "Error")
+            }
+        })
+
+        $okButton.Add_Click({
+            # Validate input
+            if ([string]::IsNullOrWhiteSpace($nameTextBox.Text)) {
+                $msgText = Get-LocalizedText -Key "MsgEnterTemplateName" -Language $Language
+                $msgTitle = Get-LocalizedText -Key "MsgValidationError" -Language $Language
+                [System.Windows.MessageBox]::Show($msgText, $msgTitle, "OK", "Warning")
+                return
+            }
+            if ([string]::IsNullOrWhiteSpace($filePathTextBox.Text)) {
+                $msgText = Get-LocalizedText -Key "MsgEnterFilePath" -Language $Language
+                $msgTitle = Get-LocalizedText -Key "MsgValidationError" -Language $Language
+                [System.Windows.MessageBox]::Show($msgText, $msgTitle, "OK", "Warning")
+                return
+            }
+
+            $dialog.DialogResult = $true
+            $dialog.Close()
+        })
+
+        $cancelButton.Add_Click({
+            $dialog.DialogResult = $false
+            $dialog.Close()
+        })
+
+        $result = $dialog.ShowDialog()
+
+        if ($result -eq $true) {
+            return [PSCustomObject]@{
+                Enabled = $enabledCheckBox.IsChecked
+                Name = $nameTextBox.Text
+                FilePath = $filePathTextBox.Text
+                Description = $descriptionTextBox.Text
+            }
+        }
+
+        return $null
+
+    } catch {
+        Write-Log -Level ERROR "Failed to show template dialog: $($_.Exception.Message)"
+        return $null
+    }
+}
+
 # Export module members
-Export-ModuleMember -Function Show-SetupGUI, Show-NetworkProfileDialog
+Export-ModuleMember -Function Show-SetupGUI, Show-NetworkProfileDialog, Show-TemplateDialog
 
 # SIG # Begin signature block
 # MIIb/gYJKoZIhvcNAQcCoIIb7zCCG+sCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
