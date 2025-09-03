@@ -184,6 +184,29 @@ function Show-SetupGUI {
                 </Grid>
             </TabItem>
             
+            <TabItem Header="Templates" x:Name="templatesTab">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <DataGrid x:Name="templatesDataGrid" Grid.Row="0" Margin="5" AutoGenerateColumns="False" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding Enabled}" Width="60"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200"/>
+                            <DataGridTextColumn Header="File Path" Binding="{Binding FilePath}" Width="300"/>
+                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="250"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="5">
+                        <Button x:Name="addTemplateButton" Content="Add Template" Width="100" Height="30" Margin="0,0,10,0"/>
+                        <Button x:Name="deleteTemplateButton" Content="Delete Template" Width="100" Height="30"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            
             <TabItem Header="Mail">
                 <Grid Margin="10">
                     <Grid.ColumnDefinitions>
@@ -247,6 +270,9 @@ function Show-SetupGUI {
         $networkProfilesDataGrid = $window.FindName('networkProfilesDataGrid')
         $addNetworkProfileButton = $window.FindName('addNetworkProfileButton')
         $deleteNetworkProfileButton = $window.FindName('deleteNetworkProfileButton')
+        $templatesDataGrid = $window.FindName('templatesDataGrid')
+        $addTemplateButton = $window.FindName('addTemplateButton')
+        $deleteTemplateButton = $window.FindName('deleteTemplateButton')
         $enableMailCheckBox = $window.FindName('enableMailCheckBox')
         $smtpServerTextBox = $window.FindName('smtpServerTextBox')
         $senderTextBox = $window.FindName('senderTextBox')
@@ -335,6 +361,21 @@ function Show-SetupGUI {
             Write-Log -Level DEBUG "Loaded $($networkProfiles.Count) network profiles into DataGrid"
         }
 
+        # Templates
+        if ($InitialConfig.Templates -and $templatesDataGrid) {
+            $templates = @()
+            foreach ($template in $InitialConfig.Templates) {
+                $templates += [PSCustomObject]@{
+                    Enabled = $template.Enabled
+                    Name = $template.Name
+                    FilePath = $template.FilePath
+                    Description = $template.Description
+                }
+            }
+            $templatesDataGrid.ItemsSource = $templates
+            Write-Log -Level DEBUG "Loaded $($templates.Count) templates into DataGrid"
+        }
+
         #endregion
 
         #region --- Event Handlers ---
@@ -403,6 +444,75 @@ function Show-SetupGUI {
                 } catch {
                     Write-Log -Level ERROR "Error deleting network profile: $($_.Exception.Message)"
                     $errorMsg = Get-LocalizedText -Key "MsgErrorDeletingProfile" -Language $currentLanguage -FormatArgs @($_.Exception.Message)
+                    $errorTitle = Get-LocalizedText -Key "MsgError" -Language $currentLanguage
+                    [System.Windows.MessageBox]::Show($errorMsg, $errorTitle, "OK", "Error")
+                }
+            })
+        }
+
+        # Add Template button
+        if ($addTemplateButton) {
+            $addTemplateButton.Add_Click({
+                try {
+                    Write-Log -Level DEBUG "Add Template button clicked"
+                    $result = Show-TemplateDialog -Language $currentLanguage
+                    if ($result) {
+                        Write-Log -Level DEBUG "Template dialog returned valid result: $($result.Name)"
+                        $currentTemplates = @()
+                        if ($templatesDataGrid.ItemsSource) {
+                            $currentTemplates = @($templatesDataGrid.ItemsSource)
+                        }
+                        $currentTemplates += $result
+                        $templatesDataGrid.ItemsSource = $currentTemplates
+                        $templatesDataGrid.Items.Refresh()
+                        Write-Log -Level INFO "Template '$($result.Name)' added successfully"
+                    }
+                } catch {
+                    Write-Log -Level ERROR "Error adding template: $($_.Exception.Message)"
+                    $errorMsg = Get-LocalizedText -Key "MsgErrorAddingTemplate" -Language $currentLanguage -FormatArgs @($_.Exception.Message)
+                    $errorTitle = Get-LocalizedText -Key "MsgError" -Language $currentLanguage
+                    [System.Windows.MessageBox]::Show($errorMsg, $errorTitle, "OK", "Error")
+                }
+            })
+        }
+
+        # Delete Template button
+        if ($deleteTemplateButton) {
+            $deleteTemplateButton.Add_Click({
+                try {
+                    Write-Log -Level DEBUG "Delete Template button clicked"
+                    
+                    # Check if a template is selected
+                    if ($null -eq $templatesDataGrid.SelectedItem) {
+                        $msgText = Get-LocalizedText -Key "MsgSelectTemplate" -Language $currentLanguage
+                        $msgTitle = Get-LocalizedText -Key "MsgNoSelection" -Language $currentLanguage
+                        [System.Windows.MessageBox]::Show($msgText, $msgTitle, "OK", "Warning")
+                        return
+                    }
+                    
+                    $selectedTemplate = $templatesDataGrid.SelectedItem
+                    $templateName = $selectedTemplate.Name
+                    
+                    # Confirm deletion
+                    $confirmMsg = Get-LocalizedText -Key "MsgConfirmDeleteTemplate" -Language $currentLanguage -FormatArgs @($templateName)
+                    $confirmTitle = Get-LocalizedText -Key "MsgConfirmDeleteTitle" -Language $currentLanguage
+                    $result = [System.Windows.MessageBox]::Show($confirmMsg, $confirmTitle, "YesNo", "Question")
+                    
+                    if ($result -eq "Yes") {
+                        # Remove from DataGrid
+                        $currentTemplates = @($templatesDataGrid.ItemsSource)
+                        $updatedTemplates = $currentTemplates | Where-Object { $_.Name -ne $templateName }
+                        $templatesDataGrid.ItemsSource = $updatedTemplates
+                        $templatesDataGrid.Items.Refresh()
+                        
+                        Write-Log -Level INFO "Template '$templateName' deleted successfully"
+                        $successMsg = Get-LocalizedText -Key "MsgTemplateDeleted" -Language $currentLanguage -FormatArgs @($templateName)
+                        $successTitle = Get-LocalizedText -Key "MsgTemplateDeletedTitle" -Language $currentLanguage
+                        [System.Windows.MessageBox]::Show($successMsg, $successTitle, "OK", "Information")
+                    }
+                } catch {
+                    Write-Log -Level ERROR "Error deleting template: $($_.Exception.Message)"
+                    $errorMsg = Get-LocalizedText -Key "MsgErrorDeletingTemplate" -Language $currentLanguage -FormatArgs @($_.Exception.Message)
                     $errorTitle = Get-LocalizedText -Key "MsgError" -Language $currentLanguage
                     [System.Windows.MessageBox]::Show($errorMsg, $errorTitle, "OK", "Error")
                 }
@@ -524,6 +634,20 @@ function Show-SetupGUI {
                 }
             }
             $updatedConfig.NetworkProfiles = $networkProfiles
+
+            # Update templates
+            $templates = @()
+            if ($templatesDataGrid -and $templatesDataGrid.ItemsSource) {
+                foreach ($item in $templatesDataGrid.ItemsSource) {
+                    $templates += @{
+                        Enabled = $item.Enabled
+                        Name = $item.Name
+                        FilePath = $item.FilePath
+                        Description = $item.Description
+                    }
+                }
+            }
+            $updatedConfig.Templates = $templates
 
             Write-Log -Level INFO "Configuration updated successfully."
             return $updatedConfig
