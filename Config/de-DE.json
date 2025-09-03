@@ -42,7 +42,7 @@
   "LblGitRepoUrl": "Repository URL",
   "LblGitBranch": "Branch",
   "LblGitCachePath": "Lokaler Cache-Pfad",
-  "TabNetworkProfiles": "Netzwerk-Profile",
+  "TabNetworkProfiles": "NetworkPath",
   "TabMain": "Haupt",
   "TabNetwork": "Netzwerkprofile",
   "TabAdvanced": "Erweitert",
