@@ -40,9 +40,16 @@ function Get-LocalizedText {
         try {
             $languageFilePath = Join-Path $Global:ScriptDirectory "Config\$Language.json"
             if (Test-Path $languageFilePath) {
+                # Use UTF8 encoding for PowerShell 5.1 compatibility
+                if ($PSVersionTable.PSVersion.Major -ge 6) {
+                    $content = Get-Content -Path $languageFilePath -Raw -Encoding UTF8
+                } else {
+                    # PowerShell 5.1: Use System.IO.File to ensure UTF8 without BOM
+                    $content = [System.IO.File]::ReadAllText($languageFilePath, [System.Text.Encoding]::UTF8)
+                }
                 $Global:LocalizedTexts = @{
                     Language = $Language
-                    Texts = Get-Content -Path $languageFilePath -Raw | ConvertFrom-Json
+                    Texts = $content | ConvertFrom-Json
                 }
                 Write-Log -Level DEBUG -Message "Loaded localization file: $languageFilePath"
             } else {
