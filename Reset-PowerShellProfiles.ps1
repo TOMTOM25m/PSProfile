@@ -71,7 +71,7 @@ catch {
 
 #region ####################### [3. Script Main Body] ##############################
 $oldVersion = try {
-    (Get-Content -Path $MyInvocation.MyCommand.Path -TotalCount 30 -ErrorAction SilentlyContinue | Select-String 'old Version:\s*(v[\d\.]+)' | ForEach-Object { $_.Matches.Groups[1].Value })[0]
+    (Get-Content -Path $MyInvocation.MyCommand.Path -ErrorAction SilentlyContinue | Select-String 'old:\s*(v[\d\.]+)' | ForEach-Object { $_.Matches.Groups[1].Value })[0]
 } catch { "v0.0.0" }
 
 # --- Handle dedicated operational modes first ---
