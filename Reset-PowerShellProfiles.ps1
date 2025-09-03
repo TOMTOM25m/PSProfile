@@ -93,6 +93,17 @@ if ($Setup.IsPresent) {
             $restartGui = $true
             # Reload config if GUI saved changes and requested a restart.
             $Global:Config = Get-Config -Path $Global:ConfigFile
+        } elseif ($guiResult -ne $null -and $guiResult -is [PSCustomObject]) {
+            # Save the updated configuration
+            Write-Log -Level INFO -Message "Saving updated configuration from Setup GUI..."
+            Save-Config -Config $guiResult -Path $Global:ConfigFile
+            $Global:Config = $guiResult
+            Write-Log -Level INFO -Message "Configuration saved successfully."
+            
+            # Update network paths in template if profiles exist
+            if ($guiResult.NetworkProfiles -and $guiResult.NetworkProfiles.Count -gt 0) {
+                Update-NetworkPathsInTemplate -Config $guiResult
+            }
         }
     } while ($restartGui)
     Write-Log -Level INFO -Message "Configuration finished. Script will exit."

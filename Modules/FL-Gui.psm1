@@ -339,7 +339,7 @@ function Show-SetupGUI {
                         Name = $item.Name
                         Path = $item.Path
                         Username = $item.Username
-                        EncryptedPassword = ""  # Will be set separately
+                        EncryptedPassword = $item.EncryptedPassword
                     }
                 }
             }
@@ -503,12 +503,20 @@ function Show-NetworkProfileDialog {
                 return $null
             }
 
+            # Encrypt password if provided
+            $encryptedPassword = ""
+            if ($passwordBox -and -not [string]::IsNullOrEmpty($passwordBox.Password)) {
+                $encryptedPassword = ConvertTo-SecureCredential -PlainTextPassword $passwordBox.Password
+                Write-Log -Level DEBUG "Password encrypted for network profile"
+            }
+
             # Create the return object with safe property access
             $profileResult = [PSCustomObject]@{
                 Enabled = if ($enabledCheckBox) { $enabledCheckBox.IsChecked } else { $true }
                 Name = if ($nameTextBox) { $nameTextBox.Text } else { "" }
                 Path = if ($pathTextBox) { $pathTextBox.Text } else { "" }
                 Username = if ($usernameTextBox) { $usernameTextBox.Text } else { "" }
+                EncryptedPassword = $encryptedPassword
             }
             
             Write-Log -Level DEBUG "Network profile created: Name='$($profileResult.Name)', Path='$($profileResult.Path)'"
