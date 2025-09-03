@@ -194,6 +194,7 @@ function Invoke-VersionControl {
 
 function ConvertTo-SecureCredential {
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '', Justification = 'This function intentionally accepts plain text to convert it to secure format')]
     param(
         [Parameter(Mandatory = $true)][string]$PlainTextPassword
     )
@@ -209,6 +210,7 @@ function ConvertTo-SecureCredential {
 
 function ConvertFrom-SecureCredential {
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '', Justification = 'Parameter contains encrypted string, not plain text password')]
     param(
         [Parameter(Mandatory = $true)][string]$EncryptedPassword,
         [Parameter(Mandatory = $true)][string]$Username
