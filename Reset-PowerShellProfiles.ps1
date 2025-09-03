@@ -93,7 +93,7 @@ if ($Setup.IsPresent) {
             $restartGui = $true
             # Reload config if GUI saved changes and requested a restart.
             $Global:Config = Get-Config -Path $Global:ConfigFile
-        } elseif ($guiResult -ne $null -and $guiResult -is [PSCustomObject]) {
+        } elseif ($null -ne $guiResult -and $guiResult -is [PSCustomObject]) {
             # Save the updated configuration
             Write-Log -Level INFO -Message "Saving updated configuration from Setup GUI..."
             Save-Config -Config $guiResult -Path $Global:ConfigFile
@@ -136,8 +136,8 @@ try {
         do {
             $restartGui = $false
             Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
-            Initialize-LocalizationFiles
-            $guiResult = Show-MuwSetupGui -InitialConfig $Global:Config
+            # Initialize-LocalizationFiles  # TODO: Implement if needed
+            $guiResult = Show-SetupGUI -InitialConfig $Global:Config
             if ($guiResult -eq 'Restart') { 
                 $restartGui = $true
                 $Global:Config = Get-Config -Path $Global:ConfigFile
