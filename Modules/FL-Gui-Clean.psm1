@@ -51,8 +51,8 @@ function Show-SetupGUI {
 
         #region --- XAML Definition ---
         $xaml = @'
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" # DevSkim: ignore DS137138
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" # DevSkim: ignore DS137138
         Title="SetupGUI Reset-PowerShellProfiles Version : v11.2.2" Height="600" Width="800" MinHeight="500" MinWidth="700"
         WindowStartupLocation="CenterScreen" ShowInTaskbar="True" Background="#F0F0F0">
     <Window.Resources>
@@ -223,12 +223,12 @@ function Show-SetupGUI {
         # Network Profiles
         if ($InitialConfig.NetworkProfiles) {
             $networkProfiles = @()
-            foreach ($profile in $InitialConfig.NetworkProfiles) {
+            foreach ($netProfile in $InitialConfig.NetworkProfiles) {
                 $networkProfiles += [PSCustomObject]@{
-                    Enabled = $profile.Enabled
-                    Name = $profile.Name
-                    Path = $profile.Path
-                    Username = $profile.Username
+                    Enabled = $netProfile.Enabled
+                    Name = $netProfile.Name
+                    Path = $netProfile.Path
+                    Username = $netProfile.Username
                 }
             }
             $controls['networkProfilesDataGrid'].ItemsSource = $networkProfiles
@@ -327,8 +327,8 @@ function Show-NetworkProfileDialog {
 
     try {
         $dialogXaml = @'
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" # DevSkim: ignore DS137138
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" # DevSkim: ignore DS137138
         Title="Network Profile" Height="300" Width="500"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize">
     <Grid Margin="15">
@@ -397,8 +397,8 @@ function Show-NetworkProfileDialog {
         # Event handlers
         $testConnectionButton.Add_Click({
             $path = $pathTextBox.Text
-            $username = $usernameTextBox.Text
-            $password = $passwordBox.SecurePassword
+           # $username = $usernameTextBox.Text
+           # $password = $passwordBox.SecurePassword
 
             if ([string]::IsNullOrWhiteSpace($path)) {
                 [System.Windows.MessageBox]::Show("Please enter a UNC path.", "Validation Error", "OK", "Warning")
