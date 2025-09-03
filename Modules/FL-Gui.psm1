@@ -682,11 +682,15 @@ function Show-NetworkProfileDialog {
                 try {
                     # Validate input
                     if ([string]::IsNullOrWhiteSpace($nameTextBox.Text)) {
-                        [System.Windows.MessageBox]::Show("Please enter a profile name.", "Validation Error", "OK", "Warning")
+                        $msgText = Get-LocalizedText -Key "MsgEnterProfileName" -Language $Language
+                        $msgTitle = Get-LocalizedText -Key "MsgValidationError" -Language $Language
+                        [System.Windows.MessageBox]::Show($msgText, $msgTitle, "OK", "Warning")
                         return
                     }
                     if ([string]::IsNullOrWhiteSpace($pathTextBox.Text)) {
-                        [System.Windows.MessageBox]::Show("Please enter a UNC path.", "Validation Error", "OK", "Warning")
+                        $msgText = Get-LocalizedText -Key "MsgEnterUncPath" -Language $Language
+                        $msgTitle = Get-LocalizedText -Key "MsgValidationError" -Language $Language
+                        [System.Windows.MessageBox]::Show($msgText, $msgTitle, "OK", "Warning")
                         return
                     }
 
@@ -695,7 +699,8 @@ function Show-NetworkProfileDialog {
                     $dialog.Close()
                 } catch {
                     Write-Log -Level ERROR "Error in Network Profile dialog OK button: $($_.Exception.Message)"
-                    [System.Windows.MessageBox]::Show("An error occurred: $($_.Exception.Message)", "Error", "OK", "Error")
+                    $errorMsg = Get-LocalizedText -Key "MsgError" -Language $Language
+                    [System.Windows.MessageBox]::Show("An error occurred: $($_.Exception.Message)", $errorMsg, "OK", "Error")
                 }
             })
         }
