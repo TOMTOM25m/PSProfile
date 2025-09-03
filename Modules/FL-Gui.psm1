@@ -25,6 +25,58 @@ if (Get-Module -Name FL-Config) {
     }
 }
 
+# Global variable to store localized texts
+$Global:LocalizedTexts = $null
+
+function Get-LocalizedText {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)][string]$Key,
+        [Parameter(Mandatory = $false)][string]$Language = "en-US",
+        [Parameter(Mandatory = $false)][string[]]$FormatArgs = @()
+    )
+    
+    if ($null -eq $Global:LocalizedTexts -or $Global:LocalizedTexts.Language -ne $Language) {
+        try {
+            $languageFilePath = Join-Path $Global:ScriptDirectory "Config\$Language.json"
+            if (Test-Path $languageFilePath) {
+                $Global:LocalizedTexts = @{
+                    Language = $Language
+                    Texts = Get-Content -Path $languageFilePath -Raw | ConvertFrom-Json
+                }
+                Write-Log -Level DEBUG -Message "Loaded localization file: $languageFilePath"
+            } else {
+                Write-Log -Level WARNING -Message "Localization file not found: $languageFilePath. Using fallback."
+                $Global:LocalizedTexts = @{
+                    Language = "en-US"
+                    Texts = @{ $Key = $Key }  # Fallback to key name
+                }
+            }
+        } catch {
+            Write-Log -Level ERROR -Message "Error loading localization file: $($_.Exception.Message)"
+            return $Key  # Fallback to key name
+        }
+    }
+    
+    $text = $Global:LocalizedTexts.Texts.$Key
+    if ([string]::IsNullOrEmpty($text)) {
+        Write-Log -Level WARNING -Message "Localization key '$Key' not found for language '$Language'"
+        return $Key  # Fallback to key name
+    }
+    
+    # Apply string formatting if arguments provided
+    if ($FormatArgs.Count -gt 0) {
+        try {
+            return [string]::Format($text, $FormatArgs)
+        } catch {
+            Write-Log -Level WARNING -Message "Error formatting localized text for key '$Key': $($_.Exception.Message)"
+            return $text
+        }
+    }
+    
+    return $text
+}
+
 if (Get-Module -Name FL-Logging) {
     Write-Verbose "Module FL-Logging already loaded."
 } else {
@@ -43,6 +95,10 @@ function Show-SetupGUI {
         [PSCustomObject]$InitialConfig
     )
     Write-Log -Level INFO "GUI mode started. Loading setup window..."
+    
+    # Initialize localization
+    $currentLanguage = $InitialConfig.Language
+    Write-Log -Level DEBUG "Initializing localization for language: $currentLanguage"
 
     try {
         Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Windows.Forms
@@ -104,7 +160,7 @@ function Show-SetupGUI {
                 </Grid>
             </TabItem>
             
-            <TabItem Header="Network Profiles">
+            <TabItem Header="Network Profiles" x:Name="networkProfilesTab">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -216,6 +272,37 @@ function Show-SetupGUI {
         if ($okButton) { Write-Log -Level DEBUG "Found control: okButton" }
         #endregion
 
+        #region --- Apply Localization ---
+        Write-Log -Level DEBUG "Applying localization texts..."
+        
+        # Find and localize tab headers
+        $networkProfilesTab = $window.FindName('networkProfilesTab')
+        if ($networkProfilesTab) { 
+            $networkProfilesTab.Header = Get-LocalizedText -Key "TabNetworkProfiles" -Language $currentLanguage
+        }
+        
+        # Localize Network Profiles buttons
+        if ($addNetworkProfileButton) { 
+            $addNetworkProfileButton.Content = Get-LocalizedText -Key "BtnAddProfile" -Language $currentLanguage
+        }
+        if ($deleteNetworkProfileButton) { 
+            $deleteNetworkProfileButton.Content = Get-LocalizedText -Key "BtnDeleteProfile" -Language $currentLanguage
+        }
+        
+        # Localize main buttons
+        if ($okButton) { 
+            $okButton.Content = Get-LocalizedText -Key "BtnOK" -Language $currentLanguage
+        }
+        if ($applyButton) { 
+            $applyButton.Content = Get-LocalizedText -Key "BtnApply" -Language $currentLanguage
+        }
+        if ($cancelButton) { 
+            $cancelButton.Content = Get-LocalizedText -Key "BtnCancel" -Language $currentLanguage
+        }
+        
+        Write-Log -Level DEBUG "Localization applied successfully"
+        #endregion
+
         #region --- Initialize Data ---
         Write-Log -Level DEBUG "Initializing GUI data..."
         
@@ -257,7 +344,7 @@ function Show-SetupGUI {
             $addNetworkProfileButton.Add_Click({
                 try {
                     Write-Log -Level DEBUG "Add Network Profile button clicked"
-                    $result = Show-NetworkProfileDialog
+                    $result = Show-NetworkProfileDialog -Language $currentLanguage
                     if ($result) {
                         Write-Log -Level DEBUG "Network Profile dialog returned valid result: $($result.Name)"
                         $currentProfiles = @()
@@ -274,6 +361,49 @@ function Show-SetupGUI {
                 } catch {
                     Write-Log -Level ERROR "Error adding network profile: $($_.Exception.Message)"
                     [System.Windows.MessageBox]::Show("Error adding network profile: $($_.Exception.Message)", "Error", "OK", "Error")
+                }
+            })
+        }
+
+        # Delete Network Profile button
+        if ($deleteNetworkProfileButton) {
+            $deleteNetworkProfileButton.Add_Click({
+                try {
+                    Write-Log -Level DEBUG "Delete Network Profile button clicked"
+                    
+                    # Check if a profile is selected
+                    if ($null -eq $networkProfilesDataGrid.SelectedItem) {
+                        $msgText = Get-LocalizedText -Key "MsgSelectProfile" -Language $currentLanguage
+                        $msgTitle = Get-LocalizedText -Key "MsgNoSelection" -Language $currentLanguage
+                        [System.Windows.MessageBox]::Show($msgText, $msgTitle, "OK", "Warning")
+                        return
+                    }
+                    
+                    $selectedProfile = $networkProfilesDataGrid.SelectedItem
+                    $profileName = $selectedProfile.Name
+                    
+                    # Confirm deletion
+                    $confirmMsg = Get-LocalizedText -Key "MsgConfirmDelete" -Language $currentLanguage -FormatArgs @($profileName)
+                    $confirmTitle = Get-LocalizedText -Key "MsgConfirmDeleteTitle" -Language $currentLanguage
+                    $result = [System.Windows.MessageBox]::Show($confirmMsg, $confirmTitle, "YesNo", "Question")
+                    
+                    if ($result -eq "Yes") {
+                        # Remove from DataGrid
+                        $currentProfiles = @($networkProfilesDataGrid.ItemsSource)
+                        $updatedProfiles = $currentProfiles | Where-Object { $_.Name -ne $profileName }
+                        $networkProfilesDataGrid.ItemsSource = $updatedProfiles
+                        $networkProfilesDataGrid.Items.Refresh()
+                        
+                        Write-Log -Level INFO "Network profile '$profileName' deleted successfully"
+                        $successMsg = Get-LocalizedText -Key "MsgProfileDeleted" -Language $currentLanguage -FormatArgs @($profileName)
+                        $successTitle = Get-LocalizedText -Key "MsgProfileDeletedTitle" -Language $currentLanguage
+                        [System.Windows.MessageBox]::Show($successMsg, $successTitle, "OK", "Information")
+                    }
+                } catch {
+                    Write-Log -Level ERROR "Error deleting network profile: $($_.Exception.Message)"
+                    $errorMsg = Get-LocalizedText -Key "MsgErrorDeletingProfile" -Language $currentLanguage -FormatArgs @($_.Exception.Message)
+                    $errorTitle = Get-LocalizedText -Key "MsgError" -Language $currentLanguage
+                    [System.Windows.MessageBox]::Show($errorMsg, $errorTitle, "OK", "Error")
                 }
             })
         }
@@ -411,7 +541,8 @@ function Show-SetupGUI {
 
 function Show-NetworkProfileDialog {
     param(
-        [PSCustomObject]$ExistingProfile = $null
+        [PSCustomObject]$ExistingProfile = $null,
+        [string]$Language = "en-US"
     )
 
     try {
@@ -476,12 +607,19 @@ function Show-NetworkProfileDialog {
         $cancelButton = $dialog.FindName("cancelButton")
 
         # Debug: Check if controls were found
-        Write-Log -Level DEBUG "Controls found: EnabledCheckBox=$($enabledCheckBox -ne $null), NameTextBox=$($nameTextBox -ne $null), OkButton=$($okButton -ne $null), CancelButton=$($cancelButton -ne $null)"
+        Write-Log -Level DEBUG "Controls found: EnabledCheckBox=$($null -ne $enabledCheckBox), NameTextBox=$($null -ne $nameTextBox), OkButton=$($null -ne $okButton), CancelButton=$($null -ne $cancelButton)"
 
         if (-not $okButton -or -not $cancelButton) {
             Write-Log -Level ERROR "Critical controls not found in Network Profile dialog"
             return $null
         }
+
+        # Apply localization to dialog
+        $dialog.Title = Get-LocalizedText -Key "NetworkProfileDialogTitle" -Language $Language
+        if ($enabledCheckBox) { $enabledCheckBox.Content = Get-LocalizedText -Key "ChkEnabled" -Language $Language }
+        if ($testConnectionButton) { $testConnectionButton.Content = Get-LocalizedText -Key "BtnTestConnection" -Language $Language }
+        if ($okButton) { $okButton.Content = Get-LocalizedText -Key "BtnOK" -Language $Language }
+        if ($cancelButton) { $cancelButton.Content = Get-LocalizedText -Key "BtnCancel" -Language $Language }
 
         # Set existing values if editing
         if ($ExistingProfile) {
@@ -499,7 +637,9 @@ function Show-NetworkProfileDialog {
                 $password = $passwordBox.SecurePassword
 
                 if ([string]::IsNullOrWhiteSpace($path)) {
-                    [System.Windows.MessageBox]::Show("Please enter a UNC path.", "Validation Error", "OK", "Warning")
+                    $msgText = Get-LocalizedText -Key "MsgEnterUncPath" -Language $Language
+                    $msgTitle = Get-LocalizedText -Key "MsgValidationError" -Language $Language
+                    [System.Windows.MessageBox]::Show($msgText, $msgTitle, "OK", "Warning")
                     return
                 }
 
@@ -508,25 +648,31 @@ function Show-NetworkProfileDialog {
                     
                     # Disable the test button during test
                     $testConnectionButton.IsEnabled = $false
-                    $testConnectionButton.Content = "Testing..."
+                    $testConnectionButton.Content = Get-LocalizedText -Key "MsgTestingConnection" -Language $Language
                     
                     # Test connection with proper credential handling
                     $testResult = Test-NetworkConnection -UncPath $path -Username $username -SecurePassword $password
                     
                     if ($testResult.Success) {
                         Write-Log -Level INFO "Network connection test successful: $($testResult.Message)"
-                        [System.Windows.MessageBox]::Show("Connection test successful!`n`nDetails: $($testResult.Message)", "Test Result", "OK", "Information")
+                        $successMsg = Get-LocalizedText -Key "MsgConnectionSuccess" -Language $Language
+                        $successTitle = Get-LocalizedText -Key "MsgTestResult" -Language $Language
+                        [System.Windows.MessageBox]::Show("$successMsg`n`nDetails: $($testResult.Message)", $successTitle, "OK", "Information")
                     } else {
                         Write-Log -Level WARNING "Network connection test failed: $($testResult.Message)"
-                        [System.Windows.MessageBox]::Show("Connection test failed!`n`nError: $($testResult.Message)", "Test Result", "OK", "Warning")
+                        $failMsg = Get-LocalizedText -Key "MsgConnectionFailed" -Language $Language
+                        $failTitle = Get-LocalizedText -Key "MsgTestResult" -Language $Language
+                        [System.Windows.MessageBox]::Show("$failMsg`n`nError: $($testResult.Message)", $failTitle, "OK", "Warning")
                     }
                 } catch {
                     Write-Log -Level ERROR "Network connection test error: $($_.Exception.Message)"
-                    [System.Windows.MessageBox]::Show("Connection test failed: $($_.Exception.Message)", "Test Result", "OK", "Error")
+                    $errorMsg = Get-LocalizedText -Key "MsgConnectionFailed" -Language $Language
+                    $errorTitle = Get-LocalizedText -Key "MsgTestResult" -Language $Language
+                    [System.Windows.MessageBox]::Show("$errorMsg $($_.Exception.Message)", $errorTitle, "OK", "Error")
                 } finally {
                     # Re-enable the test button
                     $testConnectionButton.IsEnabled = $true
-                    $testConnectionButton.Content = "Test Connection"
+                    $testConnectionButton.Content = Get-LocalizedText -Key "BtnTestConnection" -Language $Language
                 }
             })
         }
