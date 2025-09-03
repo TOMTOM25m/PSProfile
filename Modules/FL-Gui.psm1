@@ -437,18 +437,24 @@ function Show-NetworkProfileDialog {
 
         if ($okButton) {
             $okButton.Add_Click({
-                # Validate input
-                if ([string]::IsNullOrWhiteSpace($nameTextBox.Text)) {
-                    [System.Windows.MessageBox]::Show("Please enter a profile name.", "Validation Error", "OK", "Warning")
-                    return
-                }
-                if ([string]::IsNullOrWhiteSpace($pathTextBox.Text)) {
-                    [System.Windows.MessageBox]::Show("Please enter a UNC path.", "Validation Error", "OK", "Warning")
-                    return
-                }
+                try {
+                    # Validate input
+                    if ([string]::IsNullOrWhiteSpace($nameTextBox.Text)) {
+                        [System.Windows.MessageBox]::Show("Please enter a profile name.", "Validation Error", "OK", "Warning")
+                        return
+                    }
+                    if ([string]::IsNullOrWhiteSpace($pathTextBox.Text)) {
+                        [System.Windows.MessageBox]::Show("Please enter a UNC path.", "Validation Error", "OK", "Warning")
+                        return
+                    }
 
-                $dialog.DialogResult = $true
-                $dialog.Close()
+                    Write-Log -Level DEBUG "Network Profile dialog - OK button clicked with valid data"
+                    $dialog.DialogResult = $true
+                    $dialog.Close()
+                } catch {
+                    Write-Log -Level ERROR "Error in Network Profile dialog OK button: $($_.Exception.Message)"
+                    [System.Windows.MessageBox]::Show("An error occurred: $($_.Exception.Message)", "Error", "OK", "Error")
+                }
             })
         }
 
@@ -462,13 +468,23 @@ function Show-NetworkProfileDialog {
         $result = $dialog.ShowDialog()
 
         if ($result -eq $true) {
-            return [PSCustomObject]@{
-                Enabled = $enabledCheckBox.IsChecked
-                Name = $nameTextBox.Text
-                Path = $pathTextBox.Text
-                Username = $usernameTextBox.Text
-                Password = $passwordBox.SecurePassword
+            # Validate that we have the necessary data
+            if ([string]::IsNullOrWhiteSpace($nameTextBox.Text) -or 
+                [string]::IsNullOrWhiteSpace($pathTextBox.Text)) {
+                Write-Log -Level ERROR "Invalid network profile data - name or path is empty"
+                return $null
             }
+
+            # Create the return object with safe property access
+            $profileResult = [PSCustomObject]@{
+                Enabled = if ($enabledCheckBox) { $enabledCheckBox.IsChecked } else { $true }
+                Name = if ($nameTextBox) { $nameTextBox.Text } else { "" }
+                Path = if ($pathTextBox) { $pathTextBox.Text } else { "" }
+                Username = if ($usernameTextBox) { $usernameTextBox.Text } else { "" }
+            }
+            
+            Write-Log -Level DEBUG "Network profile created: Name='$($profileResult.Name)', Path='$($profileResult.Path)'"
+            return $profileResult
         }
 
         return $null
