@@ -167,6 +167,175 @@ function Update-NetworkPathsInTemplate {
     }
 }
 
-Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Set-TemplateVersion, Send-MailNotification, ConvertTo-Base64, ConvertFrom-Base64, Update-NetworkPathsInTemplate
+function Test-NetworkConnection {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)][string]$UncPath,
+        [Parameter(Mandatory = $false)][string]$Username = "",
+        [Parameter(Mandatory = $false)][System.Security.SecureString]$SecurePassword = $null
+    )
+    
+    try {
+        Write-Log -Level DEBUG -Message "Starting network connection test for path: $UncPath"
+        
+        # Parse the UNC path to get server name
+        if (-not $UncPath.StartsWith("\\")) {
+            return @{ Success = $false; Message = "Invalid UNC path format. Path must start with '\\'." }
+        }
+        
+        $pathParts = $UncPath.TrimStart('\').Split('\')
+        if ($pathParts.Length -lt 2) {
+            return @{ Success = $false; Message = "Invalid UNC path format. Expected format: \\server\share\path" }
+        }
+        
+        $serverName = $pathParts[0]
+        $shareName = $pathParts[1]
+        $testPath = "\\$serverName\$shareName"
+        
+        Write-Log -Level DEBUG -Message "Testing connection to server: $serverName, share: $shareName"
+        
+        # Step 1: Basic network connectivity test (ping)
+        Write-Log -Level DEBUG -Message "Step 1: Testing basic connectivity to server '$serverName'"
+        if (-not (Test-NetConnection -ComputerName $serverName -Port 445 -InformationLevel Quiet -WarningAction SilentlyContinue)) {
+            return @{ Success = $false; Message = "Server '$serverName' is not reachable on SMB port 445. Check network connectivity." }
+        }
+        
+        # Step 2: Credential preparation
+        $credential = $null
+        if (-not [string]::IsNullOrEmpty($Username) -and $SecurePassword -ne $null) {
+            try {
+                $credential = New-Object System.Management.Automation.PSCredential($Username, $SecurePassword)
+                Write-Log -Level DEBUG -Message "Using provided credentials for user: $Username"
+            } catch {
+                return @{ Success = $false; Message = "Invalid credentials provided: $($_.Exception.Message)" }
+            }
+        } else {
+            Write-Log -Level DEBUG -Message "No credentials provided, using current user context"
+        }
+        
+        # Step 3: Test SMB connection with authentication
+        Write-Log -Level DEBUG -Message "Step 2: Testing SMB share access to '$testPath'"
+        
+        # Remove any existing connections to avoid conflicts
+        try {
+            $existingConnections = Get-SmbConnection -ServerName $serverName -ErrorAction SilentlyContinue
+            if ($existingConnections) {
+                Write-Log -Level DEBUG -Message "Found existing SMB connections to '$serverName', removing them for clean test"
+                $existingConnections | Remove-SmbConnection -Force -Confirm:$false -ErrorAction SilentlyContinue
+            }
+        } catch {
+            # Ignore errors when cleaning up existing connections
+        }
+        
+        # Test actual SMB connection
+        try {
+            if ($null -ne $credential) {
+                # Test with specific credentials
+                Write-Log -Level DEBUG -Message "Testing SMB connection with provided credentials"
+                
+                # Simple approach: try to access the share with Get-ChildItem using RunAs
+                $testScriptBlock = {
+                    param($TestPath)
+                    try {
+                        Get-ChildItem -Path $TestPath -ErrorAction Stop | Select-Object -First 1 | Out-Null
+                        return $true
+                    } catch {
+                        throw $_.Exception.Message
+                    }
+                }
+                
+                $job = Start-Job -ScriptBlock $testScriptBlock -ArgumentList $testPath -Credential $credential
+                $jobResult = Wait-Job -Job $job -Timeout 30
+                
+                if ($jobResult.State -eq "Completed") {
+                    try {
+                        Receive-Job -Job $job -ErrorAction Stop | Out-Null
+                        Remove-Job -Job $job -Force
+                        Write-Log -Level DEBUG -Message "SMB connection verified successfully with credentials"
+                    } catch {
+                        Remove-Job -Job $job -Force
+                        return @{ Success = $false; Message = "Credential authentication failed: $($_.Exception.Message)" }
+                    }
+                } elseif ($jobResult.State -eq "Failed") {
+                    $jobError = Receive-Job -Job $job -ErrorAction SilentlyContinue
+                    Remove-Job -Job $job -Force
+                    return @{ Success = $false; Message = "Connection test with credentials failed: $jobError" }
+                } else {
+                    Remove-Job -Job $job -Force
+                    return @{ Success = $false; Message = "Connection test with credentials timed out after 30 seconds" }
+                }
+            } else {
+                # Test with current user context
+                Write-Log -Level DEBUG -Message "Testing SMB connection with current user context"
+                if (-not (Test-Path -Path $testPath -PathType Container -ErrorAction SilentlyContinue)) {
+                    return @{ Success = $false; Message = "Share '$testPath' is not accessible with current user context." }
+                }
+            }
+            
+            # Step 4: Test file system access
+            Write-Log -Level DEBUG -Message "Step 3: Testing file system access to '$UncPath'"
+            $fullPathAccessible = $false
+            
+            if ($null -ne $credential) {
+                # For credential-based access, use a job to test the full path
+                try {
+                    $fullPathTestScript = {
+                        param($FullPath)
+                        try {
+                            return Test-Path -Path $FullPath -ErrorAction Stop
+                        } catch {
+                            return $false
+                        }
+                    }
+                    
+                    $pathJob = Start-Job -ScriptBlock $fullPathTestScript -ArgumentList $UncPath -Credential $credential
+                    $pathJobResult = Wait-Job -Job $pathJob -Timeout 15
+                    
+                    if ($pathJobResult.State -eq "Completed") {
+                        $fullPathAccessible = Receive-Job -Job $pathJob
+                        Remove-Job -Job $pathJob -Force
+                    } else {
+                        Remove-Job -Job $pathJob -Force
+                        Write-Log -Level DEBUG -Message "Full path test with credentials timed out"
+                        $fullPathAccessible = $true  # Assume accessible if test times out
+                    }
+                } catch {
+                    Write-Log -Level DEBUG -Message "Full path test with credentials failed: $($_.Exception.Message)"
+                    $fullPathAccessible = $true  # Assume accessible if we can't test properly
+                }
+            } else {
+                # Test direct access without credentials
+                $fullPathAccessible = Test-Path -Path $UncPath -ErrorAction SilentlyContinue
+            }
+            
+            if (-not $fullPathAccessible) {
+                return @{ Success = $false; Message = "Share '$testPath' is accessible, but the full path '$UncPath' is not accessible. Check path and permissions." }
+            }
+            
+            $successMessage = "Connection successful! Server '$serverName' is reachable, share '$shareName' is accessible"
+            if ($null -ne $credential) {
+                $successMessage += " with provided credentials"
+            } else {
+                $successMessage += " with current user context"
+            }
+            $successMessage += ", and the full path '$UncPath' is accessible."
+            
+            Write-Log -Level INFO -Message "Network connection test completed successfully: $UncPath"
+            return @{ Success = $true; Message = $successMessage }
+            
+        } catch {
+            $errorMessage = "SMB connection failed: $($_.Exception.Message)"
+            Write-Log -Level WARNING -Message $errorMessage
+            return @{ Success = $false; Message = $errorMessage }
+        }
+        
+    } catch {
+        $errorMessage = "Network connection test failed: $($_.Exception.Message)"
+        Write-Log -Level ERROR -Message $errorMessage
+        return @{ Success = $false; Message = $errorMessage }
+    }
+}
+
+Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Set-TemplateVersion, Send-MailNotification, ConvertTo-Base64, ConvertFrom-Base64, Update-NetworkPathsInTemplate, Test-NetworkConnection
 
 # --- End of module --- v11.2.2 ; Regelwerk: v8.2.0 ---

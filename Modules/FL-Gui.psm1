@@ -121,7 +121,8 @@ function Show-SetupGUI {
                     </DataGrid>
                     
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="5">
-                        <Button x:Name="addNetworkProfileButton" Content="Add Profile" Width="100" Height="30"/>
+                        <Button x:Name="addNetworkProfileButton" Content="Add Profile" Width="100" Height="30" Margin="0,0,10,0"/>
+                        <Button x:Name="deleteNetworkProfileButton" Content="Delete Profile" Width="100" Height="30"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -188,6 +189,7 @@ function Show-SetupGUI {
         $whatIfCheckBox = $window.FindName('whatIfCheckBox')
         $networkProfilesDataGrid = $window.FindName('networkProfilesDataGrid')
         $addNetworkProfileButton = $window.FindName('addNetworkProfileButton')
+        $deleteNetworkProfileButton = $window.FindName('deleteNetworkProfileButton')
         $enableMailCheckBox = $window.FindName('enableMailCheckBox')
         $smtpServerTextBox = $window.FindName('smtpServerTextBox')
         $senderTextBox = $window.FindName('senderTextBox')
@@ -203,6 +205,7 @@ function Show-SetupGUI {
         if ($whatIfCheckBox) { Write-Log -Level DEBUG "Found control: whatIfCheckBox" }
         if ($networkProfilesDataGrid) { Write-Log -Level DEBUG "Found control: networkProfilesDataGrid" }
         if ($addNetworkProfileButton) { Write-Log -Level DEBUG "Found control: addNetworkProfileButton" }
+        if ($deleteNetworkProfileButton) { Write-Log -Level DEBUG "Found control: deleteNetworkProfileButton" }
         if ($enableMailCheckBox) { Write-Log -Level DEBUG "Found control: enableMailCheckBox" }
         if ($smtpServerTextBox) { Write-Log -Level DEBUG "Found control: smtpServerTextBox" }
         if ($senderTextBox) { Write-Log -Level DEBUG "Found control: senderTextBox" }
@@ -501,10 +504,29 @@ function Show-NetworkProfileDialog {
                 }
 
                 try {
-                    # Test connection logic here
-                    [System.Windows.MessageBox]::Show("Connection test successful!", "Test Result", "OK", "Information")
+                    Write-Log -Level DEBUG "Testing connection to '$path' with username '$username'"
+                    
+                    # Disable the test button during test
+                    $testConnectionButton.IsEnabled = $false
+                    $testConnectionButton.Content = "Testing..."
+                    
+                    # Test connection with proper credential handling
+                    $testResult = Test-NetworkConnection -UncPath $path -Username $username -SecurePassword $password
+                    
+                    if ($testResult.Success) {
+                        Write-Log -Level INFO "Network connection test successful: $($testResult.Message)"
+                        [System.Windows.MessageBox]::Show("Connection test successful!`n`nDetails: $($testResult.Message)", "Test Result", "OK", "Information")
+                    } else {
+                        Write-Log -Level WARNING "Network connection test failed: $($testResult.Message)"
+                        [System.Windows.MessageBox]::Show("Connection test failed!`n`nError: $($testResult.Message)", "Test Result", "OK", "Warning")
+                    }
                 } catch {
+                    Write-Log -Level ERROR "Network connection test error: $($_.Exception.Message)"
                     [System.Windows.MessageBox]::Show("Connection test failed: $($_.Exception.Message)", "Test Result", "OK", "Error")
+                } finally {
+                    # Re-enable the test button
+                    $testConnectionButton.IsEnabled = $true
+                    $testConnectionButton.Content = "Test Connection"
                 }
             })
         }
