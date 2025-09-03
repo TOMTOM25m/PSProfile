@@ -110,7 +110,7 @@ function Show-SetupGUI {
         $xaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SetupGUI Reset-PowerShellProfiles Version : v11.2.2" Height="600" Width="800" MinHeight="500" MinWidth="700"
+        Title="SetupGUI Reset-PowerShellProfiles" Height="600" Width="800" MinHeight="500" MinWidth="700"
         WindowStartupLocation="CenterScreen" ShowInTaskbar="True" Background="#F0F0F0"
         Topmost="True" ShowActivated="True" Focusable="True" WindowState="Normal">
     <Window.Resources>
