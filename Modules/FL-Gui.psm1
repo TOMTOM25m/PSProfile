@@ -54,7 +54,8 @@ function Show-SetupGUI {
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="SetupGUI Reset-PowerShellProfiles Version : v11.2.2" Height="600" Width="800" MinHeight="500" MinWidth="700"
-        WindowStartupLocation="CenterScreen" ShowInTaskbar="True" Background="#F0F0F0">
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="True" Background="#F0F0F0"
+        Topmost="True" ShowActivated="True" Focusable="True" WindowState="Normal">
     <Window.Resources>
         <SolidColorBrush x:Key="PrimaryBrush" Color="#111d4e"/>
         <Style TargetType="Button">
@@ -172,6 +173,11 @@ function Show-SetupGUI {
         $reader = [System.Xml.XmlNodeReader]::new([xml]$xaml)
         $window = [Windows.Markup.XamlReader]::Load($reader)
         $window.Title = $windowTitle
+
+        # Ensure window appears in foreground and is focused
+        $window.Topmost = $true
+        $window.ShowActivated = $true
+        $window.WindowState = [System.Windows.WindowState]::Normal
 
         #endregion
 
@@ -295,6 +301,15 @@ function Show-SetupGUI {
 
         #region --- Show Dialog ---
         Write-Log -Level INFO "Showing setup GUI..."
+        
+        # Additional activation to ensure the window appears in foreground
+        $window.Activate()
+        $window.Focus()
+        
+        # Temporarily set Topmost to true, then false to bring to front
+        $window.Topmost = $true
+        $window.Topmost = $false
+        
         $result = $window.ShowDialog()
 
         if ($result -eq $true) {
