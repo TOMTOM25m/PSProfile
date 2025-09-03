@@ -97,6 +97,26 @@ By using these scripts, you agree to be bound by the above terms.
                 EncryptedPassword = ""
             }
         )
+        Templates              = @(
+            @{
+                Name = "Standard Profile"
+                FilePath = "Templates\\Profile-template.ps1"
+                Enabled = $true
+                Description = "Default PowerShell profile template"
+            },
+            @{
+                Name = "Extended Profile"
+                FilePath = "Templates\\Profile-templateX.ps1"
+                Enabled = $true
+                Description = "Extended PowerShell profile with additional features"
+            },
+            @{
+                Name = "Modern Profile"
+                FilePath = "Templates\\Profile-templateMOD.ps1"
+                Enabled = $true
+                Description = "Modern PowerShell profile with contemporary styling"
+            }
+        )
     }
 }
 
