@@ -173,7 +173,7 @@ try {
         $templateSourcePath = Invoke-GitUpdate
     }
     if ($null -eq $templateSourcePath) {
-        $templateSourcePath = $Global:ScriptDirectory
+        $templateSourcePath = Join-Path $Global:ScriptDirectory 'Templates'
         Write-Log -Level INFO -Message "Using local template files from: $templateSourcePath"
     }
     $Global:Config.TemplateFilePaths = @{
