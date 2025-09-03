@@ -244,12 +244,25 @@ function Show-SetupGUI {
         # Add Network Profile button
         if ($addNetworkProfileButton) {
             $addNetworkProfileButton.Add_Click({
-                $result = Show-NetworkProfileDialog
-                if ($result) {
-                    $currentProfiles = @($networkProfilesDataGrid.ItemsSource)
-                    $currentProfiles += $result
-                    $networkProfilesDataGrid.ItemsSource = $currentProfiles
-                    $networkProfilesDataGrid.Items.Refresh()
+                try {
+                    Write-Log -Level DEBUG "Add Network Profile button clicked"
+                    $result = Show-NetworkProfileDialog
+                    if ($result) {
+                        Write-Log -Level DEBUG "Network Profile dialog returned valid result: $($result.Name)"
+                        $currentProfiles = @()
+                        if ($networkProfilesDataGrid.ItemsSource) {
+                            $currentProfiles = @($networkProfilesDataGrid.ItemsSource)
+                        }
+                        $currentProfiles += $result
+                        $networkProfilesDataGrid.ItemsSource = $currentProfiles
+                        $networkProfilesDataGrid.Items.Refresh()
+                        Write-Log -Level INFO "Network profile '$($result.Name)' added successfully"
+                    } else {
+                        Write-Log -Level DEBUG "Network Profile dialog was cancelled or returned null"
+                    }
+                } catch {
+                    Write-Log -Level ERROR "Error adding network profile: $($_.Exception.Message)"
+                    [System.Windows.MessageBox]::Show("Error adding network profile: $($_.Exception.Message)", "Error", "OK", "Error")
                 }
             })
         }

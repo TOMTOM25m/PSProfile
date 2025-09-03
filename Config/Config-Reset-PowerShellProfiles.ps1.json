@@ -5,7 +5,7 @@
   "Environment": "DEV",
   "WhatIfMode": false,
   "Disclaimer": {
-    "DE": "Die bereitgestellten Skripte und die zugehÃ¶rige Dokumentation werden \"wie besehen\" (\"as is\")\nohne ausdrÃ¼ckliche oder stillschweigende GewÃ¤hrleistung jeglicher Art zur VerfÃ¼gung gestellt.\nInsbesondere wird keinerlei GewÃ¤hr Ã¼bernommen fÃ¼r die MarktgÃ¤ngigkeit, die Eignung fÃ¼r einen bestimmten Zweck\noder die Nichtverletzung von Rechten Dritter.\nEs besteht keine Verpflichtung zur Wartung, Aktualisierung oder UnterstÃ¼tzung der Skripte. Jegliche Nutzung erfolgt auf eigenes Risiko.\nIn keinem Fall haften Herr Flecki Garnreiter, sein Arbeitgeber oder die Mitwirkenden an der Erstellung,\nEntwicklung oder Verbreitung dieser Skripte fÃ¼r direkte, indirekte, zufÃ¤llige, besondere oder FolgeschÃ¤den - einschlieÃŸlich,\naber nicht beschrÃ¤nkt auf entgangenen Gewinn, Betriebsunterbrechungen, Datenverlust oder sonstige wirtschaftliche Verluste -,\nselbst wenn sie auf die MÃ¶glichkeit solcher SchÃ¤den hingewiesen wurden.\nDurch die Nutzung der Skripte erklÃ¤ren Sie sich mit diesen Bedingungen einverstanden.",
+    "DE": "Die bereitgestellten Skripte und die zugehÃƒÂ¶rige Dokumentation werden \"wie besehen\" (\"as is\")\nohne ausdrÃƒÂ¼ckliche oder stillschweigende GewÃƒÂ¤hrleistung jeglicher Art zur VerfÃƒÂ¼gung gestellt.\nInsbesondere wird keinerlei GewÃƒÂ¤hr ÃƒÂ¼bernommen fÃƒÂ¼r die MarktgÃƒÂ¤ngigkeit, die Eignung fÃƒÂ¼r einen bestimmten Zweck\noder die Nichtverletzung von Rechten Dritter.\nEs besteht keine Verpflichtung zur Wartung, Aktualisierung oder UnterstÃƒÂ¼tzung der Skripte. Jegliche Nutzung erfolgt auf eigenes Risiko.\nIn keinem Fall haften Herr Flecki Garnreiter, sein Arbeitgeber oder die Mitwirkenden an der Erstellung,\nEntwicklung oder Verbreitung dieser Skripte fÃƒÂ¼r direkte, indirekte, zufÃƒÂ¤llige, besondere oder FolgeschÃƒÂ¤den - einschlieÃƒÅ¸lich,\naber nicht beschrÃƒÂ¤nkt auf entgangenen Gewinn, Betriebsunterbrechungen, Datenverlust oder sonstige wirtschaftliche Verluste -,\nselbst wenn sie auf die MÃƒÂ¶glichkeit solcher SchÃƒÂ¤den hingewiesen wurden.\nDurch die Nutzung der Skripte erklÃƒÂ¤ren Sie sich mit diesen Bedingungen einverstanden.",
     "EN": "The scripts and accompanying documentation are provided \"as is,\" without warranty of any kind, either express or implied.\nFlecki Garnreiter and his employer disclaim all warranties, including but not limited to the implied warranties of merchantability,\nfitness for a particular purpose, and non-infringement.\nThere is no obligation to provide maintenance, support, updates, or enhancements for the scripts.\nUse of these scripts is at your own risk. Under no circumstances shall Flecki Garnreiter, his employer, the authors,\nor any party involved in the creation, production, or distribution of the scripts be held liable for any damages whatever,\nincluding but not not limited to direct, indirect, incidental, consequential, or special damages\n(such as loss of profits, business interruption, or loss of business data), even if advised of the possibility of such damages.\nBy using these scripts, you agree to be bound by the above terms."
   },
   "GuiAssets": {
@@ -56,9 +56,9 @@
     "RepoUrl": "https://github.com/TOMTOM25m/PSProfile.git"
   },
   "TemplateFilePaths": {
-    "ProfileMOD": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-templateMOD.ps1",
+    "ProfileX": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-templateX.ps1",
     "Profile": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-template.ps1",
-    "ProfileX": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-templateX.ps1"
+    "ProfileMOD": "F:\\DEV\\repositories\\GitCache\\repository\\Profile-templateMOD.ps1"
   },
   "NetworkProfiles": []
 }
