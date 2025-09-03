@@ -305,7 +305,7 @@ function Show-SetupGUI {
         # Find and localize tab headers
         $networkProfilesTab = $window.FindName('networkProfilesTab')
         if ($networkProfilesTab) { 
-            $networkProfilesTab.Header = Get-LocalizedText -Key "TabNetworkProfiles" -Language $currentLanguage
+            $networkProfilesTab.Header = Get-LocalizedText -Key "TabNetwork" -Language $currentLanguage
         }
         
         $templatesTab = $window.FindName('templatesTab')

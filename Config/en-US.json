@@ -43,7 +43,7 @@
   "LblGitBranch": "Branch",
   "LblGitCachePath": "Local Cache Path",
       "TabMain": "Main",
-    "TabNetwork": "Network Profiles",
+    "TabNetwork": "NetworkPath",
     "TabAdvanced": "Advanced",
     "TabTemplates": "Templates",
   "HelpNetworkProfiles": "Configure network paths with encrypted credentials for automatic mounting.",
