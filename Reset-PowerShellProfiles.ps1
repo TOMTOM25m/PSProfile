@@ -71,8 +71,18 @@ catch {
 
 #region ####################### [3. Script Main Body] ##############################
 $oldVersion = try {
-    (Get-Content -Path $MyInvocation.MyCommand.Path -ErrorAction SilentlyContinue | Select-String 'old:\s*(v[\d\.]+)' | ForEach-Object { $_.Matches.Groups[1].Value })[0]
-} catch { "v0.0.0" }
+    $content = Get-Content -Path $MyInvocation.MyCommand.Path -ErrorAction SilentlyContinue
+    # Look for pattern: old: vX.Y.Z
+    $pattern = 'old:\s*(v\d+\.\d+\.\d+)'
+    $match = $content | Select-String $pattern
+    if ($match) {
+        $match.Matches[0].Groups[1].Value
+    } else {
+        "v0.0.0"
+    }
+} catch { 
+    "v0.0.0" 
+}
 
 # --- Handle dedicated operational modes first ---
 if ($Setup.IsPresent) {

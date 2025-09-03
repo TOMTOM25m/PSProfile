@@ -186,7 +186,7 @@ Der Templates Tab bietet folgende Funktionalität:
 * **Delete Template:** Button zum Löschen ausgewählter Templates mit Bestätigung
 * **Template Dialog:** Browse-Funktionalität, Validierung und Test-Möglichkeit für Templates
 
-#### Template Dialog Funktionen:
+#### Template Dialog Funktionen
 
 * **File Browse:** Auswahl von Template-Dateien über OpenFileDialog
 * **Validation:** Überprüfung ob Template-Datei existiert und erreichbar ist
@@ -235,17 +235,20 @@ Sprachdateien müssen für alle GUI-Elemente vollständige Übersetzungen enthal
 Für die Signierung von PowerShell-Skripten und die Erstellung von EXE-Dateien:
 
 1. **Selbstsigniertes Zertifikat erstellen:**
+
    ```powershell
    $cert = New-SelfSignedCertificate -Subject "CN=Flecki Garnreiter Code Signing" -Type CodeSigning -KeyUsage DigitalSignature -FriendlyName "Flecki Code Signing Certificate" -CertStoreLocation Cert:\CurrentUser\My -KeyExportPolicy ExportableEncrypted -KeySpec Signature -KeyLength 2048 -KeyAlgorithm RSA -HashAlgorithm SHA256
    ```
 
 2. **Zertifikat vertrauenswürdig machen:**
+
    ```powershell
    Export-Certificate -Cert $cert -FilePath "FleckiCodeSigning.cer"
    Import-Certificate -FilePath "FleckiCodeSigning.cer" -CertStoreLocation Cert:\LocalMachine\Root
    ```
 
 3. **Skripte signieren:**
+
    ```powershell
    Set-AuthenticodeSignature -FilePath "Script.ps1" -Certificate $cert -TimestampServer "http://timestamp.digicert.com"
    ```
@@ -260,6 +263,7 @@ Invoke-PS2EXE -inputFile "Reset-PowerShellProfiles.ps1" -outputFile "Reset-Power
 ```
 
 **Nachträgliche Signierung der EXE:**
+
 ```powershell
 Set-AuthenticodeSignature -FilePath "Reset-PowerShellProfiles.exe" -Certificate $cert -TimestampServer "http://timestamp.digicert.com"
 ```
@@ -325,5 +329,4 @@ if (-not $config.Templates) {
 ---
 
 **Ende des Regelwerks v9.0.9**
-
 © 2025 Flecki Garnreiter - Alle Rechte vorbehalten.
