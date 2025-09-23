@@ -98,8 +98,20 @@ function Initialize-LocalAssets {
                     New-Item -Path $localDir -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
                 }
                 try {
-                    Copy-Item -Path $sourcePath -Destination $destPath -Force -ErrorAction Stop
-                    Write-Log -Level INFO -Message "$assetName successfully copied to $destPath"
+                    # Regelwerk v9.5.0 Compliance: Use robocopy for UNC path operations
+                    $robocopyArgs = @('/E', '/R:3', '/W:5')
+                    $assetFileName = Split-Path $sourcePath -Leaf
+                    $assetSourceDir = Split-Path $sourcePath -Parent
+                    $assetDestDir = Split-Path $destPath -Parent
+                    
+                    Write-Log -Level INFO -Message "Using robocopy for UNC path operation (Regelwerk v9.5.0): robocopy `"$assetSourceDir`" `"$assetDestDir`" `"$assetFileName`" /E /R:3 /W:5"
+                    & robocopy $assetSourceDir $assetDestDir $assetFileName @robocopyArgs | Out-Null
+                    
+                    if ($LASTEXITCODE -le 3) {
+                        Write-Log -Level INFO -Message "$assetName successfully copied to $destPath via robocopy (exit code: $LASTEXITCODE)"
+                    } else {
+                        throw "Robocopy failed with exit code: $LASTEXITCODE"
+                    }
                 }
                 catch {
                     Write-Log -Level WARNING -Message "Could not copy $assetName from UNC path: $($_.Exception.Message)"
