@@ -1,12 +1,12 @@
 <#
 .SYNOPSIS
-    [DE] Setzt alle PowerShell-Profile auf einen Standard zurück und verwaltet die Konfiguration über eine GUI.
+    [DE] Setzt alle PowerShell-Profile auf einen Standard zurueck und verwaltet die Konfiguration ueber eine GUI.
     [EN] Resets all PowerShell profiles to a standard and manages the configuration via a GUI.
 .DESCRIPTION
-    [DE] Ein vollumfängliches Verwaltungsskript für PowerShell-Profile gemäss MUW-Regeln. Es erzwingt Administratorrechte,
+    [DE] Ein vollumfaengliches Verwaltungsskript fuer PowerShell-Profile gemaess MUW-Regeln. Es erzwingt Administratorrechte,
          stellt die UTF-8-Kodierung sicher und bietet eine WPF-basierte GUI (-Setup) zur Konfiguration. Bei fehlender
-         oder korrupter Konfiguration startet die GUI automatisch. Das Skript führt eine Versionskontrolle der Konfiguration
-         durch, versioniert die Profil-Vorlagen, schreibt in das Windows Event Log und beinhaltet eine voll funktionsfähige
+         oder korrupter Konfiguration startet die GUI automatisch. Das Skript fuehrt eine Versionskontrolle der Konfiguration
+         durch, versioniert die Profil-Vorlagen, schreibt in das Windows Event Log und beinhaltet eine voll funktionsfaehige
          Log-Archivierung sowie einen Mail-Versand.
     [EN] A comprehensive management script for PowerShell profiles according to MUW rules. It enforces administrator rights,
          ensures UTF-8 encoding, and provides a WPF-based GUI (-Setup) for configuration. The GUI starts automatically
@@ -25,7 +25,7 @@
     old Version:    v11.2.1
     Version now:    v11.2.2
     MUW-Regelwerk:  v8.2.0
-    Notes:          [DE] Network Profiles-Feature hinzugefügt: Konfigurierbare Netzwerkpfade mit verschlüsselten Credentials für Profile-TemplateX.ps1.
+    Notes:          [DE] Network Profiles-Feature hinzugefuegt: Konfigurierbare Netzwerkpfade mit verschluesselten Credentials fuer Profile-TemplateX.ps1.
                     [EN] Added Network Profiles feature: Configurable network paths with encrypted credentials for Profile-TemplateX.ps1.
     Copyright:      © 2025 Flecki Garnreiter
     License:        MIT License
