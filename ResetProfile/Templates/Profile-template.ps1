@@ -90,7 +90,7 @@ if ($global:ProfileLoadedVersion -eq 'v25.0.0-Professional') {
 }
 $global:ProfileLoadedVersion = 'v25.0.0-Professional'
 
-# Enhanced PowerShell version detection
+# Enhanced PowerShell version detection (PS 5.1 compatible)
 $global:PSVersionInfo = [PSCustomObject]@{
     Major = $PSVersionTable.PSVersion.Major
     Minor = $PSVersionTable.PSVersion.Minor
@@ -104,16 +104,23 @@ $global:PSVersionInfo = [PSCustomObject]@{
 
 # Initialize global variables with error handling
 try {
-    $global:IsAdmin = if ($global:PSVersionInfo.Platform -eq 'Unix') {
-        (id -u) -eq 0
+    # PS 5.1 compatible admin detection
+    if ($global:PSVersionInfo.Platform -eq 'Unix') {
+        $global:IsAdmin = (id -u) -eq 0
     } else {
-        ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+        $global:IsAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     }
     
     $global:IsModernPS = $global:PSVersionInfo.IsModern
-    $global:IsWindows = $global:PSVersionInfo.Platform -ne 'Unix' -and $global:PSVersionInfo.Platform -ne 'MacOS'
     
-    # PowerShell 5.1 compatible version of null coalescing
+    # PS 5.1 compatible platform detection
+    if ($PSVersionTable.Platform) {
+        $global:IsWindows = $PSVersionTable.Platform -ne 'Unix' -and $PSVersionTable.Platform -ne 'MacOS'
+    } else {
+        $global:IsWindows = $true  # PS 5.1 is Windows only
+    }
+    
+    # PS 5.1 compatible path detection (no null coalescing operator)
     if ($PSCommandPath) { 
         $global:ProfilePath = $PSCommandPath 
     } else { 
@@ -146,6 +153,9 @@ if ($LoadExtensions) {
 #region ═══════════════════════════════════════════════════════════════════════════════════════════════
 #                           VERSION-SPECIFIC FUNCTION IMPLEMENTATIONS
 #═══════════════════════════════════════════════════════════════════════════════════════════════════════
+
+# Initialize Git Status Cache
+if (-not $global:GitStatusCache) { $global:GitStatusCache = @{} }
 
 # PowerShell 5.1 specific functions
 if ($global:PSVersionInfo.IsLegacy) {
@@ -189,7 +199,7 @@ if ($global:PSVersionInfo.IsLegacy) {
         $now = Get-Date
         
         # Use cache if less than 30 seconds old
-        if ($global:GitStatusCache -and $global:GitStatusCache[$cacheKey] -and 
+        if ($global:GitStatusCache[$cacheKey] -and 
             ($now - $global:GitStatusCache[$cacheKey].Time).TotalSeconds -lt 30) {
             return $global:GitStatusCache[$cacheKey].Status
         }
@@ -200,11 +210,14 @@ if ($global:PSVersionInfo.IsLegacy) {
                 if ($LASTEXITCODE -eq 0) {
                     $branch = & git rev-parse --abbrev-ref HEAD 2>$null
                     $status = & git status --porcelain 2>$null
-                    $indicator = if ($status) { "±" } else { "✓" }
+                    if ($status) { 
+                        $indicator = "±" 
+                    } else { 
+                        $indicator = "✓" 
+                    }
                     $result = " (git:$branch$indicator)"
                     
-                    # Initialize cache if not exists
-                    if (-not $global:GitStatusCache) { $global:GitStatusCache = @{} }
+                    # Cache the result
                     $global:GitStatusCache[$cacheKey] = @{
                         Status = $result
                         Time = $now
@@ -269,9 +282,14 @@ if ($global:PSVersionInfo.IsLegacy) {
         $gitInfo = Get-GitStatus-PS51
         if ($gitInfo) { Write-Host "$gitInfo " -NoNewline -ForegroundColor Magenta }
 
-        # User and admin status
-        $userColor = if ($global:IsAdmin) { "Red" } else { "Cyan" }
-        $userPrefix = if ($global:IsAdmin) { "Admin" } else { "User" }
+        # User and admin status (PS 5.1 compatible)
+        if ($global:IsAdmin) { 
+            $userColor = "Red"
+            $userPrefix = "Admin"
+        } else { 
+            $userColor = "Cyan"
+            $userPrefix = "User"
+        }
         $userText = "[$($env:USERNAME)@$userPrefix-PS$($PSVersionTable.PSVersion.Major)]"
         Write-Host "$userText " -NoNewline -ForegroundColor $userColor
 
@@ -311,13 +329,17 @@ if ($global:PSVersionInfo.IsLegacy) {
     
     # Display PS 5.1 startup message
     if (-not $Quiet) {
-        $adminText = if ($global:IsAdmin) { "Admin" } else { "User " }
+        if ($global:IsAdmin) { 
+            $adminText = "Admin" 
+        } else { 
+            $adminText = "User " 
+        }
         Write-Host "🔧 PowerShell 5.1 Legacy Profile v25.0.0 (Regelwerk v9.6.0) geladen" -ForegroundColor Cyan
         Write-Host "⚙️  Edition: $($PSVersionTable.PSEdition) | Platform: Windows | Rights: $adminText" -ForegroundColor Yellow
     }
 
 } else {
-    #region ####################### PowerShell 7.x Modern Features #######################
+    # PowerShell 7.x Modern Features (using only PS 7.x compatible syntax here)
     
     # PS 7.x System Info with modern cmdlets
     function Get-SystemInfo-PS7 {
@@ -383,7 +405,7 @@ if ($global:PSVersionInfo.IsLegacy) {
         $now = Get-Date
         
         # Use cache if less than 30 seconds old
-        if ($global:GitStatusCache -and $global:GitStatusCache[$cacheKey] -and 
+        if ($global:GitStatusCache[$cacheKey] -and 
             ($now - $global:GitStatusCache[$cacheKey].Time).TotalSeconds -lt 30) {
             return $global:GitStatusCache[$cacheKey].Status
         }
@@ -396,8 +418,7 @@ if ($global:PSVersionInfo.IsLegacy) {
                     $status = if ($gitStatus) { "±" } else { "✓" }
                     $result = " ($branch$status)"
                     
-                    # Initialize cache if not exists
-                    if (-not $global:GitStatusCache) { $global:GitStatusCache = @{} }
+                    # Cache the result
                     $global:GitStatusCache[$cacheKey] = @{
                         Status = $result
                         Time = $now
@@ -434,7 +455,7 @@ if ($global:PSVersionInfo.IsLegacy) {
             Write-Host "❌ $ComputerName`:$Port - Error (PS 7.x): $_" -ForegroundColor Red
             return $false
         } finally {
-            $tcp?.Close()
+            if ($tcp) { $tcp.Close() }
         }
     }
 
@@ -449,7 +470,7 @@ if ($global:PSVersionInfo.IsLegacy) {
 
         # Execution time display
         $history = Get-History -Count 1
-        if ($history?.StartExecutionTime -and $history?.EndExecutionTime) {
+        if ($history -and $history.StartExecutionTime -and $history.EndExecutionTime) {
             $execTime = $history.EndExecutionTime - $history.StartExecutionTime
             $timeString = "{0:mm}:{0:ss}.{1:d3}" -f $execTime, $execTime.Milliseconds
             Write-Host "[$timeString] " -NoNewline -ForegroundColor White
@@ -472,7 +493,7 @@ if ($global:PSVersionInfo.IsLegacy) {
         return "> "
     }
 
-    # Set PS 7.x specific aliases with modern syntax
+    # Set PS 7.x specific aliases
     Set-Alias -Name "ll" -Value "Get-ChildItem" -Force -Scope Global
     Set-Alias -Name "grep" -Value "Select-String" -Force -Scope Global
     Set-Alias -Name "which" -Value "Get-Command" -Force -Scope Global
@@ -500,8 +521,6 @@ if ($global:PSVersionInfo.IsLegacy) {
 "@
         Write-Host $banner -ForegroundColor Cyan
     }
-
-    #endregion
 }
 
 #endregion
@@ -509,9 +528,6 @@ if ($global:PSVersionInfo.IsLegacy) {
 #region ═══════════════════════════════════════════════════════════════════════════════════════════════
 #                               UNIVERSAL FUNCTIONS (ALL VERSIONS)
 #═══════════════════════════════════════════════════════════════════════════════════════════════════════
-
-# Initialize Git Status Cache
-if (-not $global:GitStatusCache) { $global:GitStatusCache = @{} }
 
 # Version-aware wrapper functions
 function global:Get-SystemInfo {
@@ -670,7 +686,11 @@ function global:Show-ProfileInfo {
     Write-Host "Profile Path: $PROFILE" -ForegroundColor Yellow
     Write-Host "Profile Exists: $(Test-Path $PROFILE)" -ForegroundColor $(if (Test-Path $PROFILE) {'Green'} else {'Red'})
     Write-Host "PowerShell Version: $($PSVersionTable.PSVersion) ($($PSVersionTable.PSEdition))" -ForegroundColor White
-    Write-Host "Platform: $($PSVersionTable.Platform)" -ForegroundColor White
+    if ($PSVersionTable.Platform) {
+        Write-Host "Platform: $($PSVersionTable.Platform)" -ForegroundColor White
+    } else {
+        Write-Host "Platform: Windows (Desktop)" -ForegroundColor White
+    }
     Write-Host "Regelwerk Version: v9.6.0" -ForegroundColor Green
     Write-Host "Template Version: v25.0.0-Professional" -ForegroundColor Green
     Write-Host "Admin Rights: $global:IsAdmin" -ForegroundColor $(if ($global:IsAdmin) {'Red'} else {'Green'})
@@ -700,7 +720,13 @@ function global:Test-ProfilePerformance {
     foreach ($test in $tests) {
         try {
             $time = (Measure-Command $test.Command).TotalMilliseconds
-            $color = if ($time -lt 100) { 'Green' } elseif ($time -lt 500) { 'Yellow' } else { 'Red' }
+            if ($time -lt 100) { 
+                $color = 'Green' 
+            } elseif ($time -lt 500) { 
+                $color = 'Yellow' 
+            } else { 
+                $color = 'Red' 
+            }
             Write-Host "  $($test.Name): $([Math]::Round($time, 2))ms" -ForegroundColor $color
         } catch {
             Write-Host "  $($test.Name): Error - $($_.Exception.Message)" -ForegroundColor Red
