@@ -1,11 +1,14 @@
-#region Version Information (MANDATORY - Regelwerk v9.6.0)
-$ScriptVersion = "v11.2.3"  # Updated for v9.6.0 compliance
-$RegelwerkVersion = "v9.6.0"
+#region Version Information (MANDATORY - Regelwerk v9.6.2)
+$ScriptVersion = "v11.2.6"  # Updated for dynamic sender address (Regelwerk v9.6.2)
+$RegelwerkVersion = "v9.6.2"
 $BuildDate = "2025-09-27"
 $Author = "Flecki (Tom) Garnreiter"
 
 <#
 .VERSION HISTORY
+v11.2.6 - 2025-09-27 - Dynamic sender address implemented (Regelwerk v9.6.2)
+v11.2.5 - 2025-09-27 - E-Mail-Integration Template added (Regelwerk v9.6.0 §8)
+v11.2.4 - 2025-09-27 - Unicode-Emoji PowerShell 5.1/7.x compatibility implemented (Regelwerk §7)
 v11.2.3 - 2025-09-27 - Updated to Regelwerk v9.6.0 compliance, added cross-script communication
 v11.2.2 - 2025-09-02 - Network Profiles feature added
 v11.2.1 - Previous - Standard functionality
@@ -19,11 +22,22 @@ function Show-ScriptInfo {
         [string]$CurrentVersion = $ScriptVersion
     )
     
-    Write-Host "🚀 $ScriptName v$CurrentVersion" -ForegroundColor Green
-    Write-Host "📅 Build: $BuildDate | Regelwerk: $RegelwerkVersion" -ForegroundColor Cyan
-    Write-Host "👤 Author: $Author" -ForegroundColor Cyan
-    Write-Host "💻 Server: $env:COMPUTERNAME" -ForegroundColor Yellow
-    Write-Host "📂 Repository: ResetProfile" -ForegroundColor Magenta
+    # PowerShell 5.1/7.x compatibility (Regelwerk v9.6.0 §7)
+    if ($PSVersionTable.PSVersion.Major -ge 7) {
+        # PowerShell 7.x - Unicode-Emojis erlaubt
+        Write-Host "🚀 $ScriptName v$CurrentVersion" -ForegroundColor Green
+        Write-Host "📅 Build: $BuildDate | Regelwerk: $RegelwerkVersion" -ForegroundColor Cyan
+        Write-Host "👤 Author: $Author" -ForegroundColor Cyan
+        Write-Host "💻 Server: $env:COMPUTERNAME" -ForegroundColor Yellow
+        Write-Host "📂 Repository: ResetProfile" -ForegroundColor Magenta
+    } else {
+        # PowerShell 5.1 - ASCII-Alternativen verwenden
+        Write-Host ">> $ScriptName v$CurrentVersion" -ForegroundColor Green
+        Write-Host "[BUILD] $BuildDate | Regelwerk: $RegelwerkVersion" -ForegroundColor Cyan
+        Write-Host "[AUTHOR] $Author" -ForegroundColor Cyan
+        Write-Host "[SERVER] $env:COMPUTERNAME" -ForegroundColor Yellow
+        Write-Host "[REPO] ResetProfile" -ForegroundColor Magenta
+    }
 }
 #endregion
 
@@ -51,7 +65,7 @@ function Send-ResetProfileMessage {
     }
     
     $MessageData | ConvertTo-Json | Out-File $MessageFile -Encoding UTF8
-    Write-Verbose "Message sent to $TargetScript: $Message"
+    Write-Verbose "Message sent to ${TargetScript}: $Message"
 }
 
 function Set-ResetProfileStatus {
@@ -81,6 +95,6 @@ function Set-ResetProfileStatus {
 #endregion
 
 # Export version information for other scripts
-Export-ModuleMember -Variable ScriptVersion, RegelwerkVersion, BuildDate, Author -Function Show-ScriptInfo, Send-ResetProfileMessage, Set-ResetProfileStatus
+# Export-ModuleMember -Variable ScriptVersion, RegelwerkVersion, BuildDate, Author -Function Show-ScriptInfo, Send-ResetProfileMessage, Set-ResetProfileStatus
 
 Write-Verbose "VERSION.ps1 loaded - ResetProfile System v$ScriptVersion (Regelwerk $RegelwerkVersion)"
