@@ -1,15 +1,15 @@
 <#
-.SYN    Last modified:  2025.09.02
-    Version:        v11.2.2
-    MUW-Regelwerk:  v8.2.0IS
-    [DE] Modul für allgemeine Hilfsfunktionen.
-    [EN] Module for general utility functions.
+.SYN    Last modified:  2025-09-27
+    Version:        v11.3.0
+    MUW-Regelwerk:  v9.6.0
+    [DE] Modul für allgemeine Hilfsfunktionen und Cross-Script Kommunikation.
+    [EN] Module for general utility functions and cross-script communication.
 .NOTES
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.08.29
-    Last modified:  2025.09.02
-    Version:        v11.2.1
-    MUW-Regelwerk:  v8.2.0
+    Last modified:  2025-09-27
+    Version:        v11.3.0
+    MUW-Regelwerk:  v9.6.0 (Cross-Script Communication §20.3)
     Notes:          [DE] Versionsnummer für Release-Konsistenz aktualisiert.
                     [EN] Updated version number for release consistency.
     Copyright:      © 2025 Flecki Garnreiter
@@ -488,6 +488,75 @@ Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Se
 # WKW0GAHIuLsCbdfOdn4z1qupQT8HIFSiKX8Smw4TLg12Clt8xVsLEELxZh65+yuG
 # tTlJ1MauqBfZDY0tAWB49eEuxgMNGwrVtJkUAWjkA1+9LY/8nSy3/eZLdS4py3gH
 # jd2UrrNQ5r6aYzrElWIKUz7U3M5p1g3trNQLUtqNnPGAi2VmjZNSJIoS4SXPxJl6
-# sWGQ5a7BgNtxFL/AP6WlTNiZLPM9/ZY8SLkHaxWwKnPm15UXp5CWnJ1/f5hKL9Km
-# oSz/KWZFSjPyrcVy9X7woMB0
-# SIG # End signature block
+#region Cross-Script Communication (MANDATORY - Regelwerk v9.6.0 §20.3)
+function Send-ScriptMessage {
+    param(
+        [string]$TargetScript,
+        [string]$Message,
+        [string]$Type = "INFO"
+    )
+    
+    $MessageDir = "LOG\Messages"
+    if (-not (Test-Path $MessageDir)) {
+        New-Item -Path $MessageDir -ItemType Directory -Force | Out-Null
+    }
+    
+    $MessageFile = "$MessageDir\$TargetScript-$(Get-Date -Format 'yyyyMMdd-HHmmss').json"
+    $MessageData = @{
+        Timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+        Source = $MyInvocation.ScriptName
+        Target = $TargetScript
+        Message = $Message
+        Type = $Type
+        RegelwerkVersion = "v9.6.0"
+    }
+    
+    $MessageData | ConvertTo-Json | Out-File $MessageFile -Encoding UTF8
+    Write-Log "Message sent to $TargetScript: $Message" -Level INFO
+}
+
+function Set-ScriptStatus {
+    param(
+        [string]$Status,
+        [hashtable]$Details = @{}
+    )
+    
+    $StatusDir = "LOG\Status"
+    if (-not (Test-Path $StatusDir)) {
+        New-Item -Path $StatusDir -ItemType Directory -Force | Out-Null
+    }
+    
+    $StatusFile = "$StatusDir\$($MyInvocation.ScriptName)-Status.json"
+    $StatusData = @{
+        Timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+        Script = $MyInvocation.ScriptName
+        Status = $Status
+        Details = $Details
+        RegelwerkVersion = "v9.6.0"
+    }
+    
+    $StatusData | ConvertTo-Json | Out-File $StatusFile -Encoding UTF8
+    Write-Log "Status updated: $Status" -Level INFO
+}
+
+function Get-ScriptStatus {
+    param([string]$ScriptName)
+    
+    $StatusFile = "LOG\Status\$ScriptName-Status.json"
+    if (Test-Path $StatusFile) {
+        try {
+            $StatusData = Get-Content $StatusFile | ConvertFrom-Json
+            return $StatusData
+        } catch {
+            Write-Log "Failed to read status file: $StatusFile" -Level WARNING
+            return $null
+        }
+    }
+    return $null
+}
+#endregion
+
+# Export new functions for cross-script communication
+Export-ModuleMember -Function Send-ScriptMessage, Set-ScriptStatus, Get-ScriptStatus
+
+# --- End of module --- v11.3.0 ; Regelwerk: v9.6.0 (Cross-Script Communication §20.3) ---

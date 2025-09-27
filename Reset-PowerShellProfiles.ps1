@@ -40,9 +40,13 @@ param (
 )
 
 #region ####################### [1. Initialization] ##############################
+# Load VERSION.ps1 for centralized version management (Regelwerk v9.6.0)
+. (Join-Path (Split-Path -Path $MyInvocation.MyCommand.Path) "VERSION.ps1")
+Show-ScriptInfo -ScriptName "PowerShell Profile Reset System" -CurrentVersion $ScriptVersion
+
 $Global:ScriptName = $MyInvocation.MyCommand.Name
-$Global:ScriptVersion = "v11.2.2"
-$Global:RulebookVersion = "v8.2.0"
+$Global:ScriptVersion = $ScriptVersion
+$Global:RulebookVersion = $RegelwerkVersion
 $Global:ScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Path
 
 $configDir = Join-Path $Global:ScriptDirectory 'Config'
