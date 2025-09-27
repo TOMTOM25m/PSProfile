@@ -90,16 +90,28 @@ if ($global:ProfileLoadedVersion -eq 'v25.0.0-Professional') {
 }
 $global:ProfileLoadedVersion = 'v25.0.0-Professional'
 
+# Enhanced PowerShell version detection
+$global:PSVersionInfo = [PSCustomObject]@{
+    Major = $PSVersionTable.PSVersion.Major
+    Minor = $PSVersionTable.PSVersion.Minor
+    IsModern = $PSVersionTable.PSVersion.Major -ge 7
+    IsLegacy = $PSVersionTable.PSVersion.Major -lt 7
+    IsCore = $PSVersionTable.PSEdition -eq 'Core'
+    IsDesktop = $PSVersionTable.PSEdition -eq 'Desktop'
+    Platform = $PSVersionTable.Platform
+    Edition = $PSVersionTable.PSEdition
+}
+
 # Initialize global variables with error handling
 try {
-    $global:IsAdmin = if ($PSVersionTable.Platform -eq 'Unix') {
+    $global:IsAdmin = if ($global:PSVersionInfo.Platform -eq 'Unix') {
         (id -u) -eq 0
     } else {
         ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     }
     
-    $global:IsModernPS = $PSVersionTable.PSVersion.Major -ge 7
-    $global:IsWindows = $PSVersionTable.Platform -ne 'Unix' -and $PSVersionTable.Platform -ne 'MacOS'
+    $global:IsModernPS = $global:PSVersionInfo.IsModern
+    $global:IsWindows = $global:PSVersionInfo.Platform -ne 'Unix' -and $global:PSVersionInfo.Platform -ne 'MacOS'
     
     # PowerShell 5.1 compatible version of null coalescing
     if ($PSCommandPath) { 
@@ -115,13 +127,13 @@ try {
 
 # Load profile extensions (optional)
 if ($LoadExtensions) {
-    $extensionFiles = @('ProfileMOD.ps1', 'ProfileX.ps1', 'Profile.Extensions.ps1')
+    $extensionFiles = @('Profile-templateMOD.ps1', 'Profile-templateX.ps1', 'ProfileMOD.ps1', 'ProfileX.ps1', 'Profile.Extensions.ps1')
     foreach ($extension in $extensionFiles) {
         $extensionPath = Join-Path -Path $global:ProfileDir -ChildPath $extension
         if (Test-Path -Path $extensionPath -PathType Leaf) {
             try { 
                 . $extensionPath 
-                if (-not $Quiet) { Write-Verbose "Loaded extension: $extension" }
+                if (-not $Quiet) { Write-Host "✅ Loaded extension: $extension" -ForegroundColor Green }
             } catch { 
                 Write-Warning "Failed to load extension '$extension': $($_.Exception.Message)" 
             }
@@ -132,85 +144,115 @@ if ($LoadExtensions) {
 #endregion
 
 #region ═══════════════════════════════════════════════════════════════════════════════════════════════
-#                                 POWERSHELL 7+ MODERN FEATURES
+#                           VERSION-SPECIFIC FUNCTION IMPLEMENTATIONS
 #═══════════════════════════════════════════════════════════════════════════════════════════════════════
 
-if ($global:IsModernPS) {
+# PowerShell 5.1 specific functions
+if ($global:PSVersionInfo.IsLegacy) {
     
-    # Enhanced system detection with cross-platform support
-    $script:SystemInfo = try {
-        if ($global:IsWindows) {
-            $computerInfo = Get-ComputerInfo -Property PowerPlatformRole -ErrorAction SilentlyContinue
-            $role = $computerInfo.PowerPlatformRole.ToString()
-            switch -Regex ($role) {
-                'Desktop|Workstation|Mobile' { "Workstation" }
-                'Server' { "Server" }
-                default {
-                    $productType = (Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction SilentlyContinue).ProductType
-                    $roleMap = @{ 1 = "Workstation"; 2 = "Domain Controller"; 3 = "Server" }
-                    if ($roleMap[$productType]) { 
-                        $roleMap[$productType] 
-                    } else { 
-                        "Unknown" 
-                    }
-                }
+    # PS 5.1 System Info with WMI/CIM fallbacks
+    function Get-SystemInfo-PS51 {
+        try {
+            # Prefer CIM, fallback to WMI for PS 5.1 compatibility
+            try {
+                $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop
+                $cpu = Get-CimInstance -ClassName Win32_Processor -ErrorAction Stop | Select-Object -First 1
+                $memory = Get-CimInstance -ClassName Win32_PhysicalMemory -ErrorAction Stop | Measure-Object -Property Capacity -Sum
+            } catch {
+                # Fallback to WMI for older systems
+                $os = Get-WmiObject -Class Win32_OperatingSystem -ErrorAction Stop
+                $cpu = Get-WmiObject -Class Win32_Processor -ErrorAction Stop | Select-Object -First 1
+                $memory = Get-WmiObject -Class Win32_PhysicalMemory -ErrorAction Stop | Measure-Object -Property Capacity -Sum
             }
-        } else {
-            if ($PSVersionTable.Platform -eq 'Unix') { "Linux/Unix" }
-            elseif ($PSVersionTable.Platform -eq 'MacOS') { "macOS" }
-            else { "Cross-Platform" }
+            
+            [PSCustomObject]@{
+                OS = $os.Caption
+                Version = $os.Version
+                Architecture = $os.OSArchitecture
+                CPU = $cpu.Name
+                MemoryGB = [Math]::Round($memory.Sum / 1GB, 2)
+                Uptime = (Get-Date) - $os.LastBootUpTime
+                PowerShell = "$($PSVersionTable.PSVersion) ($($PSVersionTable.PSEdition))"
+                LoadTime = "$(Get-Date -Format 'HH:mm:ss')"
+                ProfileVersion = "v25.0.0-PS51"
+            }
+        } catch {
+            Write-Warning "Could not retrieve system information (PS 5.1): $($_.Exception.Message)"
+            return $null
         }
-    } catch { "Unknown" }
-    
-    # Professional startup banner
-    if (-not $Quiet) {
-        $adminText = if ($global:IsAdmin) { "Admin" } else { "User " }
-        $banner = @"
-╭─────────────────────────────────────────────────────────────────╮
-│ 🚀 PowerShell Professional Profile v25.0.0                      │
-│ 📋 Regelwerk v9.6.0 Compliant | $($script:SystemInfo.PadRight(15)) | $($adminText.PadRight(5)) │
-│ ⚡ Enhanced productivity tools and utilities loaded              │
-╰─────────────────────────────────────────────────────────────────╯
-"@
-        Write-Host $banner -ForegroundColor Cyan
     }
 
-    # Optimized Git Integration with Caching
-    $global:GitStatusCache = @{}
-    function Get-GitStatus {
+    # PS 5.1 Git Status with enhanced error handling
+    function Get-GitStatus-PS51 {
         $currentPath = Get-Location
-        $cacheKey = $currentPath.Path
+        $cacheKey = "ps51_$($currentPath.Path)"
         $now = Get-Date
         
         # Use cache if less than 30 seconds old
-        if ($global:GitStatusCache[$cacheKey] -and 
+        if ($global:GitStatusCache -and $global:GitStatusCache[$cacheKey] -and 
             ($now - $global:GitStatusCache[$cacheKey].Time).TotalSeconds -lt 30) {
             return $global:GitStatusCache[$cacheKey].Status
         }
         
         if (Get-Command git -ErrorAction SilentlyContinue) {
             try {
-                $gitStatus = git status --porcelain 2>$null
+                $null = & git status --porcelain 2>$null
                 if ($LASTEXITCODE -eq 0) {
-                    $branch = git branch --show-current 2>$null
-                    $status = if ($gitStatus) { "±" } else { "✓" }
-                    $result = " ($branch$status)"
-                    # Cache the result
+                    $branch = & git rev-parse --abbrev-ref HEAD 2>$null
+                    $status = & git status --porcelain 2>$null
+                    $indicator = if ($status) { "±" } else { "✓" }
+                    $result = " (git:$branch$indicator)"
+                    
+                    # Initialize cache if not exists
+                    if (-not $global:GitStatusCache) { $global:GitStatusCache = @{} }
                     $global:GitStatusCache[$cacheKey] = @{
                         Status = $result
                         Time = $now
                     }
                     return $result
                 }
-            } catch { }
+            } catch { 
+                Write-Verbose "Git error in PS 5.1: $($_.Exception.Message)"
+            }
         }
         return ""
     }
 
-    # Enhanced Prompt with Git Integration
-    function global:prompt {
+    # PS 5.1 Network Test with .NET Framework
+    function Test-Port-PS51 {
+        param(
+            [Parameter(Mandatory)][string]$ComputerName,
+            [Parameter(Mandatory)][int]$Port,
+            [int]$Timeout = 3000
+        )
+        try {
+            $tcp = New-Object System.Net.Sockets.TcpClient
+            $connect = $tcp.BeginConnect($ComputerName, $Port, $null, $null)
+            $wait = $connect.AsyncWaitHandle.WaitOne($Timeout, $false)
+            if ($wait) {
+                $tcp.EndConnect($connect)
+                Write-Host "✅ $ComputerName`:$Port - Open (PS 5.1)" -ForegroundColor Green
+                return $true
+            } else {
+                Write-Host "❌ $ComputerName`:$Port - Closed/Timeout (PS 5.1)" -ForegroundColor Red
+                return $false
+            }
+        } catch {
+            Write-Host "❌ $ComputerName`:$Port - Error (PS 5.1): $_" -ForegroundColor Red
+            return $false
+        } finally {
+            if ($tcp) { $tcp.Close() }
+        }
+    }
+
+    # PS 5.1 Enhanced Prompt
+    function prompt-PS51 {
         # Command status indicator
-        if ($?) { Write-Host "✔ " -NoNewline -ForegroundColor Green } else { Write-Host "✘ " -NoNewline -ForegroundColor Red }
+        if ($?) { 
+            Write-Host "✔ " -NoNewline -ForegroundColor Green 
+        } else { 
+            Write-Host "✘ " -NoNewline -ForegroundColor Red 
+        }
 
         # Execution time display
         $history = Get-History -Count 1
@@ -223,263 +265,465 @@ if ($global:IsModernPS) {
         # Current location
         Write-Host "$(Split-Path -Leaf (Get-Location)) " -NoNewline -ForegroundColor Yellow
         
-        # Git status
-        $gitInfo = Get-GitStatus
+        # Git status for PS 5.1
+        $gitInfo = Get-GitStatus-PS51
         if ($gitInfo) { Write-Host "$gitInfo " -NoNewline -ForegroundColor Magenta }
 
         # User and admin status
         $userColor = if ($global:IsAdmin) { "Red" } else { "Cyan" }
-        $userText = if ($global:IsAdmin) { "[$($env:USERNAME)@Admin]" } else { "[$($env:USERNAME)]" }
+        $userPrefix = if ($global:IsAdmin) { "Admin" } else { "User" }
+        $userText = "[$($env:USERNAME)@$userPrefix-PS$($PSVersionTable.PSVersion.Major)]"
         Write-Host "$userText " -NoNewline -ForegroundColor $userColor
 
         return "> "
     }
 
-    # Modern PowerShell 7+ Aliases and Functions
-    Set-Alias -Name "ll" -Value "Get-ChildItem" -Force
-    Set-Alias -Name "grep" -Value "Select-String" -Force
-    Set-Alias -Name "which" -Value "Get-Command" -Force
+    # Set PS 5.1 specific aliases
+    Set-Alias -Name "ll" -Value "Get-ChildItem" -Force -Scope Global
+    Set-Alias -Name "grep" -Value "Select-String" -Force -Scope Global
+    Set-Alias -Name "which" -Value "Get-Command" -Force -Scope Global
     
-    function global:touch { param($file) New-Item -ItemType File -Path $file -Force }
-    function global:mkd { param($dir) New-Item -ItemType Directory -Path $dir -Force }
-    function global:reload { . $PROFILE }
-    function global:edit-profile { code $PROFILE }
-    function global:Get-PublicIP { (Invoke-RestMethod -Uri "https://ipinfo.io/ip").Trim() }
-
-    #endregion
-}
-else {
-    #region ####################### [3. Block für Windows PowerShell 5.1 (Legacy & Encoding-Safe)] ####################
-
-    # Stellt sicher, dass die Konsolenausgabe UTF-8-kodiert ist, um Sonderzeichen korrekt darzustellen.
-    $OutputEncoding = [System.Text.UTF8Encoding]::new()
-
+    # PS 5.1 Security enhancements
     if ($global:IsAdmin) {
-        'HKLM:\SOFTWARE\Microsoft\.NETFramework\v4.0.30319', 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v4.0.30319' | ForEach-Object {
-            if (-not (Test-Path $_)) { try { New-Item -Path $_ -Force -ErrorAction Stop | Out-Null } catch { return } }
-            Set-ItemProperty -Path $_ -Name 'SchUseStrongCrypto' -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
-        }
-    }
-    else {
         try {
-            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SystemDefault # DevSkim: ignore DS440020, DS440000
-        }
-        catch {
-            Write-Warning "System-Standard-Sicherheitsprotokolle konnten nicht gesetzt werden. Web-Anfragen könnten fehlschlagen."
+            # Enable strong cryptography for PS 5.1
+            $regPaths = @(
+                'HKLM:\SOFTWARE\Microsoft\.NETFramework\v4.0.30319',
+                'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v4.0.30319'
+            )
+            foreach ($regPath in $regPaths) {
+                if (-not (Test-Path $regPath)) { 
+                    try { 
+                        New-Item -Path $regPath -Force -ErrorAction Stop | Out-Null 
+                    } catch { 
+                        continue 
+                    } 
+                }
+                Set-ItemProperty -Path $regPath -Name 'SchUseStrongCrypto' -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+            }
+        } catch {
+            Write-Verbose "Could not set strong crypto settings: $($_.Exception.Message)"
         }
     }
-    
-    Write-Host "🔧 Legacy PowerShell Profile v25.0.0 (Regelwerk v9.6.0) für PS 5.1 geladen."
-    if ($global:IsAdmin) { Write-Host "⚡ Administrator-Rechte aktiv" }
 
-    # Optimized Legacy Git Integration with Caching
-    $global:GitStatusCache = @{}
-    function Get-GitStatusLegacy {
+    # Set encoding for PS 5.1
+    $OutputEncoding = [System.Text.UTF8Encoding]::new()
+    
+    # Display PS 5.1 startup message
+    if (-not $Quiet) {
+        $adminText = if ($global:IsAdmin) { "Admin" } else { "User " }
+        Write-Host "🔧 PowerShell 5.1 Legacy Profile v25.0.0 (Regelwerk v9.6.0) geladen" -ForegroundColor Cyan
+        Write-Host "⚙️  Edition: $($PSVersionTable.PSEdition) | Platform: Windows | Rights: $adminText" -ForegroundColor Yellow
+    }
+
+} else {
+    #region ####################### PowerShell 7.x Modern Features #######################
+    
+    # PS 7.x System Info with modern cmdlets
+    function Get-SystemInfo-PS7 {
+        try {
+            if ($global:IsWindows) {
+                $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop
+                $cpu = Get-CimInstance -ClassName Win32_Processor -ErrorAction Stop | Select-Object -First 1
+                $memory = Get-CimInstance -ClassName Win32_PhysicalMemory -ErrorAction Stop | Measure-Object -Property Capacity -Sum
+                
+                $systemRole = try {
+                    $computerInfo = Get-ComputerInfo -Property PowerPlatformRole -ErrorAction SilentlyContinue
+                    $role = $computerInfo.PowerPlatformRole.ToString()
+                    switch -Regex ($role) {
+                        'Desktop|Workstation|Mobile' { "Workstation" }
+                        'Server' { "Server" }
+                        default {
+                            $productType = $os.ProductType
+                            switch ($productType) {
+                                1 { "Workstation" }
+                                2 { "Domain Controller" }
+                                3 { "Server" }
+                                default { "Unknown" }
+                            }
+                        }
+                    }
+                } catch { "Unknown" }
+            } else {
+                # Cross-platform info for PS 7.x
+                $os = [PSCustomObject]@{
+                    Caption = "$($PSVersionTable.Platform)"
+                    Version = [System.Environment]::OSVersion.Version.ToString()
+                    OSArchitecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
+                    LastBootUpTime = Get-Date  # Simplified for non-Windows
+                }
+                $cpu = [PSCustomObject]@{ Name = "Cross-Platform CPU" }
+                $memory = [PSCustomObject]@{ Sum = 8GB }  # Placeholder
+                $systemRole = $PSVersionTable.Platform
+            }
+            
+            [PSCustomObject]@{
+                OS = $os.Caption
+                Version = $os.Version
+                Architecture = $os.OSArchitecture
+                CPU = $cpu.Name
+                MemoryGB = [Math]::Round($memory.Sum / 1GB, 2)
+                Uptime = if ($global:IsWindows) { (Get-Date) - $os.LastBootUpTime } else { "N/A" }
+                PowerShell = "$($PSVersionTable.PSVersion) ($($PSVersionTable.PSEdition))"
+                LoadTime = "$(Get-Date -Format 'HH:mm:ss')"
+                ProfileVersion = "v25.0.0-PS7"
+                SystemRole = $systemRole
+                Platform = $PSVersionTable.Platform
+            }
+        } catch {
+            Write-Warning "Could not retrieve system information (PS 7.x): $($_.Exception.Message)"
+            return $null
+        }
+    }
+
+    # PS 7.x Git Status with modern syntax
+    function Get-GitStatus-PS7 {
         $currentPath = Get-Location
-        $cacheKey = "legacy_$($currentPath.Path)"
+        $cacheKey = $currentPath.Path
         $now = Get-Date
         
         # Use cache if less than 30 seconds old
-        if ($global:GitStatusCache[$cacheKey] -and 
+        if ($global:GitStatusCache -and $global:GitStatusCache[$cacheKey] -and 
             ($now - $global:GitStatusCache[$cacheKey].Time).TotalSeconds -lt 30) {
             return $global:GitStatusCache[$cacheKey].Status
         }
         
         if (Get-Command git -ErrorAction SilentlyContinue) {
             try {
-                $null = git status 2>$null
+                $gitStatus = git status --porcelain 2>$null
                 if ($LASTEXITCODE -eq 0) {
-                    $branch = git rev-parse --abbrev-ref HEAD 2>$null
-                    $result = " (git:$branch)"
-                    # Cache the result
+                    $branch = git branch --show-current 2>$null
+                    $status = if ($gitStatus) { "±" } else { "✓" }
+                    $result = " ($branch$status)"
+                    
+                    # Initialize cache if not exists
+                    if (-not $global:GitStatusCache) { $global:GitStatusCache = @{} }
                     $global:GitStatusCache[$cacheKey] = @{
                         Status = $result
                         Time = $now
                     }
                     return $result
                 }
-            } catch { }
+            } catch { 
+                Write-Verbose "Git error in PS 7.x: $($_.Exception.Message)"
+            }
         }
         return ""
     }
 
-    # Enhanced Legacy Prompt
-    function global:prompt {
-        if ($?) { Write-Host "✔ " -NoNewline -ForegroundColor Green } else { Write-Host "✘ " -NoNewline -ForegroundColor Red }
+    # PS 7.x Network Test with modern features
+    function Test-Port-PS7 {
+        param(
+            [Parameter(Mandatory)][string]$ComputerName,
+            [Parameter(Mandatory)][int]$Port,
+            [int]$Timeout = 3000
+        )
+        try {
+            $tcp = [System.Net.Sockets.TcpClient]::new()
+            $connect = $tcp.BeginConnect($ComputerName, $Port, $null, $null)
+            $wait = $connect.AsyncWaitHandle.WaitOne($Timeout, $false)
+            if ($wait) {
+                $tcp.EndConnect($connect)
+                Write-Host "✅ $ComputerName`:$Port - Open (PS 7.x)" -ForegroundColor Green
+                return $true
+            } else {
+                Write-Host "❌ $ComputerName`:$Port - Closed/Timeout (PS 7.x)" -ForegroundColor Red
+                return $false
+            }
+        } catch {
+            Write-Host "❌ $ComputerName`:$Port - Error (PS 7.x): $_" -ForegroundColor Red
+            return $false
+        } finally {
+            $tcp?.Close()
+        }
+    }
 
+    # PS 7.x Enhanced Prompt with modern features
+    function prompt-PS7 {
+        # Command status indicator
+        if ($?) { 
+            Write-Host "✔ " -NoNewline -ForegroundColor Green 
+        } else { 
+            Write-Host "✘ " -NoNewline -ForegroundColor Red 
+        }
+
+        # Execution time display
         $history = Get-History -Count 1
-        if ($history -and $history.StartExecutionTime -and $history.EndExecutionTime) {
+        if ($history?.StartExecutionTime -and $history?.EndExecutionTime) {
             $execTime = $history.EndExecutionTime - $history.StartExecutionTime
             $timeString = "{0:mm}:{0:ss}.{1:d3}" -f $execTime, $execTime.Milliseconds
             Write-Host "[$timeString] " -NoNewline -ForegroundColor White
         }
 
+        # Current location
         Write-Host "$(Split-Path -Leaf (Get-Location)) " -NoNewline -ForegroundColor Yellow
         
-        # Git status for PS 5.1
-        $gitInfo = Get-GitStatusLegacy
+        # Git status
+        $gitInfo = Get-GitStatus-PS7
         if ($gitInfo) { Write-Host "$gitInfo " -NoNewline -ForegroundColor Magenta }
 
+        # User and admin status with platform info
         $userColor = if ($global:IsAdmin) { "Red" } else { "Cyan" }
-        $userText = if ($global:IsAdmin) { "[$($env:USERNAME)@Admin]" } else { "[$($env:USERNAME)]" }
+        $userPrefix = if ($global:IsAdmin) { "Admin" } else { "User" }
+        $platformInfo = if ($global:IsWindows) { "Win" } else { $PSVersionTable.Platform }
+        $userText = "[$($env:USERNAME)@$userPrefix-PS$($PSVersionTable.PSVersion.Major)-$platformInfo]"
         Write-Host "$userText " -NoNewline -ForegroundColor $userColor
 
         return "> "
     }
 
-    # Legacy-compatible Aliases and Functions
-    Set-Alias -Name "ll" -Value "Get-ChildItem" -Force
-    Set-Alias -Name "grep" -Value "Select-String" -Force
-    Set-Alias -Name "which" -Value "Get-Command" -Force
+    # Set PS 7.x specific aliases with modern syntax
+    Set-Alias -Name "ll" -Value "Get-ChildItem" -Force -Scope Global
+    Set-Alias -Name "grep" -Value "Select-String" -Force -Scope Global
+    Set-Alias -Name "which" -Value "Get-Command" -Force -Scope Global
     
-    function global:touch { param($file) New-Item -ItemType File -Path $file -Force }
-    function global:mkd { param($dir) New-Item -ItemType Directory -Path $dir -Force }
-    function global:reload { . $PROFILE }
-    function global:edit-profile { notepad $PROFILE }
+    # PS 7.x specific functions
+    function global:Get-PublicIP-PS7 { 
+        try {
+            (Invoke-RestMethod -Uri "https://ipinfo.io/ip" -TimeoutSec 5).Trim() 
+        } catch {
+            Write-Warning "Could not retrieve public IP: $($_.Exception.Message)"
+        }
+    }
+
+    # Display PS 7.x startup message with enhanced info
+    if (-not $Quiet) {
+        $adminText = if ($global:IsAdmin) { "Admin" } else { "User " }
+        $platformText = if ($global:IsWindows) { "Windows" } else { $PSVersionTable.Platform }
+        
+        $banner = @"
+╭─────────────────────────────────────────────────────────────────╮
+│ 🚀 PowerShell 7.x Modern Profile v25.0.0                        │
+│ 📋 Regelwerk v9.6.0 | $($platformText.PadRight(12)) | $($adminText.PadRight(5)) │
+│ ⚡ Enhanced productivity tools and utilities loaded              │
+╰─────────────────────────────────────────────────────────────────╯
+"@
+        Write-Host $banner -ForegroundColor Cyan
+    }
 
     #endregion
 }
 
-#region ####################### [4. Gemeinsame Funktionen (Für alle Versionen)] ###########################
+#endregion
 
-# Optimized System Information Functions
+#region ═══════════════════════════════════════════════════════════════════════════════════════════════
+#                               UNIVERSAL FUNCTIONS (ALL VERSIONS)
+#═══════════════════════════════════════════════════════════════════════════════════════════════════════
+
+# Initialize Git Status Cache
+if (-not $global:GitStatusCache) { $global:GitStatusCache = @{} }
+
+# Version-aware wrapper functions
 function global:Get-SystemInfo {
-    try {
-        $os = Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop
-        $cpu = Get-CimInstance -ClassName Win32_Processor -ErrorAction Stop | Select-Object -First 1
-        $memory = Get-CimInstance -ClassName Win32_PhysicalMemory -ErrorAction Stop | Measure-Object -Property Capacity -Sum
-        
-        [PSCustomObject]@{
-            OS = $os.Caption
-            Version = $os.Version
-            Architecture = $os.OSArchitecture
-            CPU = $cpu.Name
-            MemoryGB = [Math]::Round($memory.Sum / 1GB, 2)
-            Uptime = (Get-Date) - $os.LastBootUpTime
-            PowerShell = $PSVersionTable.PSVersion
-            LoadTime = "$(Get-Date -Format 'HH:mm:ss')"
-        }
-    } catch {
-        Write-Warning "Could not retrieve system information: $($_.Exception.Message)"
-        return $null
+    if ($global:PSVersionInfo.IsModern) {
+        Get-SystemInfo-PS7
+    } else {
+        Get-SystemInfo-PS51
     }
 }
 
-# Network Utilities
 function global:Test-Port {
     param(
         [Parameter(Mandatory)][string]$ComputerName,
         [Parameter(Mandatory)][int]$Port,
         [int]$Timeout = 3000
     )
-    try {
-        $tcp = New-Object System.Net.Sockets.TcpClient
-        $connect = $tcp.BeginConnect($ComputerName, $Port, $null, $null)
-        $wait = $connect.AsyncWaitHandle.WaitOne($Timeout, $false)
-        if ($wait) {
-            $tcp.EndConnect($connect)
-            Write-Host "✅ $ComputerName`:$Port - Open" -ForegroundColor Green
-            return $true
-        } else {
-            Write-Host "❌ $ComputerName`:$Port - Closed/Timeout" -ForegroundColor Red
-            return $false
-        }
-    } catch {
-        Write-Host "❌ $ComputerName`:$Port - Error: $_" -ForegroundColor Red
-        return $false
-    } finally {
-        if ($tcp) { $tcp.Close() }
+    if ($global:PSVersionInfo.IsModern) {
+        Test-Port-PS7 -ComputerName $ComputerName -Port $Port -Timeout $Timeout
+    } else {
+        Test-Port-PS51 -ComputerName $ComputerName -Port $Port -Timeout $Timeout
     }
 }
 
-# File and Directory Utilities
-function global:Get-DirectorySize {
-    param([string]$Path = ".")
-    $size = (Get-ChildItem -Path $Path -Recurse -File | Measure-Object -Property Length -Sum).Sum
-    $sizeGB = [Math]::Round($size / 1GB, 2)
-    $sizeMB = [Math]::Round($size / 1MB, 2)
-    Write-Host "Directory: $Path" -ForegroundColor Cyan
-    Write-Host "Size: $sizeMB MB ($sizeGB GB)" -ForegroundColor Yellow
+# Set the appropriate prompt function
+function global:prompt {
+    if ($global:PSVersionInfo.IsModern) {
+        prompt-PS7
+    } else {
+        prompt-PS51
+    }
 }
 
-# PowerShell Performance
+# Universal utility functions (work in both versions)
+function global:Get-DirectorySize {
+    param([string]$Path = ".")
+    try {
+        $size = (Get-ChildItem -Path $Path -Recurse -File -ErrorAction Stop | Measure-Object -Property Length -Sum).Sum
+        $sizeGB = [Math]::Round($size / 1GB, 2)
+        $sizeMB = [Math]::Round($size / 1MB, 2)
+        Write-Host "Directory: $Path" -ForegroundColor Cyan
+        Write-Host "Size: $sizeMB MB ($sizeGB GB)" -ForegroundColor Yellow
+    } catch {
+        Write-Warning "Could not calculate directory size: $($_.Exception.Message)"
+    }
+}
+
 function global:Measure-CommandTime {
     param([scriptblock]$Command)
     $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-    & $Command
-    $stopwatch.Stop()
-    Write-Host "Execution Time: $($stopwatch.ElapsedMilliseconds)ms" -ForegroundColor Cyan
+    try {
+        & $Command
+    } finally {
+        $stopwatch.Stop()
+        Write-Host "Execution Time: $($stopwatch.ElapsedMilliseconds)ms" -ForegroundColor Cyan
+    }
 }
 
-# Process Management
 function global:Get-TopProcesses {
     param([int]$Count = 10)
     Get-Process | Sort-Object CPU -Descending | Select-Object -First $Count Name, CPU, WorkingSet, Id |
     Format-Table -AutoSize
 }
 
-# Quick System Commands
-function global:uptime { (Get-Date) - (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime }
-function global:df { Get-WmiObject -Class Win32_LogicalDisk | Select-Object DeviceID, @{Name="Size(GB)";Expression={[math]::Round($_.Size/1GB,2)}}, @{Name="FreeSpace(GB)";Expression={[math]::Round($_.FreeSpace/1GB,2)}}, @{Name="%Free";Expression={[math]::Round(($_.FreeSpace/$_.Size)*100,2)}} }
+# Universal system commands
+function global:uptime { 
+    try {
+        if ($global:IsWindows) {
+            (Get-Date) - (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
+        } else {
+            "Uptime not available on this platform"
+        }
+    } catch {
+        Write-Warning "Could not retrieve uptime: $($_.Exception.Message)"
+    }
+}
+
+function global:df { 
+    try {
+        if ($global:IsWindows) {
+            Get-WmiObject -Class Win32_LogicalDisk | Select-Object DeviceID, 
+                @{Name="Size(GB)";Expression={[math]::Round($_.Size/1GB,2)}}, 
+                @{Name="FreeSpace(GB)";Expression={[math]::Round($_.FreeSpace/1GB,2)}}, 
+                @{Name="%Free";Expression={[math]::Round(($_.FreeSpace/$_.Size)*100,2)}}
+        } else {
+            Write-Host "df command not implemented for this platform. Use native 'df -h'" -ForegroundColor Yellow
+        }
+    } catch {
+        Write-Warning "Could not retrieve disk information: $($_.Exception.Message)"
+    }
+}
+
 function global:ps-version { $PSVersionTable }
 
-# Development Helpers
+# Development helpers
 function global:New-GUID { [System.Guid]::NewGuid().ToString() }
+
 function global:Get-Hash {
     param(
         [Parameter(Mandatory)][string]$FilePath,
         [string]$Algorithm = "SHA256"
     )
-    Get-FileHash -Path $FilePath -Algorithm $Algorithm
+    try {
+        Get-FileHash -Path $FilePath -Algorithm $Algorithm
+    } catch {
+        Write-Warning "Could not calculate hash: $($_.Exception.Message)"
+    }
 }
 
-# Quick JSON/XML formatting
 function global:Format-Json {
     param([Parameter(ValueFromPipeline)]$InputObject)
-    $InputObject | ConvertTo-Json -Depth 10 | Write-Host -ForegroundColor Green
+    try {
+        $InputObject | ConvertTo-Json -Depth 10 | Write-Host -ForegroundColor Green
+    } catch {
+        Write-Warning "Could not format JSON: $($_.Exception.Message)"
+    }
 }
 
-# Profile Management and Performance
+# Universal file operations
+function global:touch { 
+    param($file) 
+    try {
+        New-Item -ItemType File -Path $file -Force
+    } catch {
+        Write-Warning "Could not create file '$file': $($_.Exception.Message)"
+    }
+}
+
+function global:mkd { 
+    param($dir) 
+    try {
+        New-Item -ItemType Directory -Path $dir -Force
+    } catch {
+        Write-Warning "Could not create directory '$dir': $($_.Exception.Message)"
+    }
+}
+
+function global:reload { 
+    try {
+        . $PROFILE 
+    } catch {
+        Write-Warning "Could not reload profile: $($_.Exception.Message)"
+    }
+}
+
+function global:edit-profile { 
+    if ($global:PSVersionInfo.IsModern -and (Get-Command code -ErrorAction SilentlyContinue)) {
+        code $PROFILE
+    } else {
+        notepad $PROFILE
+    }
+}
+
+# Enhanced profile information
 function global:Show-ProfileInfo {
     Write-Host "📋 PowerShell Profile Information" -ForegroundColor Cyan
     Write-Host "Profile Path: $PROFILE" -ForegroundColor Yellow
     Write-Host "Profile Exists: $(Test-Path $PROFILE)" -ForegroundColor $(if (Test-Path $PROFILE) {'Green'} else {'Red'})
-    Write-Host "PowerShell Version: $($PSVersionTable.PSVersion)" -ForegroundColor White
+    Write-Host "PowerShell Version: $($PSVersionTable.PSVersion) ($($PSVersionTable.PSEdition))" -ForegroundColor White
+    Write-Host "Platform: $($PSVersionTable.Platform)" -ForegroundColor White
     Write-Host "Regelwerk Version: v9.6.0" -ForegroundColor Green
     Write-Host "Template Version: v25.0.0-Professional" -ForegroundColor Green
     Write-Host "Admin Rights: $global:IsAdmin" -ForegroundColor $(if ($global:IsAdmin) {'Red'} else {'Green'})
-    Write-Host "Modern PS: $global:IsModernPS" -ForegroundColor Cyan
+    Write-Host "Modern PS: $($global:PSVersionInfo.IsModern)" -ForegroundColor Cyan
+    Write-Host "Legacy PS: $($global:PSVersionInfo.IsLegacy)" -ForegroundColor Cyan
+    Write-Host "Edition: $($global:PSVersionInfo.Edition)" -ForegroundColor Magenta
 }
 
-# Profile Performance Test
+# Enhanced performance test with version-specific tests
 function global:Test-ProfilePerformance {
     Write-Host "🚀 Testing Profile Performance..." -ForegroundColor Cyan
     
     $tests = @(
         @{ Name = "Get-SystemInfo"; Command = { Get-SystemInfo | Out-Null } },
-        @{ Name = "Git Status"; Command = { if ($global:IsModernPS) { Get-GitStatus } else { Get-GitStatusLegacy } } },
+        @{ Name = "Git Status"; Command = { 
+            if ($global:PSVersionInfo.IsModern) { 
+                Get-GitStatus-PS7 | Out-Null 
+            } else { 
+                Get-GitStatus-PS51 | Out-Null 
+            } 
+        }},
         @{ Name = "Directory Listing"; Command = { Get-ChildItem | Out-Null } },
-        @{ Name = "Process List"; Command = { Get-Process | Select-Object -First 5 | Out-Null } }
+        @{ Name = "Process List"; Command = { Get-Process | Select-Object -First 5 | Out-Null } },
+        @{ Name = "Test-Port"; Command = { Test-Port -ComputerName "127.0.0.1" -Port 80 -Timeout 1000 | Out-Null } }
     )
     
     foreach ($test in $tests) {
-        $time = (Measure-Command $test.Command).TotalMilliseconds
-        $color = if ($time -lt 100) { 'Green' } elseif ($time -lt 500) { 'Yellow' } else { 'Red' }
-        Write-Host "  $($test.Name): $([Math]::Round($time, 2))ms" -ForegroundColor $color
+        try {
+            $time = (Measure-Command $test.Command).TotalMilliseconds
+            $color = if ($time -lt 100) { 'Green' } elseif ($time -lt 500) { 'Yellow' } else { 'Red' }
+            Write-Host "  $($test.Name): $([Math]::Round($time, 2))ms" -ForegroundColor $color
+        } catch {
+            Write-Host "  $($test.Name): Error - $($_.Exception.Message)" -ForegroundColor Red
+        }
     }
+    
+    Write-Host "Profile optimized for: PowerShell $($PSVersionTable.PSVersion.Major).x" -ForegroundColor Magenta
 }
 
 #endregion
 
-#region ####################### [5. Aufräumen (Für alle Versionen)] ###########################
+#region ═══════════════════════════════════════════════════════════════════════════════════════════════
+#                                       CLEANUP & FINALIZATION
+#═══════════════════════════════════════════════════════════════════════════════════════════════════════
 
 # Cleanup temporary variables
 Remove-Variable -Name 'script:*' -ErrorAction SilentlyContinue
-Remove-Variable -Name 'osMessage' -ErrorAction SilentlyContinue
 
 # Display welcome message
 if (-not $global:ProfileWelcomeShown) {
-    Write-Host "\n🎉 Profile loaded successfully! Use 'Show-ProfileInfo' for details." -ForegroundColor Green
+    $loadTime = ((Get-Date) - $script:ProfileStartTime).TotalMilliseconds
+    Write-Host "`n🎉 Profile loaded successfully in $([Math]::Round($loadTime, 2))ms!" -ForegroundColor Green
+    Write-Host "💡 Use 'Show-ProfileInfo' for details | 'Test-ProfilePerformance' for benchmarks" -ForegroundColor Cyan
     $global:ProfileWelcomeShown = $true
 }
 
