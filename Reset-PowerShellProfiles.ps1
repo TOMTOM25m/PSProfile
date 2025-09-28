@@ -30,11 +30,11 @@
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.07.11
     Last modified:  2025.09.02
-    old Version:    v11.2.1
-    Version now:    v11.2.2
-    MUW-Regelwerk:  v8.2.0
-    Notes:          [DE] Network Profiles-Feature hinzugefuegt: Konfigurierbare Netzwerkpfade mit verschluesselten Credentials fuer Profile-TemplateX.ps1.
-                    [EN] Added Network Profiles feature: Configurable network paths with encrypted credentials for Profile-TemplateX.ps1.
+    old Version:    v11.2.2
+    Version now:    v11.2.6
+    MUW-Regelwerk:  v9.6.2
+    Notes:          [DE] Initialize-LocalizationFiles implementiert, PowerShell 5.1/7.x Kompatibilität verbessert, Regelwerk v9.6.2 compliance.
+                    [EN] Implemented Initialize-LocalizationFiles, improved PowerShell 5.1/7.x compatibility, Regelwerk v9.6.2 compliance.
     Copyright:      ?? 2025 Flecki Garnreiter
     License:        MIT License
 #>
@@ -57,9 +57,18 @@ function Show-ScriptInfo {
         [string]$ScriptName,
         [string]$CurrentVersion
     )
-    Write-Host "???? $ScriptName" -ForegroundColor Cyan
-    Write-Host "???? Version: $CurrentVersion" -ForegroundColor Green
-    Write-Host "??????  Regelwerk: $RegelwerkVersion" -ForegroundColor Yellow
+    # PowerShell 5.1/7.x compatibility (Regelwerk v9.6.2 §7)
+    if ($PSVersionTable.PSVersion.Major -ge 7) {
+        # PowerShell 7.x - Unicode-Emojis erlaubt
+        Write-Host "🚀 $ScriptName" -ForegroundColor Cyan
+        Write-Host "📦 Version: $CurrentVersion" -ForegroundColor Green
+        Write-Host "📋 Regelwerk: $RegelwerkVersion" -ForegroundColor Yellow
+    } else {
+        # PowerShell 5.1 - ASCII-Alternativen verwenden
+        Write-Host ">> $ScriptName" -ForegroundColor Cyan
+        Write-Host "[VER] Version: $CurrentVersion" -ForegroundColor Green
+        Write-Host "[RW] Regelwerk: $RegelwerkVersion" -ForegroundColor Yellow
+    }
 }
 
 Show-ScriptInfo -ScriptName "PowerShell Profile Reset System" -CurrentVersion $ScriptVersion
@@ -121,7 +130,7 @@ if ($Setup.IsPresent) {
     do {
         $restartGui = $false
         Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
-        # Initialize-LocalizationFiles  # TODO: Implement if needed
+        Initialize-LocalizationFiles
         $guiResult = Show-SetupGUI -InitialConfig $Global:Config
         if ($guiResult -eq 'Restart') {
             $restartGui = $true
@@ -170,7 +179,7 @@ try {
         do {
             $restartGui = $false
             Invoke-VersionControl -LoadedConfig $Global:Config -Path $Global:ConfigFile
-            # Initialize-LocalizationFiles  # TODO: Implement if needed
+            Initialize-LocalizationFiles
             $guiResult = Show-SetupGUI -InitialConfig $Global:Config
             if ($guiResult -eq 'Restart') { 
                 $restartGui = $true
@@ -302,4 +311,4 @@ finally {
 }
 #endregion
 
-# --- End of Script --- old: v11.2.1 ; now: v11.2.2 ; Regelwerk: v8.2.0 ---
+# --- End of Script --- old: v11.2.2 ; now: v11.2.6 ; Regelwerk: v9.6.2 ---

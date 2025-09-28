@@ -1,5 +1,9 @@
 ﻿<#
-.SYN    Last modified:  2025-09-27
+.SY    Author:         Flecki (Tom) Garnreiter
+    Created on:     2025.08.29
+    Last modified:  2025-09-28
+    Version:        v11.3.1
+    MUW-Regelwerk:  v9.6.2 (Initialize-LocalizationFiles implemented)Last modified:  2025-09-27
     Version:        v11.3.0
     MUW-Regelwerk:  v9.6.0
     [DE] Modul fÃ¼r allgemeine Hilfsfunktionen und Cross-Script Kommunikation.
@@ -164,6 +168,272 @@ function Update-NetworkPathsInTemplate {
     }
     catch {
         Write-Log -Level ERROR -Message "Error updating network paths in template '$TemplateFilePath': $($_.Exception.Message)"
+    }
+}
+
+function Initialize-LocalizationFiles {
+    [CmdletBinding()]
+    param()
+    
+    try {
+        Write-Log -Level INFO -Message "Initializing localization files..."
+        
+        # Get supported languages from configuration
+        $supportedLanguages = @("de-DE", "en-US")
+        $configDir = Join-Path $Global:ScriptDirectory "Config"
+        
+        # Ensure config directory exists
+        if (-not (Test-Path $configDir)) {
+            New-Item -Path $configDir -ItemType Directory -Force | Out-Null
+            Write-Log -Level INFO -Message "Created config directory: $configDir"
+        }
+        
+        foreach ($language in $supportedLanguages) {
+            $languageFile = Join-Path $configDir "$language.json"
+            $needsUpdate = $false
+            
+            # Check if language file exists
+            if (-not (Test-Path $languageFile)) {
+                Write-Log -Level WARNING -Message "Language file missing: $languageFile. Creating default file."
+                $needsUpdate = $true
+            } else {
+                # Check version compatibility
+                try {
+                    $langContent = Get-Content -Path $languageFile -Raw | ConvertFrom-Json
+                    $fileVersion = $langContent.Version
+                    $expectedVersion = $Global:Config.LanguageFileVersions.$language
+                    
+                    if ($fileVersion -ne $expectedVersion) {
+                        Write-Log -Level WARNING -Message "Language file version mismatch for $language. File: $fileVersion, Expected: $expectedVersion"
+                        $needsUpdate = $true
+                    } else {
+                        Write-Log -Level DEBUG -Message "Language file $language is up to date (version: $fileVersion)"
+                    }
+                } catch {
+                    Write-Log -Level ERROR -Message "Error reading language file ${languageFile}: $($_.Exception.Message)"
+                    $needsUpdate = $true
+                }
+            }
+            
+            # Update language file if needed
+            if ($needsUpdate) {
+                Write-Log -Level INFO -Message "Updating language file: $languageFile"
+                $defaultContent = Get-DefaultLanguageContent -Language $language
+                
+                try {
+                    $defaultContent | ConvertTo-Json -Depth 3 | Set-Content -Path $languageFile -Encoding UTF8 -Force
+                    Write-Log -Level INFO -Message "Successfully updated language file: $languageFile"
+                } catch {
+                    Write-Log -Level ERROR -Message "Failed to update language file ${languageFile}: $($_.Exception.Message)"
+                }
+            }
+        }
+        
+        Write-Log -Level INFO -Message "Localization files initialization completed successfully"
+        
+    } catch {
+        Write-Log -Level ERROR -Message "Error initializing localization files: $($_.Exception.Message)"
+        throw
+    }
+}
+
+function Get-DefaultLanguageContent {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("de-DE", "en-US")]
+        [string]$Language
+    )
+    
+    $version = $Global:Config.LanguageFileVersions.$Language
+    
+    if ($Language -eq "de-DE") {
+        return [PSCustomObject]@{
+            Version = $version
+            TabGeneral = "Allgemein"
+            LblLanguage = "Sprache"
+            LblEnvironment = "Umgebung"
+            WhatIfLabel = "Simulationsmodus ausführen (WhatIf)"
+            HelpEnv = "DEV für Debugging und Simulation, PROD für den produktiven Einsatz."
+            HelpWhatIf = "Simuliert nur Aktionen im DEV-Modus, ohne Änderungen vorzunehmen."
+            TabPaths = "Pfade / Logging"
+            GrpLoggingPaths = "Protokollierungs-Pfade"
+            HelpLoggingPaths = "Definiert die Speicherorte für Log- und Report-Dateien."
+            GrpTemplatePaths = "Vorlagen-Pfade"
+            HelpTemplatePaths = "Pfade zu den PowerShell-Profilvorlagen, die verwendet werden sollen."
+            LblStdTemplate = "Standard-Profil (profile.ps1)"
+            LblTemplateX = "Erweitertes Profil (profileX.ps1)"
+            LblTemplateMOD = "Modernes Profil (ProfileMOD.ps1)"
+            LblLogDir = "Log-Verzeichnis"
+            LblReportDir = "Report-Verzeichnis"
+            ChkArchive = "Log-Archivierung aktivieren"
+            ChkEventLog = "Windows Event Log aktivieren"
+            TabBackup = "Backup"
+            HelpBackup = "Aktiviert und konfiguriert automatische Backups der Profile."
+            ChkBackupEnabled = "Backup aktivieren"
+            LblBackupPath = "Backup-Pfad"
+            TabMail = "E-Mail"
+            HelpMail = "Konfiguriert die E-Mail-Benachrichtigungen für den Skriptstatus."
+            ChkMailEnabled = "Mail-Benachrichtigung aktivieren"
+            LblSmtpServer = "SMTP-Server"
+            LblSender = "Absender"
+            LblDevRecipient = "Empfänger (DEV)"
+            LblProdRecipient = "Empfänger (PROD)"
+            HelpMailProd = "Mehrere Empfänger mit Semikolon (;) trennen."
+            BtnOK = "OK"
+            BtnApply = "Anwenden"
+            BtnCancel = "Abbrechen"
+            BtnBrowse = " ... "
+            RestartTitle = "Sprachwechsel"
+            RestartMessage = "Um die Sprache zu ändern, muss das Konfigurationsfenster neu gestartet werden. Aktuelle Änderungen speichern und neu starten?"
+            TabUpdate = "Update"
+            ChkGitUpdateEnabled = "Automatische Updates via Git aktivieren"
+            HelpGitUpdate = "Wenn aktiviert, werden die Profil-Vorlagen vor der Ausführung aus dem angegebenen Git-Repository geklont/aktualisiert. Git muss auf dem System installiert sein."
+            LblGitRepoUrl = "Repository URL"
+            LblGitBranch = "Branch"
+            LblGitCachePath = "Lokaler Cache-Pfad"
+            TabMain = "Haupt"
+            TabNetwork = "NetworkPath"
+            TabAdvanced = "Erweitert"
+            TabTemplates = "Vorlagen"
+            HelpNetworkProfiles = "Konfiguriere Netzwerkpfade mit verschlüsselten Zugangsdaten für automatisches Einbinden."
+            BtnAddProfile = "Profil hinzufügen"
+            BtnDeleteProfile = "Profil löschen"
+            BtnAddTemplate = "Vorlage hinzufügen"
+            BtnDeleteTemplate = "Vorlage löschen"
+            BtnTestConnection = "Verbindung testen"
+            NetworkProfileDialogTitle = "Netzwerk-Profil"
+            LblProfileName = "Name:"
+            LblUncPath = "UNC-Pfad:"
+            LblUsername = "Benutzername:"
+            LblPassword = "Passwort:"
+            ChkEnabled = "Aktiviert"
+            MsgSelectProfile = "Bitte wählen Sie ein Netzwerk-Profil zum Löschen aus."
+            MsgNoSelection = "Keine Auswahl"
+            MsgConfirmDelete = "Sind Sie sicher, dass Sie das Netzwerk-Profil '{0}' löschen möchten?"
+            MsgConfirmDeleteTitle = "Löschung bestätigen"
+            MsgProfileDeleted = "Netzwerk-Profil '{0}' wurde gelöscht."
+            MsgProfileDeletedTitle = "Profil gelöscht"
+            MsgEnterProfileName = "Bitte geben Sie einen Profilnamen ein."
+            MsgEnterUncPath = "Bitte geben Sie einen UNC-Pfad ein."
+            MsgValidationError = "Validierungsfehler"
+            MsgConnectionSuccess = "Verbindungstest erfolgreich!"
+            MsgConnectionFailed = "Verbindungstest fehlgeschlagen!"
+            MsgTestResult = "Testergebnis"
+            MsgTestingConnection = "Teste..."
+            MsgErrorAddingProfile = "Fehler beim Hinzufügen des Netzwerk-Profils: {0}"
+            MsgErrorDeletingProfile = "Fehler beim Löschen des Netzwerk-Profils: {0}"
+            MsgError = "Fehler"
+            TemplateDialogTitle = "Vorlagen-Konfiguration"
+            LblTemplateName = "Name:"
+            LblTemplateFilePath = "Dateipfad:"
+            LblTemplateDescription = "Beschreibung:"
+            BtnTestTemplate = "Vorlage testen"
+            MsgSelectTemplate = "Bitte wählen Sie eine Vorlage zum Löschen aus."
+            MsgConfirmDeleteTemplate = "Sind Sie sicher, dass Sie die Vorlage '{0}' löschen möchten?"
+            MsgTemplateDeleted = "Vorlage '{0}' wurde gelöscht."
+            MsgEnterTemplateName = "Bitte geben Sie einen Vorlagennamen ein."
+            MsgEnterTemplateFilePath = "Bitte geben Sie einen Vorlagen-Dateipfad ein."
+            MsgTemplateFileNotFound = "Vorlagen-Datei nicht gefunden: {0}"
+            MsgTemplateTestSuccess = "Vorlagen-Test erfolgreich!"
+            MsgTemplateTestFailed = "Vorlagen-Test fehlgeschlagen: {0}"
+            MsgErrorAddingTemplate = "Fehler beim Hinzufügen der Vorlage: {0}"
+            MsgErrorDeletingTemplate = "Fehler beim Löschen der Vorlage: {0}"
+        }
+    } else {
+        # en-US
+        return [PSCustomObject]@{
+            Version = $version
+            TabGeneral = "General"
+            LblLanguage = "Language"
+            LblEnvironment = "Environment"
+            WhatIfLabel = "Run in Simulation Mode (WhatIf)"
+            HelpEnv = "DEV for debugging and simulation, PROD for productive use."
+            HelpWhatIf = "Only simulates actions in DEV mode without making changes."
+            TabPaths = "Paths / Logging"
+            GrpLoggingPaths = "Logging Paths"
+            HelpLoggingPaths = "Defines the storage locations for log and report files."
+            GrpTemplatePaths = "Template Paths"
+            HelpTemplatePaths = "Paths to the PowerShell profile templates to be used."
+            LblStdTemplate = "Standard Profile (profile.ps1)"
+            LblTemplateX = "Extended Profile (profileX.ps1)"
+            LblTemplateMOD = "Modern Profile (ProfileMOD.ps1)"
+            LblLogDir = "Log Directory"
+            LblReportDir = "Report Directory"
+            ChkArchive = "Enable Log Archiving"
+            ChkEventLog = "Enable Windows Event Log"
+            TabBackup = "Backup"
+            HelpBackup = "Enables and configures automatic backups of the profiles."
+            ChkBackupEnabled = "Enable Backup"
+            LblBackupPath = "Backup Path"
+            TabMail = "E-Mail"
+            HelpMail = "Configures the e-mail notifications for the script status."
+            ChkMailEnabled = "Enable Mail Notification"
+            LblSmtpServer = "SMTP Server"
+            LblSender = "Sender"
+            LblDevRecipient = "Recipient (DEV)"
+            LblProdRecipient = "Recipient (PROD)"
+            HelpMailProd = "Separate multiple recipients with a semicolon (;)."
+            BtnOK = "OK"
+            BtnApply = "Apply"
+            BtnCancel = "Cancel"
+            BtnBrowse = " ... "
+            RestartTitle = "Language Change"
+            RestartMessage = "To apply the language change, the configuration window must be restarted. Save current changes and restart?"
+            TabUpdate = "Update"
+            ChkGitUpdateEnabled = "Enable automatic updates via Git"
+            HelpGitUpdate = "If enabled, the profile templates will be cloned/updated from the specified Git repository before execution. Git must be installed on the system."
+            LblGitRepoUrl = "Repository URL"
+            LblGitBranch = "Branch"
+            LblGitCachePath = "Local Cache Path"
+            TabMain = "Main"
+            TabNetwork = "NetworkPath"
+            TabAdvanced = "Advanced"
+            TabTemplates = "Templates"
+            HelpNetworkProfiles = "Configure network paths with encrypted credentials for automatic mounting."
+            BtnAddProfile = "Add Profile"
+            BtnDeleteProfile = "Delete Profile"
+            BtnAddTemplate = "Add Template"
+            BtnDeleteTemplate = "Delete Template"
+            BtnTestConnection = "Test Connection"
+            NetworkProfileDialogTitle = "Network Profile"
+            LblProfileName = "Name:"
+            LblUncPath = "UNC Path:"
+            LblUsername = "Username:"
+            LblPassword = "Password:"
+            ChkEnabled = "Enabled"
+            MsgSelectProfile = "Please select a network profile to delete."
+            MsgNoSelection = "No Selection"
+            MsgConfirmDelete = "Are you sure you want to delete the network profile '{0}'?"
+            MsgConfirmDeleteTitle = "Confirm Deletion"
+            MsgProfileDeleted = "Network profile '{0}' has been deleted."
+            MsgProfileDeletedTitle = "Profile Deleted"
+            MsgEnterProfileName = "Please enter a profile name."
+            MsgEnterUncPath = "Please enter a UNC path."
+            MsgValidationError = "Validation Error"
+            MsgConnectionSuccess = "Connection test successful!"
+            MsgConnectionFailed = "Connection test failed!"
+            MsgTestResult = "Test Result"
+            MsgTestingConnection = "Testing..."
+            MsgErrorAddingProfile = "Error adding network profile: {0}"
+            MsgErrorDeletingProfile = "Error deleting network profile: {0}"
+            MsgError = "Error"
+            TemplateDialogTitle = "Template Configuration"
+            LblTemplateName = "Name:"
+            LblTemplateFilePath = "File Path:"
+            LblTemplateDescription = "Description:"
+            BtnTestTemplate = "Test Template"
+            MsgSelectTemplate = "Please select a template to delete."
+            MsgConfirmDeleteTemplate = "Are you sure you want to delete the template '{0}'?"
+            MsgTemplateDeleted = "Template '{0}' has been deleted."
+            MsgEnterTemplateName = "Please enter a template name."
+            MsgEnterTemplateFilePath = "Please enter a template file path."
+            MsgTemplateFileNotFound = "Template file not found: {0}"
+            MsgTemplateTestSuccess = "Template test successful!"
+            MsgTemplateTestFailed = "Template test failed: {0}"
+            MsgErrorAddingTemplate = "Error adding template: {0}"
+            MsgErrorDeletingTemplate = "Error deleting template: {0}"
+        }
     }
 }
 
@@ -336,6 +606,6 @@ function Test-NetworkConnection {
     }
 }
 
-Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Set-TemplateVersion, Send-MailNotification, ConvertTo-Base64, ConvertFrom-Base64, Update-NetworkPathsInTemplate, Test-NetworkConnection
+Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Set-TemplateVersion, Send-MailNotification, ConvertTo-Base64, ConvertFrom-Base64, Update-NetworkPathsInTemplate, Test-NetworkConnection, Initialize-LocalizationFiles, Get-DefaultLanguageContent
 
-# --- End of module --- v11.2.2 ; Regelwerk: v8.2.0 ---
+# --- End of module --- v11.2.6 ; Regelwerk: v9.6.2 ---
