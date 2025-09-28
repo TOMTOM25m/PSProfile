@@ -17,6 +17,18 @@ f:\DEV\repositories\
 └── Useranlage/         # Benutzeranlage System | User provisioning system
 ```
 
+### Production Network Deployment | Produktions-Netzwerk-Deployment
+**KRITISCH**: Produktive Scripts werden auf dem Netzwerkpfad bereitgestellt:
+**CRITICAL**: Production scripts are deployed to the network path:
+
+```
+\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\
+├── PSProfile\          # Produktive PowerShell Profile Scripts
+├── CertSurv\           # Produktive Zertifikatüberwachung
+├── CertWebService\     # Produktive Web Services  
+└── Shared\             # Gemeinsame Ressourcen und Templates
+```
+
 ### Cross-Repository-Workflows | Cross-Repository Workflows
 ```powershell
 # Repository-übergreifende Kommunikation | Cross-repository communication
@@ -42,6 +54,261 @@ This is a **MUW-Regelwerk v9.6.2 compliant** enterprise PowerShell profile manag
 - **`Modules/FL-*.psm1`**: Modulare Architektur mit Config, Logging, GUI, Maintenance und Utils Modulen | Modular architecture with Config, Logging, GUI, Maintenance, and Utils modules
 - **`Templates/`**: PowerShell Profil-Templates (Profile-template.ps1, Profile-templateX.ps1, Profile-templateMOD.ps1) | PowerShell profile templates
 - **`Config/`**: JSON Konfigurationen, Lokalisierungsdateien (de-DE.json, en-US.json) und GUI Assets | JSON configurations, localization files, and GUI assets
+
+## Enterprise Deployment Patterns
+
+### Produktions-Deployment auf Netzwerkpfad | Production Deployment to Network Path
+**Standard-Produktionspfad**: `\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\PSProfile\`
+
+```powershell
+# Produktions-Deployment-Pattern | Production deployment pattern
+function Deploy-ToProduction {
+    param(
+        [string]$ProductionPath = "\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\PSProfile",
+        [switch]$ValidateOnly,
+        [switch]$BackupExisting
+    )
+    
+    # Pre-Deployment-Validierung | Pre-deployment validation
+    Test-NetworkPath -Path $ProductionPath -RequiredPermissions @('Read','Write','Execute')
+    Test-ProductionReadiness -SourcePath $Global:ScriptDirectory
+    
+    if ($BackupExisting) {
+        # Existing production version backup | Backup der bestehenden Produktionsversion
+        $BackupPath = "$ProductionPath\.backup\$(Get-Date -Format 'yyyy-MM-dd_HH-mm-ss')"
+        New-Item -Path $BackupPath -ItemType Directory -Force
+        Copy-Item "$ProductionPath\*" $BackupPath -Recurse -Force
+        Write-Log -Level INFO -Message "Production backup created: $BackupPath"
+    }
+    
+    if ($ValidateOnly) {
+        Write-Host "✅ Deployment validation passed. Use -ValidateOnly:$false to deploy." -ForegroundColor Green
+        return
+    }
+    
+    # Deployment zur Produktion | Deployment to production
+    $DeploymentItems = @(
+        @{ Source = "Reset-PowerShellProfiles.ps1"; Target = "$ProductionPath\Reset-PowerShellProfiles.ps1" }
+        @{ Source = "VERSION.ps1"; Target = "$ProductionPath\VERSION.ps1" }
+        @{ Source = "Modules\"; Target = "$ProductionPath\Modules\" }
+        @{ Source = "Templates\"; Target = "$ProductionPath\Templates\" }
+        @{ Source = "Config\"; Target = "$ProductionPath\Config\" }
+    )
+    
+    foreach ($Item in $DeploymentItems) {
+        $SourcePath = Join-Path $Global:ScriptDirectory $Item.Source
+        Copy-Item -Path $SourcePath -Destination $Item.Target -Recurse -Force
+        Write-Log -Level INFO -Message "Deployed: $($Item.Source) -> $($Item.Target)"
+    }
+    
+    # Produktions-Konfiguration setzen | Set production configuration
+    Set-ProductionConfiguration -ConfigPath "$ProductionPath\Config"
+    
+    Write-Log -Level INFO -Message "Successfully deployed PSProfile to production: $ProductionPath"
+}
+```
+
+### Netzwerk-basierte Script-Ausführung | Network-based Script Execution
+```powershell
+# Scripts vom Produktionspfad ausführen | Execute scripts from production path
+function Invoke-ProductionScript {
+    param(
+        [string]$ScriptName = "Reset-PowerShellProfiles.ps1",
+        [hashtable]$Parameters = @{},
+        [string]$ProductionPath = "\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\PSProfile"
+    )
+    
+    # Netzwerkpfad-Zugriff validieren | Validate network path access
+    if (-not (Test-Path $ProductionPath)) {
+        throw "Production path not accessible: $ProductionPath"
+    }
+    
+    $ScriptFullPath = Join-Path $ProductionPath $ScriptName
+    
+    # Execution Policy für Netzwerk-Scripts | Execution policy for network scripts
+    $CurrentPolicy = Get-ExecutionPolicy
+    if ($CurrentPolicy -eq 'Restricted') {
+        Write-Warning "ExecutionPolicy is Restricted. Script execution may fail."
+    }
+    
+    # Script mit Parametern ausführen | Execute script with parameters
+    try {
+        & $ScriptFullPath @Parameters
+        Write-Log -Level INFO -Message "Successfully executed production script: $ScriptName"
+    } catch {
+        Write-Log -Level ERROR -Message "Failed to execute production script $ScriptName`: $($_.Exception.Message)"
+        throw
+    }
+}
+```
+
+### Shared Resources Management | Verwaltung geteilter Ressourcen
+```powershell
+# Gemeinsame Ressourcen auf Netzwerkpfad verwalten | Manage shared resources on network path
+function Sync-SharedResources {
+    param(
+        [string]$SharedPath = "\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\Shared",
+        [string[]]$ResourceTypes = @("Templates", "Configs", "Assets")
+    )
+    
+    foreach ($ResourceType in $ResourceTypes) {
+        $SourcePath = Join-Path $Global:ScriptDirectory $ResourceType
+        $TargetPath = Join-Path $SharedPath $ResourceType
+        
+        if (Test-Path $SourcePath) {
+            # Robocopy für Enterprise-Synchronisation | Robocopy for enterprise synchronization
+            $RobocopyArgs = @(
+                $SourcePath
+                $TargetPath
+                '/MIR'           # Mirror directory tree
+                '/R:3'           # Retry 3 times on failure
+                '/W:10'          # Wait 10 seconds between retries
+                '/LOG+:C:\Logs\ResourceSync.log'
+                '/TEE'           # Output to console and log
+            )
+            
+            & robocopy @RobocopyArgs
+            Write-Log -Level INFO -Message "Synchronized $ResourceType to shared path"
+        }
+    }
+}
+```
+
+### Production Configuration Management | Produktions-Konfigurationsverwaltung
+```powershell
+# Produktions-spezifische Konfiguration | Production-specific configuration
+function Set-ProductionConfiguration {
+    param([string]$ConfigPath)
+    
+    $ProductionConfig = @{
+        Environment = "PROD"
+        WhatIfMode = $false
+        Logging = @{
+            LogPath = "\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\Logs\PSProfile"
+            EnableEventLog = $true
+            LogRetentionDays = 90
+            ArchiveRetentionDays = 365
+        }
+        Mail = @{
+            Enabled = $true
+            SmtpServer = "smtpi.meduniwien.ac.at"
+            Sender = "noreply-prod@meduniwien.ac.at"
+            ProdRecipient = "win-admin@meduniwien.ac.at"
+        }
+        UNCPaths = @{
+            AssetDirectory = "\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\Shared\Assets"
+            BackupDirectory = "\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\Backup"
+        }
+        Security = @{
+            RequireDigitalSignature = $true
+            AllowedExecutionHosts = @("itscmgmt03.srv.meduniwien.ac.at")
+        }
+    }
+    
+    $ConfigFile = Join-Path $ConfigPath "Config-Production.json"
+    $ProductionConfig | ConvertTo-Json -Depth 5 | Set-Content $ConfigFile -Encoding UTF8
+    
+    Write-Log -Level INFO -Message "Production configuration created: $ConfigFile"
+}
+```
+
+### Network Path Access Validation | Netzwerkpfad-Zugriff-Validierung
+```powershell
+# Netzwerkpfad-Zugriff und Berechtigungen prüfen | Validate network path access and permissions
+function Test-ProductionNetworkAccess {
+    param(
+        [string]$ProductionPath = "\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD",
+        [string[]]$RequiredPaths = @("PSProfile", "Shared", "Logs", "Backup")
+    )
+    
+    $ValidationResults = @{
+        ServerReachable = $false
+        PathAccessible = @{}
+        Permissions = @{}
+        TotalScore = 0
+        MaxScore = 0
+    }
+    
+    # Server-Erreichbarkeit prüfen | Test server reachability
+    try {
+        $ServerName = "itscmgmt03.srv.meduniwien.ac.at"
+        $PingResult = Test-Connection -ComputerName $ServerName -Count 1 -Quiet
+        $ValidationResults.ServerReachable = $PingResult
+        if ($PingResult) { $ValidationResults.TotalScore++ }
+        $ValidationResults.MaxScore++
+        
+        Write-Log -Level INFO -Message "Server reachability: $PingResult"
+    } catch {
+        Write-Log -Level ERROR -Message "Server ping failed: $($_.Exception.Message)"
+    }
+    
+    # Pfad-Zugriff prüfen | Test path access
+    foreach ($Path in $RequiredPaths) {
+        $FullPath = Join-Path $ProductionPath $Path
+        $ValidationResults.MaxScore++
+        
+        try {
+            $PathExists = Test-Path $FullPath
+            $ValidationResults.PathAccessible[$Path] = $PathExists
+            if ($PathExists) { $ValidationResults.TotalScore++ }
+            
+            # Berechtigungen testen | Test permissions
+            if ($PathExists) {
+                $ValidationResults.MaxScore += 3  # Read, Write, Execute
+                
+                # Read-Berechtigung | Read permission
+                try {
+                    Get-ChildItem $FullPath -ErrorAction Stop | Out-Null
+                    $ValidationResults.Permissions["$Path-Read"] = $true
+                    $ValidationResults.TotalScore++
+                } catch {
+                    $ValidationResults.Permissions["$Path-Read"] = $false
+                }
+                
+                # Write-Berechtigung | Write permission
+                try {
+                    $TestFile = Join-Path $FullPath "test_$(Get-Date -Format 'yyyyMMddHHmmss').tmp"
+                    "test" | Out-File $TestFile -ErrorAction Stop
+                    Remove-Item $TestFile -Force -ErrorAction SilentlyContinue
+                    $ValidationResults.Permissions["$Path-Write"] = $true
+                    $ValidationResults.TotalScore++
+                } catch {
+                    $ValidationResults.Permissions["$Path-Write"] = $false
+                }
+                
+                # Execute-Berechtigung (für Script-Pfade) | Execute permission (for script paths)
+                if ($Path -eq "PSProfile") {
+                    try {
+                        $TestScript = Join-Path $FullPath "VERSION.ps1"
+                        if (Test-Path $TestScript) {
+                            # Nur Syntax-Check, nicht ausführen | Syntax check only, don't execute
+                            $null = [System.Management.Automation.PSParser]::Tokenize((Get-Content $TestScript -Raw), [ref]$null)
+                            $ValidationResults.Permissions["$Path-Execute"] = $true
+                            $ValidationResults.TotalScore++
+                        }
+                    } catch {
+                        $ValidationResults.Permissions["$Path-Execute"] = $false
+                    }
+                } else {
+                    $ValidationResults.TotalScore++  # Non-script paths automatically pass execute test
+                }
+            }
+            
+            Write-Log -Level INFO -Message "Path validation for $FullPath`: Accessible=$PathExists"
+        } catch {
+            $ValidationResults.PathAccessible[$Path] = $false
+            Write-Log -Level ERROR -Message "Path access test failed for $FullPath`: $($_.Exception.Message)"
+        }
+    }
+    
+    # Validierungsergebnis ausgeben | Output validation result
+    $SuccessPercentage = [math]::Round(($ValidationResults.TotalScore / $ValidationResults.MaxScore) * 100)
+    Write-Host "`n📊 Production Network Access Validation" -ForegroundColor Cyan
+    Write-Host "Score: $($ValidationResults.TotalScore)/$($ValidationResults.MaxScore) ($SuccessPercentage%)" -ForegroundColor $(if ($SuccessPercentage -ge 80) { "Green" } elseif ($SuccessPercentage -ge 60) { "Yellow" } else { "Red" })
+    
+    return $ValidationResults
+}
+```
 
 ## MUW-Regelwerk v9.6.2 Compliance Patterns
 
@@ -124,69 +391,9 @@ Set-ResetProfileStatus -Status "RUNNING" -Details @{
 $CertSurvStatus = Get-ScriptStatus -ScriptName "Cert-Surveillance-Main.ps1"
 ```
 
-## Enterprise Deployment Patterns
-
-### Netzwerk-Deployment auf itscmgmt03.srv.meduniwien.ac.at
-```powershell
-# Standard Enterprise-Deployment-Pattern | Standard enterprise deployment pattern
-function Deploy-ToProductionServer {
-    param([string]$TargetServer = "itscmgmt03.srv.meduniwien.ac.at")
-    
-    # Deployment-Validierung | Deployment validation
-    Test-NetworkConnectivity -Server $TargetServer
-    Test-AdminCredentials -Server $TargetServer
-    
-    # Batch-Installation vorbereiten | Prepare batch installation
-    $DeploymentPackage = New-DeploymentPackage -Source $Global:ScriptDirectory
-    
-    # Remote-Installation | Remote installation
-    Invoke-Command -ComputerName $TargetServer -ScriptBlock {
-        param($Package)
-        & "$Package\Install-PSProfile.bat"
-    } -ArgumentList $DeploymentPackage
-}
-```
-
-### Batch-Installation-Pattern
-```powershell
-# Install-PSProfile.bat Integration | Batch installation integration
-function New-BatchInstaller {
-    $BatchContent = @"
-@echo off
-echo Installing PSProfile System...
-powershell.exe -ExecutionPolicy Bypass -File ".\Setup-PSProfile.ps1" -Silent
-if %ERRORLEVEL% NEQ 0 (
-    echo Installation failed with error %ERRORLEVEL%
-    pause
-    exit /b %ERRORLEVEL%
-)
-echo PSProfile System installed successfully
-"@
-    
-    $BatchContent | Out-File "Install-PSProfile.bat" -Encoding ASCII
-}
-```
-
-### Service-Installation-Workflows
-```powershell
-# Windows Service Integration für Enterprise-Monitoring | Windows service integration for enterprise monitoring
-function Install-PSProfileService {
-    $ServiceParams = @{
-        Name = "PSProfileManager"
-        BinaryPathName = "powershell.exe -File `"$Global:ScriptDirectory\PSProfile-Service.ps1`""
-        DisplayName = "PowerShell Profile Manager Service"
-        Description = "MUW-Regelwerk compliant PowerShell profile management service"
-        StartupType = "Automatic"
-    }
-    
-    New-Service @ServiceParams
-    Start-Service -Name "PSProfileManager"
-}
-```
-
 ## Zentrale Logging-Architektur | Centralized Logging Architecture
 
-### Cross-System Log-Aggregation
+### Cross-System Log-Aggregation mit Production Path Integration
 ```powershell
 # Zentrale Log-Sammlung für Enterprise-Monitoring | Central log collection for enterprise monitoring
 function Write-CentralLog {
@@ -200,8 +407,12 @@ function Write-CentralLog {
     # Lokales Log | Local log
     Write-Log -Level $Level -Message $Message
     
-    # Zentrales Enterprise-Log | Central enterprise log
-    $CentralLogPath = "\\itscmgmt03.srv.meduniwien.ac.at\Logs\PowerShell\$System"
+    # Zentrales Production Log | Central production log
+    $CentralLogPath = "\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\Logs\$System"
+    if (-not (Test-Path $CentralLogPath)) {
+        New-Item -Path $CentralLogPath -ItemType Directory -Force
+    }
+    
     $LogEntry = @{
         Timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss.fff'
         Level = $Level
@@ -211,310 +422,217 @@ function Write-CentralLog {
         Message = $Message
         RegelwerkVersion = $RegelwerkVersion
         ScriptVersion = $ScriptVersion
+        ProductionPath = "\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD"
     }
     
-    $LogEntry | ConvertTo-Json -Compress | Add-Content "$CentralLogPath\$((Get-Date).ToString('yyyy-MM-dd')).jsonl"
-}
-```
-
-### Log-Format-Standards für Enterprise-Monitoring
-```powershell
-# Standardisiertes Log-Format für SIEM-Integration | Standardized log format for SIEM integration
-function Format-EnterpriseLogEntry {
-    param($LogData)
-    
-    return @{
-        # ISO 8601 Timestamp für internationale Kompatibilität | ISO 8601 timestamp for international compatibility
-        '@timestamp' = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
-        level = $LogData.Level.ToLower()
-        message = $LogData.Message
-        system = @{
-            name = "PSProfile"
-            version = $ScriptVersion
-            regelwerk = $RegelwerkVersion
-            environment = $Global:Config.Environment
-        }
-        host = @{
-            name = $env:COMPUTERNAME
-            user = $env:USERNAME
-            domain = $env:USERDOMAIN
-        }
-        # Correlation ID für Request-Tracking | Correlation ID for request tracking
-        correlation_id = $Global:CorrelationId
-        # Custom Fields für erweiterte Analyse | Custom fields for extended analysis
-        custom = $LogData.CustomFields
+    try {
+        $LogEntry | ConvertTo-Json -Compress | Add-Content "$CentralLogPath\$((Get-Date).ToString('yyyy-MM-dd')).jsonl"
+    } catch {
+        # Fallback auf lokales Logging | Fallback to local logging
+        Write-EventLog -LogName Application -Source $System -EntryType Warning -EventId 2001 -Message "Failed to write to central log: $($_.Exception.Message)"
     }
 }
 ```
 
-### Event Log Integration mit Enterprise-Standards
+### Production Log Monitoring | Produktions-Log-Monitoring
 ```powershell
-# Windows Event Log mit Source-Registration | Windows Event Log with source registration
-function Write-EnterpriseEventLog {
-    param($Level, $Message, $EventID = 1000)
+# Production Log-Überwachung | Production log monitoring
+function Monitor-ProductionLogs {
+    param(
+        [string]$LogPath = "\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\Logs",
+        [int]$TailLines = 100,
+        [string[]]$Systems = @("PSProfile", "CertSurv", "CertWebService")
+    )
     
-    # Event Source registrieren falls nicht vorhanden | Register event source if not present
-    if (-not [System.Diagnostics.EventLog]::SourceExists("PSProfile")) {
-        [System.Diagnostics.EventLog]::CreateEventSource("PSProfile", "Application")
+    foreach ($System in $Systems) {
+        $SystemLogPath = Join-Path $LogPath $System
+        $TodayLog = Join-Path $SystemLogPath "$((Get-Date).ToString('yyyy-MM-dd')).jsonl"
+        
+        if (Test-Path $TodayLog) {
+            Write-Host "`n📊 $System - Last $TailLines entries:" -ForegroundColor Cyan
+            
+            $LogEntries = Get-Content $TodayLog -Tail $TailLines | ForEach-Object {
+                try {
+                    $_ | ConvertFrom-Json
+                } catch {
+                    # Skip invalid JSON lines
+                    $null
+                }
+            } | Where-Object { $_ -ne $null }
+            
+            # Fehler und Warnungen hervorheben | Highlight errors and warnings
+            foreach ($Entry in $LogEntries) {
+                $Color = switch ($Entry.Level.ToUpper()) {
+                    'ERROR' { 'Red' }
+                    'WARNING' { 'Yellow' }
+                    'CRITICAL' { 'Magenta' }
+                    default { 'White' }
+                }
+                
+                Write-Host "$($Entry.Timestamp) [$($Entry.Level)] $($Entry.Message)" -ForegroundColor $Color
+            }
+        } else {
+            Write-Host "📝 $System - No log file for today" -ForegroundColor Gray
+        }
     }
-    
-    $EventType = switch ($Level) {
-        'ERROR' { 'Error' }
-        'WARNING' { 'Warning' }
-        default { 'Information' }
-    }
-    
-    Write-EventLog -LogName Application -Source "PSProfile" -EntryType $EventType -EventId $EventID -Message $Message
 }
 ```
 
 ## Comprehensive Testing Architecture
 
+### Production Deployment Testing | Produktions-Deployment-Tests
+```powershell
+# Production-Readiness Tests | Produktions-Bereitschafts-Tests
+function Test-ProductionReadiness {
+    param([string]$SourcePath = $Global:ScriptDirectory)
+    
+    $TestResults = @{
+        TestName = "Production Readiness Test"
+        Timestamp = Get-Date
+        Results = @{}
+        OverallStatus = "UNKNOWN"
+    }
+    
+    # Network Path Accessibility | Netzwerkpfad-Zugriff
+    $TestResults.Results['NetworkAccess'] = Test-ProductionNetworkAccess
+    
+    # Script Integrity | Script-Integrität  
+    $TestResults.Results['ScriptIntegrity'] = Test-ScriptIntegrity -Path $SourcePath
+    
+    # Dependencies | Abhängigkeiten
+    $TestResults.Results['Dependencies'] = Test-ProductionDependencies -Path $SourcePath
+    
+    # Configuration | Konfiguration
+    $TestResults.Results['Configuration'] = Test-ProductionConfiguration -Path $SourcePath
+    
+    # Security | Sicherheit
+    $TestResults.Results['Security'] = Test-ProductionSecurity -Path $SourcePath
+    
+    # Regelwerk Compliance | Regelwerk-Konformität
+    $TestResults.Results['RegelwerkCompliance'] = Test-RegelwerkCompliance -Path $SourcePath
+    
+    # Overall Status berechnen | Calculate overall status
+    $FailedTests = $TestResults.Results.Values | Where-Object { $_.Status -eq 'FAIL' }
+    $TestResults.OverallStatus = if ($FailedTests.Count -eq 0) { "READY" } else { "NOT_READY" }
+    
+    # Ergebnis-Report | Results report
+    Write-Host "`n🎯 Production Readiness Summary" -ForegroundColor Cyan
+    foreach ($TestCategory in $TestResults.Results.Keys) {
+        $Result = $TestResults.Results[$TestCategory]
+        $StatusColor = if ($Result.Status -eq 'PASS') { 'Green' } else { 'Red' }
+        $StatusIcon = if ($Result.Status -eq 'PASS') { '✅' } else { '❌' }
+        
+        Write-Host "$StatusIcon $TestCategory`: $($Result.Status)" -ForegroundColor $StatusColor
+    }
+    
+    Write-Host "`n🚀 Overall Status: $($TestResults.OverallStatus)" -ForegroundColor $(if ($TestResults.OverallStatus -eq 'READY') { 'Green' } else { 'Red' })
+    
+    return $TestResults
+}
+```
+
 ### Integration zwischen verschiedenen Test-Suites
 ```powershell
-# Master Test Controller für alle Repository-Tests | Master test controller for all repository tests
+# Master Test Controller mit Production Path Integration | Master test controller with production path integration
 function Invoke-MasterTestSuite {
     param(
         [string[]]$Repositories = @("PSProfile", "CertSurv", "CertWebService"),
-        [switch]$IncludeIntegrationTests,
+        [switch]$IncludeProductionTests,
+        [switch]$ValidateNetworkPaths,
         [switch]$GenerateReport
     )
     
-    $TestResults = @{}
-    
-    foreach ($Repo in $Repositories) {
-        Write-Host "Testing $Repo..." -ForegroundColor Cyan
-        
-        # Repository-spezifische Tests | Repository-specific tests
-        $TestResults[$Repo] = @{
-            UnitTests = & ".\$Repo\TEST\Test-$Repo-Functions.ps1"
-            ComplianceTests = & ".\Tests\Test-$Repo-Compliance.ps1"
-            SecurityTests = & ".\Tests\Test-$Repo-Security.ps1"
-        }
-        
-        # Cross-Repository Integration Tests | Cross-repository integration tests
-        if ($IncludeIntegrationTests) {
-            $TestResults[$Repo].IntegrationTests = & ".\Tests\Test-$Repo-Integration.ps1"
-        }
+    $TestResults = @{
+        ExecutionDate = Get-Date
+        ProductionPath = "\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD"
+        RepositoryResults = @{}
+        ProductionValidation = $null
+        OverallStatus = "UNKNOWN"
     }
     
+    # Network Path Validation falls angefordert | Network path validation if requested
+    if ($ValidateNetworkPaths) {
+        Write-Host "🌐 Validating production network paths..." -ForegroundColor Cyan
+        $TestResults.ProductionValidation = Test-ProductionNetworkAccess
+    }
+    
+    # Repository-spezifische Tests | Repository-specific tests
+    foreach ($Repo in $Repositories) {
+        Write-Host "`n📂 Testing $Repo..." -ForegroundColor Cyan
+        
+        $RepoResults = @{
+            UnitTests = $null
+            ComplianceTests = $null
+            SecurityTests = $null
+            ProductionReadiness = $null
+        }
+        
+        try {
+            # Standard Tests | Standard tests
+            if (Test-Path ".\$Repo\TEST\Test-$Repo-Functions.ps1") {
+                $RepoResults.UnitTests = & ".\$Repo\TEST\Test-$Repo-Functions.ps1"
+            }
+            
+            if (Test-Path ".\Tests\Test-$Repo-Compliance.ps1") {
+                $RepoResults.ComplianceTests = & ".\Tests\Test-$Repo-Compliance.ps1"
+            }
+            
+            # Production Tests falls angefordert | Production tests if requested
+            if ($IncludeProductionTests -and ($Repo -eq "PSProfile")) {
+                $RepoResults.ProductionReadiness = Test-ProductionReadiness -SourcePath ".\$Repo"
+            }
+            
+        } catch {
+            Write-Host "❌ Error testing $Repo`: $($_.Exception.Message)" -ForegroundColor Red
+            $RepoResults.Error = $_.Exception.Message
+        }
+        
+        $TestResults.RepositoryResults[$Repo] = $RepoResults
+    }
+    
+    # Gesamtstatus berechnen | Calculate overall status
+    $FailedRepos = $TestResults.RepositoryResults.Keys | Where-Object {
+        $TestResults.RepositoryResults[$_].Error -or 
+        ($TestResults.RepositoryResults[$_].ProductionReadiness.OverallStatus -eq "NOT_READY")
+    }
+    
+    $TestResults.OverallStatus = if ($FailedRepos.Count -eq 0) { "ALL_SYSTEMS_GO" } else { "ISSUES_DETECTED" }
+    
+    # Report generieren falls angefordert | Generate report if requested
     if ($GenerateReport) {
-        New-TestReport -Results $TestResults
+        $ReportPath = ".\Reports\Master-Test-Report-$(Get-Date -Format 'yyyy-MM-dd_HH-mm-ss').json"
+        New-Item -Path (Split-Path $ReportPath) -ItemType Directory -Force | Out-Null
+        $TestResults | ConvertTo-Json -Depth 10 | Set-Content $ReportPath
+        Write-Host "📊 Test report saved: $ReportPath" -ForegroundColor Green
     }
     
     return $TestResults
 }
 ```
 
-### Compliance-Testing-Workflows
-```powershell
-# Regelwerk v9.6.2 Compliance-Tests | Regelwerk v9.6.2 compliance tests
-function Test-RegelwerkCompliance {
-    param([string]$RepositoryPath)
-    
-    $ComplianceResults = @{
-        Version = "v9.6.2"
-        TestDate = Get-Date
-        Results = @{}
-    }
-    
-    # §1-§6: Basis-Compliance Tests
-    $ComplianceResults.Results['BasicCompliance'] = @{
-        VersionManagement = Test-VersionManagement -Path $RepositoryPath
-        UTF8Encoding = Test-UTF8Encoding -Path $RepositoryPath  
-        AdminRequirements = Test-AdminRequirements -Path $RepositoryPath
-        ErrorHandling = Test-ErrorHandling -Path $RepositoryPath
-        LoggingStandard = Test-LoggingStandard -Path $RepositoryPath
-        ConfigManagement = Test-ConfigManagement -Path $RepositoryPath
-    }
-    
-    # §7: PowerShell-Kompatibilität
-    $ComplianceResults.Results['PSCompatibility'] = Test-PowerShellCompatibility -Path $RepositoryPath
-    
-    # §8: E-Mail-Integration  
-    $ComplianceResults.Results['EmailIntegration'] = Test-EmailIntegration -Path $RepositoryPath
-    
-    # §9: Cross-Script-Kommunikation
-    $ComplianceResults.Results['CrossScriptComm'] = Test-CrossScriptCommunication -Path $RepositoryPath
-    
-    return $ComplianceResults
-}
-```
-
-### Quick-Compliance-Test Pattern
-```powershell
-# Schnelle Compliance-Überprüfung für CI/CD | Quick compliance check for CI/CD
-function Invoke-QuickComplianceTest {
-    Write-Host "🔍 Quick Compliance Test - Regelwerk v9.6.2" -ForegroundColor Yellow
-    
-    $Tests = @(
-        @{ Name = "VERSION.ps1 exists"; Test = { Test-Path "VERSION.ps1" } }
-        @{ Name = "FL-* modules present"; Test = { (Get-ChildItem "Modules\FL-*.psm1").Count -gt 0 } }
-        @{ Name = "UTF-8 encoding"; Test = { Test-ScriptEncoding } }
-        @{ Name = "Admin requirements"; Test = { Test-AdminRequirements } }
-        @{ Name = "Cross-script functions"; Test = { Test-CrossScriptFunctions } }
-    )
-    
-    $Results = foreach ($Test in $Tests) {
-        $Passed = & $Test.Test
-        [PSCustomObject]@{
-            Test = $Test.Name
-            Status = if ($Passed) { "✅ PASS" } else { "❌ FAIL" }
-            Passed = $Passed
-        }
-    }
-    
-    $PassedCount = ($Results | Where-Object Passed).Count
-    Write-Host "`n📊 Results: $PassedCount/$($Tests.Count) tests passed" -ForegroundColor $(if ($PassedCount -eq $Tests.Count) { "Green" } else { "Red" })
-    
-    return $Results
-}
-```
-
-## Modulares Import-Pattern | Modular Import Pattern
-```powershell
-# FL-Module mit Dependency-Checking importieren | Import FL-modules with dependency checking
-function Import-FLModules {
-    param([string]$ModulePath = (Join-Path $Global:ScriptDirectory "Modules"))
-    
-    $RequiredModules = @(
-        'FL-Config.psm1',    # Basis-Konfiguration | Base configuration
-        'FL-Logging.psm1',   # Logging-Framework | Logging framework  
-        'FL-Utils.psm1',     # Utilities | Utilities
-        'FL-Maintenance.psm1', # Wartung | Maintenance
-        'FL-Gui.psm1'        # GUI-Framework | GUI framework
-    )
-    
-    foreach ($Module in $RequiredModules) {
-        try {
-            $ModuleFullPath = Join-Path $ModulePath $Module
-            if (-not (Test-Path $ModuleFullPath)) {
-                throw "Required module not found: $Module"
-            }
-            
-            Import-Module $ModuleFullPath -ErrorAction Stop -Force
-            Write-Log -Level DEBUG -Message "Successfully loaded module: $Module"
-        } catch {
-            Write-Log -Level ERROR -Message "Failed to load critical module $Module`: $($_.Exception.Message)"
-            throw "Critical module loading failure. Cannot continue."
-        }
-    }
-}
-```
-
-## Konfigurationssystem | Configuration System
-
-### JSON Konfigurationsverwaltung mit Versionsmigration | JSON Configuration Management with Version Migration
-```powershell
-# Erweiterte Konfigurationsverwaltung | Extended configuration management
-function Get-ConfigWithMigration {
-    param([string]$ConfigPath)
-    
-    $Config = Get-Config -Path $ConfigPath
-    
-    if ($null -eq $Config) {
-        Write-Log -Level WARNING -Message "Configuration not found. Creating default configuration."
-        $Config = Get-DefaultConfig
-        Save-Config -Config $Config -Path $ConfigPath
-        return $Config
-    }
-    
-    # Automatische Migration für veraltete Konfigurationen | Automatic migration for outdated configurations
-    if ($Config.RegelwerkVersion -ne $RegelwerkVersion) {
-        Write-Log -Level INFO -Message "Migrating configuration from $($Config.RegelwerkVersion) to $RegelwerkVersion"
-        $Config = Invoke-ConfigMigration -Config $Config -TargetVersion $RegelwerkVersion
-        Save-Config -Config $Config -Path $ConfigPath
-    }
-    
-    return $Config
-}
-```
-
-### Template-Versionierung mit Git-Integration | Template Versioning with Git Integration
-```powershell
-# Git-basierte Template-Synchronisation | Git-based template synchronization
-function Sync-TemplatesFromGit {
-    param([string]$GitRepoUrl, [string]$Branch = "main")
-    
-    $GitCachePath = $Global:Config.GitUpdate.CachePath
-    
-    if (Test-Path $GitCachePath) {
-        # Git Repository aktualisieren | Update git repository
-        Set-Location $GitCachePath
-        & git pull origin $Branch
-    } else {
-        # Git Repository klonen | Clone git repository
-        & git clone $GitRepoUrl $GitCachePath --branch $Branch
-    }
-    
-    # Template-Dateien kopieren und versionieren | Copy and version template files
-    $TemplateSource = Join-Path $GitCachePath "Templates"
-    $TemplateTarget = Join-Path $Global:ScriptDirectory "Templates"
-    
-    Copy-Item "$TemplateSource\*" $TemplateTarget -Force
-    
-    # Template-Versionen aktualisieren | Update template versions
-    Update-TemplateVersions -TemplateDirectory $TemplateTarget
-}
-```
-
-### Netzwerk-Profile mit Advanced Authentication | Network Profiles with Advanced Authentication
-```powershell
-# Erweiterte Netzwerk-Authentifizierung | Extended network authentication
-function Connect-NetworkProfileAdvanced {
-    param([PSCustomObject]$NetworkProfile)
-    
-    # Multi-Faktor-Authentifizierung unterstützen | Support multi-factor authentication
-    if ($NetworkProfile.AuthMethod -eq "Certificate") {
-        $Credential = Get-CertificateCredential -CertificateThumbprint $NetworkProfile.CertThumbprint
-    } elseif ($NetworkProfile.AuthMethod -eq "Kerberos") {
-        $Credential = Get-KerberosCredential -ServicePrincipal $NetworkProfile.SPN
-    } else {
-        # Standard verschlüsselte Credentials | Standard encrypted credentials
-        $Credential = ConvertFrom-SecureCredential -EncryptedPassword $NetworkProfile.EncryptedPassword -Username $NetworkProfile.Username
-    }
-    
-    # Netzwerk-Drive mit Retry-Logic verbinden | Connect network drive with retry logic
-    $Connected = $false
-    $RetryCount = 0
-    $MaxRetries = 3
-    
-    do {
-        try {
-            New-PSDrive -Name $NetworkProfile.DriveLetter -PSProvider FileSystem -Root $NetworkProfile.Path -Credential $Credential -ErrorAction Stop
-            $Connected = $true
-            Write-Log -Level INFO -Message "Successfully connected to network profile: $($NetworkProfile.Name)"
-        } catch {
-            $RetryCount++
-            Write-Log -Level WARNING -Message "Failed to connect to $($NetworkProfile.Name). Retry $RetryCount/$MaxRetries"
-            Start-Sleep -Seconds (2 * $RetryCount)
-        }
-    } while (-not $Connected -and $RetryCount -lt $MaxRetries)
-    
-    if (-not $Connected) {
-        throw "Failed to connect to network profile $($NetworkProfile.Name) after $MaxRetries attempts"
-    }
-}
-```
-
 ## Code-Konventionen | Code Conventions
 
 - **Globale Variablen | Global Variables**: `$Global:ScriptDirectory`, `$Global:Config`, `$Global:ScriptVersion`, `$Global:CorrelationId`
+- **Produktionspfad | Production Path**: `\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\PSProfile\`
 - **Modul-Benennung | Module Naming**: FL-{Function}.psm1 (FL-Config, FL-Logging, FL-Gui, FL-Utils, FL-Maintenance)
+- **Network Deployment**: Robocopy-basierte Synchronisation für Enterprise-Stabilität | Robocopy-based synchronization for enterprise stability
 - **Cross-Repo-Kommunikation | Cross-Repo Communication**: Standardisierte Message-Formate mit JSON-Schema-Validation
-- **Fehlerbehandlung | Error Handling**: Immer try/catch mit Write-CentralLog für Enterprise-Umgebungen | Always use try/catch with Write-CentralLog for enterprise environments
+- **Fehlerbehandlung | Error Handling**: Immer try/catch mit Write-CentralLog für Production-Monitoring | Always use try/catch with Write-CentralLog for production monitoring
 - **Encoding**: UTF-8 erzwingen | Force UTF-8: `$OutputEncoding = [System.Text.UTF8Encoding]::new($false)`
-- **Deployment**: Batch-Integration für Enterprise-Rollout | Batch integration for enterprise rollout
 
 ## Enterprise-Integration Points
 
-- **Git-Template-Sync**: Automatische Template-Synchronisation vom GitHub Repository via `$Global:Config.GitUpdate`
-- **SMTP-Integration**: Enterprise-E-Mail-Benachrichtigungen mit dynamischen Sender-Adressen | Enterprise email notifications with dynamic sender addresses
+- **Production Network Path**: `\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\PSProfile\` für Script-Bereitstellung | for script deployment
+- **Shared Resources**: `\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\Shared\` für gemeinsame Templates und Assets | for shared templates and assets
+- **Central Logging**: `\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\Logs\` für Enterprise-Log-Aggregation | for enterprise log aggregation
+- **Backup Location**: `\\itscmgmt03.srv.meduniwien.ac.at\iso\PROD\Backup\` für Produktions-Backups | for production backups
+- **SMTP-Integration**: `smtpi.meduniwien.ac.at` mit produktions-spezifischen Sender-Adressen | with production-specific sender addresses
 - **Event Log**: Windows Event Log Integration mit SIEM-kompatiblen Formaten | Windows Event Log integration with SIEM-compatible formats
-- **Network Deployment**: Remote-Installation auf `itscmgmt03.srv.meduniwien.ac.at` | Remote installation on production servers
 - **Service Integration**: Windows Service-Wrapper für automatisierte Profile-Verwaltung | Windows service wrapper for automated profile management
-- **7-Zip Archive**: Automatisierte Log-Kompression mit Enterprise-Retention-Policies | Automated log compression with enterprise retention policies
 - **Cross-Repository**: Message-Bus-Pattern für Repository-übergreifende Kommunikation | Message bus pattern for cross-repository communication
 
-**Kritisch | Critical**: Immer `Invoke-VersionControl` vor Operationen ausführen, `Initialize-LocalizationFiles` für GUI-Support verwenden, und Cross-Repository-Tests mit `Invoke-MasterTestSuite` durchführen.
-Always run `Invoke-VersionControl` before operations, use `Initialize-LocalizationFiles` for GUI support, and perform cross-repository tests with `Invoke-MasterTestSuite`.
+**KRITISCH | CRITICAL**: 
+- **Immer** `Test-ProductionNetworkAccess` vor Deployment ausführen | **Always** run before deployment
+- **Immer** `Test-ProductionReadiness` vor Produktions-Release | **Always** run before production release  
+- **Immer** Backup erstellen mit `Deploy-ToProduction -BackupExisting` | **Always** create backup with deployment
+- **Niemals** direkt in Produktion entwickeln - nur über validierte Deployment-Pipeline | **Never** develop directly in production - only through validated deployment pipeline
