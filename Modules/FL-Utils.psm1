@@ -210,7 +210,7 @@ function Initialize-LocalizationFiles {
                         Write-Log -Level DEBUG -Message "Language file $language is up to date (version: $fileVersion)"
                     }
                 } catch {
-                    Write-Log -Level ERROR -Message "Error reading language file ${languageFile}: $($_.Exception.Message)"
+                    Write-Log -Level ERROR -Message "Error reading language file $languageFile: $($_.Exception.Message)"
                     $needsUpdate = $true
                 }
             }
@@ -224,7 +224,7 @@ function Initialize-LocalizationFiles {
                     $defaultContent | ConvertTo-Json -Depth 3 | Set-Content -Path $languageFile -Encoding UTF8 -Force
                     Write-Log -Level INFO -Message "Successfully updated language file: $languageFile"
                 } catch {
-                    Write-Log -Level ERROR -Message "Failed to update language file ${languageFile}: $($_.Exception.Message)"
+                    Write-Log -Level ERROR -Message "Failed to update language file $languageFile: $($_.Exception.Message)"
                 }
             }
         }
