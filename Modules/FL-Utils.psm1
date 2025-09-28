@@ -22,21 +22,87 @@
 # Functions for Utilities
 
 function Get-AllProfilePaths {
-    Write-Log -Level DEBUG -Message "Querying all four potential profile paths."
-    $profileProperties = 'CurrentUserCurrentHost', 'CurrentUserAllHosts', 'AllUsersCurrentHost', 'AllUsersAllHosts'
-    return $profileProperties.ForEach({ try { $PROFILE.$_ } catch {} }) | Where-Object { -not [string]::IsNullOrEmpty($_) } | Select-Object -Unique
+    param([switch]$AllVersions)
+    
+    if ($AllVersions) {
+        Write-Log -Level DEBUG -Message "Querying profile paths for ALL PowerShell versions (5.1 and 7.x)."
+        $allPaths = @()
+        
+        # PowerShell 5.1 Pfade
+        $ps5Paths = @(
+            "$env:USERPROFILE\Documents\WindowsPowerShell\profile.ps1",
+            "$env:USERPROFILE\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1",
+            "$env:SystemRoot\System32\WindowsPowerShell\v1.0\profile.ps1",
+            "$env:SystemRoot\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1"
+        )
+        
+        # PowerShell 7.x Pfade
+        $ps7Paths = @(
+            "$env:USERPROFILE\Documents\PowerShell\profile.ps1",
+            "$env:USERPROFILE\Documents\PowerShell\Microsoft.PowerShell_profile.ps1",
+            "$env:ProgramFiles\PowerShell\7\profile.ps1",
+            "$env:ProgramFiles\PowerShell\7\Microsoft.PowerShell_profile.ps1"
+        )
+        
+        $allPaths += $ps5Paths + $ps7Paths
+        return $allPaths | Where-Object { -not [string]::IsNullOrEmpty($_) } | Select-Object -Unique
+    } else {
+        Write-Log -Level DEBUG -Message "Querying profile paths for current PowerShell version only."
+        $profileProperties = 'CurrentUserCurrentHost', 'CurrentUserAllHosts', 'AllUsersCurrentHost', 'AllUsersAllHosts'
+        return $profileProperties.ForEach({ try { $PROFILE.$_ } catch {} }) | Where-Object { -not [string]::IsNullOrEmpty($_) } | Select-Object -Unique
+    }
 }
 
 function Get-SystemwideProfilePath {
-    Write-Log -Level DEBUG -Message "Determining system-wide profile path for this PowerShell edition."
-    if ($IsCoreCLR) {
-        # PowerShell 7+
-        return Join-Path -Path $env:ProgramFiles -ChildPath 'PowerShell\7\profile.ps1'
+    param([string]$PowerShellVersion = "Current")
+    
+    Write-Log -Level DEBUG -Message "Determining system-wide profile path for PowerShell edition: $PowerShellVersion"
+    
+    switch ($PowerShellVersion) {
+        "PS5" {
+            # Windows PowerShell 5.1
+            return Join-Path -Path $env:SystemRoot -ChildPath 'System32\WindowsPowerShell\v1.0\profile.ps1'
+        }
+        "PS7" {
+            # PowerShell 7+
+            return Join-Path -Path $env:ProgramFiles -ChildPath 'PowerShell\7\profile.ps1'
+        }
+        "Current" {
+            # Aktuelle Version
+            if ($IsCoreCLR) {
+                return Join-Path -Path $env:ProgramFiles -ChildPath 'PowerShell\7\profile.ps1'
+            } else {
+                return Join-Path -Path $env:SystemRoot -ChildPath 'System32\WindowsPowerShell\v1.0\profile.ps1'
+            }
+        }
+        default {
+            throw "Unknown PowerShell version: $PowerShellVersion. Use 'PS5', 'PS7', or 'Current'."
+        }
     }
-    else {
-        # Windows PowerShell 5.1
-        return Join-Path -Path $env:SystemRoot -ChildPath 'System32\WindowsPowerShell\v1.0\profile.ps1'
+}
+
+function Get-AllPowerShellVersionPaths {
+    [CmdletBinding()]
+    param()
+    
+    Write-Log -Level DEBUG -Message "Collecting profile paths for both PowerShell 5.1 and 7.x"
+    
+    $versionPaths = @{
+        PS5 = @{
+            SystemwideDir = "$env:SystemRoot\System32\WindowsPowerShell\v1.0"
+            UserDir = "$env:USERPROFILE\Documents\WindowsPowerShell"
+            Executable = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"
+            Available = Test-Path "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"
+        }
+        PS7 = @{
+            SystemwideDir = "$env:ProgramFiles\PowerShell\7"
+            UserDir = "$env:USERPROFILE\Documents\PowerShell"
+            Executable = "$env:ProgramFiles\PowerShell\7\pwsh.exe"
+            Available = Test-Path "$env:ProgramFiles\PowerShell\7\pwsh.exe"
+        }
     }
+    
+    return $versionPaths
 }
 
 function Set-TemplateVersion {
@@ -210,7 +276,7 @@ function Initialize-LocalizationFiles {
                         Write-Log -Level DEBUG -Message "Language file $language is up to date (version: $fileVersion)"
                     }
                 } catch {
-                    Write-Log -Level ERROR -Message "Error reading language file $languageFile: $($_.Exception.Message)"
+                    Write-Log -Level ERROR -Message "Error reading language file $languageFile - $($_.Exception.Message)"
                     $needsUpdate = $true
                 }
             }
@@ -224,7 +290,7 @@ function Initialize-LocalizationFiles {
                     $defaultContent | ConvertTo-Json -Depth 3 | Set-Content -Path $languageFile -Encoding UTF8 -Force
                     Write-Log -Level INFO -Message "Successfully updated language file: $languageFile"
                 } catch {
-                    Write-Log -Level ERROR -Message "Failed to update language file $languageFile: $($_.Exception.Message)"
+                    Write-Log -Level ERROR -Message "Failed to update language file $languageFile - $($_.Exception.Message)"
                 }
             }
         }
@@ -606,6 +672,6 @@ function Test-NetworkConnection {
     }
 }
 
-Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Set-TemplateVersion, Send-MailNotification, ConvertTo-Base64, ConvertFrom-Base64, Update-NetworkPathsInTemplate, Test-NetworkConnection, Initialize-LocalizationFiles, Get-DefaultLanguageContent
+Export-ModuleMember -Function Get-AllProfilePaths, Get-SystemwideProfilePath, Get-AllPowerShellVersionPaths, Set-TemplateVersion, Send-MailNotification, ConvertTo-Base64, ConvertFrom-Base64, Update-NetworkPathsInTemplate, Test-NetworkConnection, Initialize-LocalizationFiles, Get-DefaultLanguageContent
 
 # --- End of module --- v11.2.6 ; Regelwerk: v9.6.2 ---

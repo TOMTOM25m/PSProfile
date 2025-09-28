@@ -26,6 +26,9 @@
 .PARAMETER Versionscontrol
     [DE] Pr??ft die Konfigurationsdatei gegen die Skript-Version, zeigt Unterschiede an und aktualisiert sie.
     [EN] Checks the configuration file against the script version, displays differences, and updates it.
+.PARAMETER CurrentVersionOnly
+    [DE] Verarbeitet nur die aktuelle PowerShell-Version anstatt alle verfügbaren Versionen (PS 5.1 und 7.x).
+    [EN] Processes only the current PowerShell version instead of all available versions (PS 5.1 and 7.x).
 .NOTES
     Author:         Flecki (Tom) Garnreiter
     Created on:     2025.07.11
@@ -44,7 +47,8 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
     [Switch]$Setup,
-    [Switch]$Versionscontrol
+    [Switch]$Versionscontrol,
+    [Switch]$CurrentVersionOnly
 )
 
 #region ####################### [1. Initialization] ##############################
@@ -243,8 +247,26 @@ try {
         Update-NetworkPathsInTemplate -TemplateFilePath $Global:Config.TemplateFilePaths.ProfileX -NetworkProfiles $Global:Config.NetworkProfiles
     }
 
+    # Check available PowerShell versions
+    if ($CurrentVersionOnly) {
+        Write-Log -Level INFO -Message "Processing CURRENT PowerShell version only (as requested)"
+        $profilePathsToProcess = Get-AllProfilePaths
+        $processAllVersions = $false
+    } else {
+        $psVersions = Get-AllPowerShellVersionPaths
+        $availableVersions = @()
+        foreach ($version in $psVersions.Keys) {
+            if ($psVersions[$version].Available) {
+                $availableVersions += $version
+            }
+        }
+        Write-Log -Level INFO -Message "Processing ALL PowerShell versions: $($availableVersions -join ', ')"
+        $profilePathsToProcess = Get-AllProfilePaths -AllVersions
+        $processAllVersions = $true
+    }
+    
     Write-Log -Level INFO -Message 'Deleting existing PowerShell profiles...'
-    Get-AllProfilePaths | ForEach-Object {
+    $profilePathsToProcess | ForEach-Object {
         if (Test-Path $_) {
             if ($PSCmdlet.ShouldProcess($_, "Delete Profile")) {
                 try { Remove-Item $_ -Force -ErrorAction Stop; Write-Log -Level INFO -Message "  - Deleted: $_" }
@@ -254,43 +276,91 @@ try {
     }
 
     Write-Log -Level INFO -Message 'Creating new profiles from templates...'
-    $systemwideProfilePath = Get-SystemwideProfilePath
-    $systemwideProfileDir = Split-Path $systemwideProfilePath -Parent
-    if (-not (Test-Path $systemwideProfileDir)) {
-        if ($PSCmdlet.ShouldProcess($systemwideProfileDir, "Create Directory")) {
-            New-Item -ItemType Directory -Path $systemwideProfileDir -Force | Out-Null
-        }
-    }
-    $templateMapping = @{
-        Profile    = $systemwideProfilePath;
-        ProfileX   = Join-Path $systemwideProfileDir 'profileX.ps1';
-        ProfileMOD = Join-Path $systemwideProfileDir 'ProfileMOD.ps1';
-    }
-
-    foreach ($templateKey in $templateMapping.Keys) {
-        $templatePath = $Global:Config.TemplateFilePaths[$templateKey]
-        $destinationPath = $templateMapping[$templateKey]
-        if ($null -eq $Global:Config.TemplateVersions) { $Global:Config.TemplateVersions = @{} }
-        if ($null -eq $Global:Config.TargetTemplateVersions) { $Global:Config.TargetTemplateVersions = @{} }
-        
-        # Correctly access properties on the PSCustomObject from JSON
-        $oldTemplateVersion = $Global:Config.TemplateVersions.PSObject.Properties[$templateKey].Value
-        $versionToSet = $Global:Config.TargetTemplateVersions.PSObject.Properties[$templateKey].Value
-
-        if ($PSCmdlet.ShouldProcess($destinationPath, "Create Profile from $($templatePath | Split-Path -Leaf)")) {
-            try {
-                Copy-Item -Path $templatePath -Destination $destinationPath -Force -ErrorAction Stop
-                Write-Log -Level INFO -Message "  - Created: $destinationPath"
-                Set-TemplateVersion -FilePath $destinationPath -NewVersion $versionToSet -OldVersion $oldTemplateVersion
+    
+    $templateMappings = @{}
+    
+    if ($processAllVersions) {
+        # Process all PowerShell versions
+        foreach ($version in $psVersions.Keys) {
+            if ($psVersions[$version].Available) {
+                Write-Log -Level INFO -Message "Processing PowerShell $version profiles..."
                 
-                # Correctly assign the new version back to the PSCustomObject
-                $Global:Config.TemplateVersions.PSObject.Properties[$templateKey].Value = $versionToSet
+                $systemwideProfilePath = Get-SystemwideProfilePath -PowerShellVersion $version
+                $systemwideProfileDir = Split-Path $systemwideProfilePath -Parent
+                
+                if (-not (Test-Path $systemwideProfileDir)) {
+                    if ($PSCmdlet.ShouldProcess($systemwideProfileDir, "Create Directory")) {
+                        New-Item -ItemType Directory -Path $systemwideProfileDir -Force | Out-Null
+                        Write-Log -Level INFO -Message "  - Created directory: $systemwideProfileDir"
+                    }
+                }
+                
+                $templateMappings[$version] = @{
+                    Profile    = $systemwideProfilePath;
+                    ProfileX   = Join-Path $systemwideProfileDir 'profileX.ps1';
+                    ProfileMOD = Join-Path $systemwideProfileDir 'ProfileMOD.ps1';
+                }
+            } else {
+                Write-Log -Level WARNING -Message "PowerShell $version is not installed - skipping profile creation"
             }
-            catch { Write-Log -Level ERROR -Message "Error creating '$destinationPath': $($_.Exception.Message)" }
+        }
+    } else {
+        # Process only current PowerShell version (legacy mode)
+        Write-Log -Level INFO -Message "Processing current PowerShell version only..."
+        
+        $systemwideProfilePath = Get-SystemwideProfilePath -PowerShellVersion "Current"
+        $systemwideProfileDir = Split-Path $systemwideProfilePath -Parent
+        
+        if (-not (Test-Path $systemwideProfileDir)) {
+            if ($PSCmdlet.ShouldProcess($systemwideProfileDir, "Create Directory")) {
+                New-Item -ItemType Directory -Path $systemwideProfileDir -Force | Out-Null
+                Write-Log -Level INFO -Message "  - Created directory: $systemwideProfileDir"
+            }
+        }
+        
+        $currentVersion = if ($IsCoreCLR) { "PS7" } else { "PS5" }
+        $templateMappings[$currentVersion] = @{
+            Profile    = $systemwideProfilePath;
+            ProfileX   = Join-Path $systemwideProfileDir 'profileX.ps1';
+            ProfileMOD = Join-Path $systemwideProfileDir 'ProfileMOD.ps1';
         }
     }
 
-    Write-Log -Level INFO -Message 'PowerShell profiles have been reset successfully.'
+    # Create profiles for all available PowerShell versions
+    foreach ($version in $templateMappings.Keys) {
+        Write-Log -Level INFO -Message "Creating profiles for PowerShell $version..."
+        
+        foreach ($templateKey in $templateMappings[$version].Keys) {
+            $templatePath = $Global:Config.TemplateFilePaths[$templateKey]
+            $destinationPath = $templateMappings[$version][$templateKey]
+            
+            if ($null -eq $Global:Config.TemplateVersions) { $Global:Config.TemplateVersions = @{} }
+            if ($null -eq $Global:Config.TargetTemplateVersions) { $Global:Config.TargetTemplateVersions = @{} }
+            
+            # Correctly access properties on the PSCustomObject from JSON
+            $oldTemplateVersion = $Global:Config.TemplateVersions.PSObject.Properties[$templateKey].Value
+            $versionToSet = $Global:Config.TargetTemplateVersions.PSObject.Properties[$templateKey].Value
+
+            if ($PSCmdlet.ShouldProcess($destinationPath, "Create Profile from $($templatePath | Split-Path -Leaf)")) {
+                try {
+                    Copy-Item -Path $templatePath -Destination $destinationPath -Force -ErrorAction Stop
+                    Write-Log -Level INFO -Message "  - Created ($version): $destinationPath"
+                    Set-TemplateVersion -FilePath $destinationPath -NewVersion $versionToSet -OldVersion $oldTemplateVersion
+                
+                    # Correctly assign the new version back to the PSCustomObject
+                    $Global:Config.TemplateVersions.PSObject.Properties[$templateKey].Value = $versionToSet
+                }
+                catch { Write-Log -Level ERROR -Message "Error creating '$destinationPath': $($_.Exception.Message)" }
+            }
+        }
+    }
+
+    if ($processAllVersions) {
+        $processedVersions = $templateMappings.Keys -join ', '
+        Write-Log -Level INFO -Message "PowerShell profiles have been reset successfully for all versions: $processedVersions"
+    } else {
+        Write-Log -Level INFO -Message 'PowerShell profiles have been reset successfully for current version.'
+    }
     $emailSubject = "SUCCESS: Profile-Reset on $($env:COMPUTERNAME)"
     $emailBody = "Script '$($Global:ScriptName)' ($($Global:ScriptVersion)) finished successfully on $($env:COMPUTERNAME) at $(Get-Date)."
 }
