@@ -208,7 +208,10 @@ function Invoke-DirectoryPermissionAnalysis {
         [switch]$IncludeInherited,
         [switch]$IncludeSystemAccounts,
         [switch]$Parallel,
-        [int]$Throttle = 5
+        [int]$Throttle = 5,
+        [string[]]$GroupInclude,
+        [string[]]$GroupExclude,
+        [switch]$PruneEmpty
     )
     Write-Log "Analyzing permissions for $RootPath" -Level INFO
     $folders = Get-FolderList -RootFolder $RootPath -MaxDepth $MaxDepth
@@ -271,6 +274,17 @@ function Invoke-DirectoryPermissionAnalysis {
                 }
             }
             $folderData.UserPermissions = $userPermissions
+            # Apply include/exclude filters if provided
+            if ($GroupInclude) {
+                $folderData.GroupPermissions = $folderData.GroupPermissions | Where-Object { $match = $false; foreach ($gi in $GroupInclude) { if ($_.GroupName -like $gi) { $match = $true; break } }; $match }
+            }
+            if ($GroupExclude) {
+                $folderData.GroupPermissions = $folderData.GroupPermissions | Where-Object { $keep = $true; foreach ($ge in $GroupExclude) { if ($_.GroupName -like $ge) { $keep = $false; break } }; $keep }
+            }
+            if ($GroupInclude -or $GroupExclude) {
+                # Re-scope user permissions to remaining groups
+                $folderData.UserPermissions = $folderData.UserPermissions | Where-Object { $_.GroupName -in ($folderData.GroupPermissions.GroupName) }
+            }
             # Build structured entries
             $entries = @()
             foreach ($gp in $groupPermissions) {
@@ -296,6 +310,11 @@ function Invoke-DirectoryPermissionAnalysis {
             if ($r) { $script:VZinfosGesamt += $r.FolderData; $script:ReportData += $r.Entries }
         }
     }
+    if ($PruneEmpty) {
+        # Remove folders that yielded no entries based on filtering
+        $validFolders = $script:ReportData | Select-Object -ExpandProperty FolderPath -Unique
+        $script:VZinfosGesamt = $script:VZinfosGesamt | Where-Object { $_.Directory -in $validFolders }
+    }
     Write-Progress -Activity 'Analyzing folder permissions' -Completed
     Write-Log "Analysis complete: processed $($folders.Count) folders (Parallel=$Parallel)" -Level SUCCESS
 }
@@ -313,7 +332,10 @@ function Start-DirectoryPermissionAudit {
         [switch]$Interactive,
         [switch]$NoLogo,
         [switch]$Parallel,
-        [int]$Throttle = 5
+        [int]$Throttle = 5,
+        [string[]]$GroupInclude,
+        [string[]]$GroupExclude,
+        [switch]$PruneEmpty
     )
     if (-not $NoLogo) { Show-ScriptInfo -ScriptName 'Directory Permission Audit Tool (Module)' -CurrentVersion $ScriptVersion -Context 'Module' }
     # Apply defaults from settings file for parameters not explicitly bound
@@ -327,7 +349,7 @@ function Start-DirectoryPermissionAudit {
     if (-not $Path) { Write-Log 'No path specified or selected.' -Level WARNING; return }
     if (-not (Test-Path -Path $Path)) { Write-Log "Invalid path: $Path" -Level ERROR; return }
     $outDir = if ($OutputPath) { $OutputPath } else { $script:ReportsDir }
-    Invoke-DirectoryPermissionAnalysis -RootPath $Path -MaxDepth $Depth -IncludeInherited:$IncludeInherited.IsPresent -IncludeSystemAccounts:$IncludeSystemAccounts.IsPresent -Parallel:$Parallel.IsPresent -Throttle $Throttle
+    Invoke-DirectoryPermissionAnalysis -RootPath $Path -MaxDepth $Depth -IncludeInherited:$IncludeInherited.IsPresent -IncludeSystemAccounts:$IncludeSystemAccounts.IsPresent -Parallel:$Parallel.IsPresent -Throttle $Throttle -GroupInclude $GroupInclude -GroupExclude $GroupExclude -PruneEmpty:$PruneEmpty.IsPresent
     if ($script:ReportData.Count -gt 0) { Export-ReportData -RootPath $Path -Format $OutputFormat -OutputPath $outDir } else { Write-Log 'No data collected.' -Level WARNING }
 }
 #endregion

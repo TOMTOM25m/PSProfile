@@ -33,7 +33,7 @@ function Export-SettingsJson {
 }
 $settings = Get-DirectoryPermissionAuditSettingsObject -Path $SettingsPath
 if (-not $settings.Count) {
-    $settings = [ordered]@{ DefaultOutputFormat='HTML'; DefaultDepth=0; IncludeInherited=$true; IncludeSystemAccounts=$false; Parallel=$false; Throttle=5 }
+    $settings = [ordered]@{ DefaultOutputFormat='HTML'; DefaultDepth=0; IncludeInherited=$true; IncludeSystemAccounts=$false; Parallel=$false; Throttle=5; GroupInclude=@(); GroupExclude=@(); PruneEmpty=$false }
 }
 $form = New-Object Windows.Forms.Form
 $form.Text = 'DirectoryPermissionAudit - Settings'
@@ -43,7 +43,7 @@ $form.FormBorderStyle = 'FixedDialog'
 $form.MaximizeBox = $false
 $form.MinimizeBox = $true
 
-$labels = @('DefaultOutputFormat','DefaultDepth','IncludeInherited','IncludeSystemAccounts','Parallel','Throttle')
+$labels = @('DefaultOutputFormat','DefaultDepth','IncludeInherited','IncludeSystemAccounts','Parallel','Throttle','GroupInclude','GroupExclude','PruneEmpty')
 $y = 20
 $controls = @{}
 foreach ($name in $labels) {
@@ -53,7 +53,7 @@ foreach ($name in $labels) {
     $lbl.AutoSize = $true
     $form.Controls.Add($lbl)
 
-    if ($name -in 'IncludeInherited','IncludeSystemAccounts','Parallel') {
+    if ($name -in 'IncludeInherited','IncludeSystemAccounts','Parallel','PruneEmpty') {
         $cb = New-Object Windows.Forms.CheckBox
         $cb.Location = New-Object Drawing.Point(200,$y)
         $cb.Width = 200
@@ -69,7 +69,15 @@ foreach ($name in $labels) {
         $combo.SelectedItem = $settings[$name]
         $controls[$name] = $combo
         $form.Controls.Add($combo)
-    } else {
+    } elseif ($name -in 'GroupInclude','GroupExclude') {
+        $txt = New-Object Windows.Forms.TextBox
+        $txt.Location = New-Object Drawing.Point(200,$y)
+        $txt.Width = 250
+        $txt.Text = ($settings[$name] -join ',')
+        $controls[$name] = $txt
+        $form.Controls.Add($txt)
+    }
+    else {
         $txt = New-Object Windows.Forms.TextBox
         $txt.Location = New-Object Drawing.Point(200,$y)
         $txt.Width = 250
@@ -92,6 +100,9 @@ $btnSave.Add_Click({
             'Parallel' { $new[$k] = $ctrl.Checked }
             'DefaultDepth' { $new[$k] = [int]$ctrl.Text }
             'Throttle' { $new[$k] = [int]$ctrl.Text }
+            'GroupInclude' { $new[$k] = ($ctrl.Text -split ',').Where({$_ -and $_.Trim()}) }
+            'GroupExclude' { $new[$k] = ($ctrl.Text -split ',').Where({$_ -and $_.Trim()}) }
+            'PruneEmpty' { $new[$k] = $ctrl.Checked }
             'DefaultOutputFormat' { $new[$k] = $ctrl.SelectedItem }
             default { $new[$k] = $ctrl.Text }
         }
@@ -114,6 +125,9 @@ $btnExport.Add_Click({
             'Parallel' { $ctrl.Checked }
             'DefaultDepth' { [int]$ctrl.Text }
             'Throttle' { [int]$ctrl.Text }
+            'GroupInclude' { ($ctrl.Text -split ',').Where({$_ -and $_.Trim()}) }
+            'GroupExclude' { ($ctrl.Text -split ',').Where({$_ -and $_.Trim()}) }
+            'PruneEmpty' { $ctrl.Checked }
             'DefaultOutputFormat' { $ctrl.SelectedItem }
             default { $ctrl.Text }
         }

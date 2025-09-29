@@ -134,6 +134,20 @@ pwsh -File .\Scripts\Setup-GUI.ps1
 
 Erlaubt Speichern (PSD1) & Export nach JSON.
 
+### Erweiterte Filter & Pruning
+
+Neue Parameter (ab v2.3.0):
+
+```powershell
+Start-DirectoryPermissionAudit -Path D:\Data -GroupInclude 'HR*','FIN-*' -GroupExclude '*Temp*' -PruneEmpty
+```
+
+- `-GroupInclude` : Liste von Wildcards – nur passende Gruppen bleiben erhalten
+- `-GroupExclude` : Liste von Wildcards – passende Gruppen werden entfernt
+- `-PruneEmpty`   : Entfernt Ordner ohne verbleibende Einträge nach dem Filtern
+
+Hinweis: Filtering passiert vor Export; HTML/CSV/JSON enthalten nur verbleibende Datensätze.
+
 
 ## Next Steps (Roadmap)
 
@@ -143,8 +157,8 @@ Erlaubt Speichern (PSD1) & Export nach JSON.
 - [x] GUI für Settings
 - [x] CI Workflow (Analyzer + Import Smoke)
 - [ ] Scheduled Audit Beispielskript
-- [ ] Filter: -GroupInclude / -GroupExclude
-- [ ] Option: -PruneEmpty
+- [x] Filter: -GroupInclude / -GroupExclude
+- [x] Option: -PruneEmpty
 - [ ] Persistenter Cache (optional JSON)
 - [ ] Pester Tests (Analyse / Export)
 - [ ] CI Matrix (PS 5.1 + 7.x) + Badge
