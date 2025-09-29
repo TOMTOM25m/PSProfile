@@ -6,20 +6,47 @@ on:
     branches: [ main ]
 
 jobs:
-  lint-and-test:
+  build-test:
+    strategy:
+      matrix:
+        include:
+          - name: pwsh-core
+            ps-version: '7.4.1'
+            shell: pwsh
+          - name: win-ps51
+            ps-version: '5.1'
+            shell: powershell
     runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup PowerShell
+      - name: Setup PowerShell (Core)
+        if: ${{ matrix.shell == 'pwsh' }}
         uses: actions/setup-powershell@v2
-      - name: Install PSScriptAnalyzer
-        run: Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+        with:
+          version: ${{ matrix['ps-version'] }}
+      - name: Install Analyzer + Pester
+        run: |
+          if ('${{ matrix.shell }}' -eq 'pwsh') { $shell = 'pwsh' } else { $shell = 'powershell' }
+          & $shell -NoLogo -Command "Install-Module PSScriptAnalyzer -Force -Scope CurrentUser; Install-Module Pester -Force -Scope CurrentUser -MinimumVersion 5.5.0"
       - name: Run Analyzer
         run: |
-          Invoke-ScriptAnalyzer -Path . -Settings PSScriptAnalyzerSettings.psd1 -Recurse -Severity Warning,Error | Tee-Object -Variable findings
-          if ($findings | Where-Object { $_.Severity -eq 'Error' }) { exit 1 }
-      - name: Smoke Test Module Import
+          if ('${{ matrix.shell }}' -eq 'pwsh') { $shell = 'pwsh' } else { $shell = 'powershell' }
+          & $shell -NoLogo -Command "`$f = Invoke-ScriptAnalyzer -Path . -Settings PSScriptAnalyzerSettings.psd1 -Recurse -Severity Warning,Error; `$err = `$f | Where-Object Severity -eq 'Error'; if (`$err) { `$err | Format-Table | Out-String | Write-Host; exit 1 }; `$f | Format-Table | Out-String | Write-Host"
+      - name: Run Pester Tests
         run: |
-          Import-Module .\DirectoryPermissionAudit.psm1 -Force
-          Get-Command -Module DirectoryPermissionAudit | Select-Object -First 5
+          if ('${{ matrix.shell }}' -eq 'pwsh') { $shell = 'pwsh' } else { $shell = 'powershell' }
+          & $shell -NoLogo -Command "Invoke-Pester -Path .\Tests -CI -Output Detailed"
+      - name: Smoke Module Import (redundant safety)
+        if: always()
+        run: |
+          if ('${{ matrix.shell }}' -eq 'pwsh') { $shell = 'pwsh' } else { $shell = 'powershell' }
+          & $shell -NoLogo -Command "Import-Module .\DirectoryPermissionAudit.psm1 -Force; (Get-Command Start-DirectoryPermissionAudit).Name | Out-Host"
+      - name: Archive Test Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ matrix.name }}
+          path: |
+            **/LOG/**/*.log
+            **/LOG/**/*.html
