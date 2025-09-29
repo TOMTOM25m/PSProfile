@@ -1,0 +1,58 @@
+{
+  "Language": "en-US",
+  "RulebookVersion": "v9.3.1",
+  "WebService": {
+    "SiteName": "CertificateSurveillance",
+    "SitePath": "C:\\inetpub\\wwwroot\\CertificateSurveillance",
+    "HttpPort": 9080,
+    "HttpsPort": 9443,
+    "SubjectName": "localhost",
+    "UpdateIntervalMinutes": 60
+  },
+  "Certificate": {
+    "ValidityDays": 365,
+    "FilterMicrosoft": true,
+    "FilterRootCerts": true,
+    "FilterTestCerts": true,
+    "FilterExpired": true,
+    "MinDaysRemaining": -30
+  },
+  "Security": {
+    "EnableWindowsAuth": true,
+    "EnableAnonymousAuth": false,
+    "RequireSSL": false,
+    "AllowedUsers": [],
+    "AllowedGroups": ["Domain Admins", "Administrators"]
+  },
+  "Firewall": {
+    "CreateRules": true,
+    "RuleNamePrefix": "CertSurveillance"
+  },
+  "Logging": {
+    "LogLevel": "INFO",
+    "EnableEventLog": true,
+    "LogRetentionDays": 30
+  },
+  "Performance": {
+    "CacheEnabled": true,
+    "CacheDurationMinutes": 15,
+    "MaxCertificatesPerPage": 100
+  },
+  "UI": {
+    "Title": "Certificate Surveillance Dashboard",
+    "Theme": {
+      "PrimaryColor": "#111d4e",
+      "SecondaryColor": "#5fb4e5",
+      "SuccessColor": "#28a745",
+      "WarningColor": "#ffc107",
+      "DangerColor": "#dc3545"
+    },
+    "RefreshIntervalSeconds": 300
+  },
+  "API": {
+    "EnableAPI": true,
+    "APIPath": "/api/certificates.json",
+    "IncludePrivateKeyInfo": false,
+    "IncludeThumbprints": true
+  }
+}

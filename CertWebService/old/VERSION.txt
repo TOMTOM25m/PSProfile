@@ -1,0 +1,111 @@
+Certificate WebService Deployment Package
+==========================================
+
+Version: v2.1.0-FINAL-UPDATED
+Build Date: 2025-09-24
+Author: Flecki (Tom) Garnreiter
+Compliance: Regelwerk v9.5.0
+
+=== UPDATED PACKAGE CONTENTS ===
+
+Essential Files Only (6 total):
+
+1. Setup.ps1
+   - Unified setup script with ALL features
+   - ASCII-compatible for Legacy PowerShell
+   - Port conflict detection (9080-9083)
+   - Server Core support with DISM/appcmd
+   - Environment auto-detection
+   - Creates ScanCertificates.ps1 for daily updates
+   - Size: ~18KB (enhanced with certificate scanner)
+
+2. Install.bat  
+   - Robocopy-based installer with local copy functionality
+   - Administrator privilege check
+   - Automatic scheduled task setup integration
+   - Local execution from temp directory
+   - Size: ~4KB (enhanced with robocopy and task setup)
+
+3. Test.ps1
+   - Comprehensive testing with port detection
+   - Health and certificate endpoint validation
+   - Local and remote endpoint testing
+   - Size: ~8KB (dual-endpoint testing)
+
+4. Setup-ScheduledTask-CertScan.ps1
+   - Automated daily certificate scan task creation
+   - SYSTEM account execution with highest privileges
+   - Configurable scan time (default: 06:00)
+   - Size: ~1KB (focused task creation)
+
+5. README.txt
+   - Installation and usage instructions
+   - Troubleshooting guide
+
+6. VERSION.txt
+   - This file - version and package information
+
+FEATURES:
+=========
+✅ ASCII-Compatible output for Legacy PowerShell
+✅ Port conflict detection and auto-selection (9080-9083)
+✅ Server Core support (DISM + appcmd)
+✅ Full Server support (PowerShell modules)
+✅ Windows 10/Client support (Optional Features)
+✅ Environment auto-detection
+✅ Dual-endpoint architecture (localhost + FQDN)
+✅ Health status monitoring
+✅ Certificate scanner with JSON output
+✅ Firewall configuration
+✅ Comprehensive testing suite
+✅ Robocopy-based deployment (Regelwerk compliant)
+✅ Local installation execution (no network dependencies)
+✅ Automatic scheduled task creation for daily scans
+✅ Cleanup of temporary installation files
+
+ENDPOINTS:
+==========
+LOCAL (for testing):
+- http://localhost:PORT/certificates.json (auto-detected port)
+- http://localhost:PORT/health.json
+
+REMOTE (for Certificate Surveillance):
+- http://servername.domain:PORT/certificates.json  
+- http://servername.domain:PORT/health.json
+
+INSTALLATION:
+=============
+.\Install.bat
+
+TESTING:
+========
+.\Test.ps1
+
+SCHEDULED TASK SETUP:
+====================
+.\Setup-ScheduledTask-CertScan.ps1 (automatically run by Install.bat)
+
+DEPLOYMENT:
+===========
+Package optimized to 6 essential files
+Robocopy-based deployment with local execution
+Maintenance complexity: Significantly reduced
+Regelwerk v9.5.0 compliant deployment method
+
+NETWORK DEPLOYMENT:
+==================
+Target: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertWebService
+Method: robocopy (Regelwerk compliant)
+Local Execution: Files copied to C:\Temp\CertWebService-Install during installation
+Support: 151 servers across all domains
+
+AUTOMATION FEATURES:
+===================
+✅ Daily certificate scan at 06:00 (configurable)
+✅ Automatic JSON update to certificates.json
+✅ SYSTEM account execution for reliability
+✅ Local file execution (no network dependencies during operation)
+
+Ready for enterprise deployment!
+
+Last Updated: 2025-09-24 12:30
