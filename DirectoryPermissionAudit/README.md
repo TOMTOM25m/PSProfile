@@ -6,13 +6,14 @@ Modern PowerShell solution for generating comprehensive reports about directory 
 
 ## Features
 
-- Interactive or automated permission analysis
-- Active Directory + lokale Gruppen/Benutzer (Fallback lokal)
-- Detaillierte Auflösung: Ordner -> Gruppe -> Benutzer
-- Multi-Format Export: CSV, JSON, Human (Legacy Text)
-- Modul-Nutzung oder direktes Skript
-- PowerShell 5.1 & 7.x kompatibel (Unicode / TLS 1.2 Handling)
+- Interaktiv oder automatisiert
+- AD + lokale Gruppen/Benutzer (Fallback lokal)
+- Auflösung: Ordner -> Gruppe -> Benutzer
+- Exportformate: CSV, JSON, Human (Legacy Text), HTML (mit Hervorhebung), Excel (Fallback CSV falls ImportExcel fehlt)
+- Modul oder Wrapper-Skript
+- PowerShell 5.1 & 7.x kompatibel (Unicode / TLS 1.2)
 - Regelwerk v9.6.2 konform (Struktur, Logging, Messaging)
+- Konfigurierbare Defaults (PSD1 Settings + GUI Editor)
 
 ## Usage
 
@@ -107,13 +108,49 @@ Optional (zukünftig):
 
 Legacy Name: VerzeichnisBerechtigungsAuswertung (intern)
 
+## Konfiguration
+
+Standardwerte werden aus `Config/DirectoryPermissionAudit.settings.psd1` geladen.
+
+Beispiel:
+ 
+```powershell
+@{
+    DefaultOutputFormat   = 'HTML'
+    DefaultDepth          = 0
+    IncludeInherited      = $true
+    IncludeSystemAccounts = $false
+    Parallel              = $false
+    Throttle              = 5
+}
+```
+Angepasste Werte wirken nur, wenn Parameter beim Aufruf nicht gesetzt werden.
+
+GUI zum Bearbeiten:
+ 
+```powershell
+pwsh -File .\Scripts\Setup-GUI.ps1
+```
+
+Erlaubt Speichern (PSD1) & Export nach JSON.
+
+
 ## Next Steps (Roadmap)
 
-- [ ] HTML/Excel Export
-- [ ] Parallelisierung (ForEach-Object -Parallel) optional
-- [ ] Caching von Gruppenmitgliedschaften
+- [x] HTML/Excel Export
+- [x] Parallelisierung optional
+- [x] Caching (Gruppen- & User-Lookups)
+- [x] GUI für Settings
+- [x] CI Workflow (Analyzer + Import Smoke)
 - [ ] Scheduled Audit Beispielskript
-- [ ] CI Workflow (Syntax + Style Check)
+- [ ] Filter: -GroupInclude / -GroupExclude
+- [ ] Option: -PruneEmpty
+- [ ] Persistenter Cache (optional JSON)
+- [ ] Pester Tests (Analyse / Export)
+- [ ] CI Matrix (PS 5.1 + 7.x) + Badge
+- [ ] HTML Template externalisierbar
+- [ ] Logging-Rotation / Retention
+- [ ] Code Signing / Release Automation
 
 ## Support / Meldungen
 
