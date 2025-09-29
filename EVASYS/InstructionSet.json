@@ -1,0 +1,77 @@
+{
+    "instructions": {
+        "copy file from {source} to {destination}": "Copy-Item -Path '{source}' -Destination '{destination}' -Force",
+        "move file from {source} to {destination}": "Move-Item -Path '{source}' -Destination '{destination}' -Force",
+        "delete file {target}": "Remove-Item -Path '{target}' -Force",
+        "create directory {path}": "New-Item -Path '{path}' -ItemType Directory -Force",
+        "remove directory {path}": "Remove-Item -Path '{path}' -Recurse -Force",
+        "stop service {service}": "Stop-Service -Name '{service}' -Force -ErrorAction SilentlyContinue",
+        "start service {service}": "Start-Service -Name '{service}' -ErrorAction SilentlyContinue",
+        "restart service {service}": "Restart-Service -Name '{service}' -Force -ErrorAction SilentlyContinue",
+        "run command {command}": "& {command}",
+        "execute {executable} with parameters {params}": "Start-Process -FilePath '{executable}' -ArgumentList '{params}' -Wait",
+        "set registry {key} to {value}": "Set-ItemProperty -Path '{key}' -Name '{name}' -Value '{value}'",
+        "backup file {source} to {destination}": "Copy-Item -Path '{source}' -Destination '{destination}.backup' -Force"
+    },
+    
+    "patterns": {
+        "file_operations": [
+            "copy\\s+(.+?)\\s+to\\s+(.+)",
+            "move\\s+(.+?)\\s+to\\s+(.+)",
+            "delete\\s+(.+)",
+            "remove\\s+(.+)"
+        ],
+        "directory_operations": [
+            "create\\s+directory\\s+(.+)",
+            "mkdir\\s+(.+)",
+            "remove\\s+directory\\s+(.+)",
+            "rmdir\\s+(.+)"
+        ],
+        "service_operations": [
+            "(start|stop|restart)\\s+service\\s+(.+)",
+            "(start|stop|restart)\\s+(.+?)\\s+service"
+        ],
+        "command_execution": [
+            "run\\s+(.+)",
+            "execute\\s+(.+)",
+            "launch\\s+(.+)"
+        ]
+    },
+    
+    "security": {
+        "allowed_paths": [
+            "C:\\temp",
+            "C:\\EvaSys",
+            "D:\\",
+            "%TEMP%"
+        ],
+        "blocked_paths": [
+            "C:\\Windows\\System32",
+            "C:\\Program Files",
+            "C:\\Program Files (x86)"
+        ],
+        "allowed_extensions": [
+            ".exe",
+            ".msi",
+            ".bat",
+            ".cmd",
+            ".ps1",
+            ".txt",
+            ".dll"
+        ],
+        "blocked_commands": [
+            "format",
+            "del /s",
+            "rmdir /s",
+            "shutdown",
+            "reboot"
+        ]
+    },
+    
+    "metadata": {
+        "version": "v6.0.0",
+        "created": "2025-09-29",
+        "description": "Instruction set for EvaSys Dynamic Update System",
+        "regelwerk": "v9.6.2"
+    }
+}

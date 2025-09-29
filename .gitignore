@@ -1,0 +1,29 @@
+﻿# PowerShell und temporäre Dateien
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup
+*~
+.DS_Store
+Thumbs.db
+
+# Vertrauliche Konfigurationsdateien
+*config*.json
+*credentials*
+*secrets*
+*.key
+*.pfx
+*.p12
+
+# Ausgabe- und Cache-Verzeichnisse
+LOG/
+TEMP/
+Cache/
+Output/
+**/old/**
+
+# Spezifische Dateien
+*.wtf
+*.zip
+Install-*.bat

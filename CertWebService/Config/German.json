@@ -1,0 +1,31 @@
+{
+    "WebService": {
+        "Title": "Zertifikat Web Service",
+        "Description": "Hochleistungs-Zertifikatsüberwachung Dashboard",
+        "LastUpdate": "Letzte Aktualisierung",
+        "Server": "Server",
+        "Status": "Status"
+    },
+    "Certificates": {
+        "Total": "Zertifikate Gesamt",
+        "Valid": "Gültig",
+        "Expiring": "Läuft ab (≤30 Tage)",
+        "Expired": "Abgelaufen",
+        "Subject": "Betreff",
+        "Issuer": "Aussteller",
+        "ExpiryDate": "Ablaufdatum",
+        "DaysRemaining": "Verbleibende Tage",
+        "Store": "Zertifikatspeicher"
+    },
+    "Messages": {
+        "Loading": "Lade Zertifikatsdaten...",
+        "Error": "Fehler beim Laden der Zertifikatsinformationen",
+        "NoData": "Keine Zertifikatsdaten verfügbar",
+        "Refresh": "Daten aktualisieren"
+    },
+    "Navigation": {
+        "Dashboard": "Dashboard",
+        "API": "API Dokumentation",
+        "Settings": "Einstellungen"
+    }
+}
