@@ -69,10 +69,12 @@ This project follows the [Universal PowerShell Regelwerk v9.6.2](../PowerShell-R
 
 ```plaintext
 DirectoryPermissionAudit/
-├── FolderPermissionReport.ps1      # Hauptskript (direkte Nutzung)
+├── FolderPermissionReport.ps1      # Hauptskript (Wrapper, lädt Modul)
 ├── DirectoryPermissionAudit.psm1   # Modul (Start-/Analyse-/Export-Funktionen)
 ├── VERSION.ps1                     # Version + Info + Messaging
 ├── README.md                      # Dokumentation
+├── IMPLEMENTATION.md              # Regelwerk-Umsetzungsdetails
+├── old/                           # Archiv (Legacy/Alt-Dateien)
 └── LOG/                           # Wird automatisch erzeugt
     ├── Messages/                  # Cross-Script Nachrichten
     └── Reports/                   # Exportierte Reports
@@ -85,6 +87,7 @@ DirectoryPermissionAudit/
 - Administrative Rechte empfohlen (vollständige ACL-Lesbarkeit)
 
 Optional (zukünftig):
+
 - PSScriptAnalyzer für CI
 - Signaturprüfung
 
@@ -94,6 +97,13 @@ Optional (zukünftig):
 |---------|-------|--------------|
 | v2.2.0  | 2025-09-29 | Migration auf Regelwerk v9.6.2, Modul hinzugefügt |
 | v2.1.0  | 2023-03-08 | Legacy signierte Version, rein interaktiv |
+
+### Legacy Artefakte (Archiv: old\)
+
+- FolderPermissionReport-legacy.exe (alte kompilierte Fassung)
+- FolderPermissionReport-legacy-copy.ps1 (redundante Kopie der Vorgängerversion)
+- OrdnerBerechtigungsstruktur_legacy.au3 (AutoIt Ursprung)
+- main_code_section-archive.ps1 (Zwischenstand aus Refactor-Phase)
 
 Legacy Name: VerzeichnisBerechtigungsAuswertung (intern)
 
