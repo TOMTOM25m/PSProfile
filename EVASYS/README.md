@@ -21,7 +21,7 @@ The EvaSys Dynamic Update System provides an automated solution for processing E
 
 ## Architecture
 
-```
+``` verlauf
 Update Package (.zip) ──► Extract ──► Find Readme ──► Parse Instructions ──► Execute Commands
                                          │                    │                    │
                                          ├─ TXT Files         ├─ Command Mapping   ├─ Backup Creation
@@ -40,6 +40,7 @@ Update Package (.zip) ──► Extract ──► Find Readme ──► Parse In
 ### Quick Setup
 
 1. **Run Setup Script**
+
    ```powershell
    .\Setup.ps1
    
@@ -98,12 +99,14 @@ The system uses pattern matching to convert readme instructions into PowerShell 
 ### Processing Update Packages
 
 1. **Interactive Mode**
+
    ```powershell
    .\Update.ps1
    # Presents list of available packages for selection
    ```
 
 2. **Automatic Mode**
+
    ```powershell
    # Process specific package
    .\Update.ps1 -PackagePath "EvaSys_Update_v2.1.zip"
@@ -139,7 +142,7 @@ Test-Path "Settings.json" -and (Get-Content "Settings.json" | ConvertFrom-Json).
 
 ## File Structure
 
-```
+``` system verzeichnis
 EVASYS/
 ├── Setup.ps1                    # System installation and configuration
 ├── Update.ps1                   # Package processing engine
@@ -164,14 +167,17 @@ EVASYS/
 ## Security Features
 
 ### Path Validation
+
 - **Allowed Paths**: `C:\temp`, `C:\EvaSys`, `D:\`, `%TEMP%`
 - **Blocked Paths**: `C:\Windows\System32`, `C:\Program Files`
 
 ### Command Restrictions
+
 - **Allowed Extensions**: `.exe`, `.msi`, `.bat`, `.cmd`, `.ps1`
 - **Blocked Commands**: `format`, `del /s`, `shutdown`, `reboot`
 
 ### Safety Measures
+
 - Automatic backup creation before updates
 - Command validation before execution
 - Comprehensive audit trail
@@ -180,12 +186,14 @@ EVASYS/
 ## Logging and Monitoring
 
 ### Log Levels
+
 - **DEBUG** - Detailed troubleshooting information
 - **INFO** - General operational messages
 - **WARNING** - Non-critical issues
 - **ERROR** - Critical failures requiring attention
 
 ### Status Tracking
+
 The system provides cross-script communication through JSON status files:
 
 ```json
@@ -224,6 +232,7 @@ The system provides cross-script communication through JSON status files:
 ### Debug Mode
 
 Enable detailed logging:
+
 ```powershell
 # Modify Settings.json
 "Logging": {
@@ -246,11 +255,13 @@ The new system replaces the legacy `Invoke-EvaSysDynamicUpdate.ps1` with a simpl
 ### Migration Steps
 
 1. **Backup Legacy Configuration**
+
    ```powershell
    Copy-Item "config-*.json" "old\" -Force
    ```
 
 2. **Run New Setup**
+
    ```powershell
    .\Setup.ps1
    ```
@@ -265,6 +276,7 @@ The new system replaces the legacy `Invoke-EvaSysDynamicUpdate.ps1` with a simpl
 For technical support or feature requests, contact the development team or refer to the MUW-Regelwerk v9.6.2 documentation.
 
 ### System Requirements
+
 - **Operating System**: Windows Server 2012 R2+ / Windows 8.1+
 - **PowerShell**: 5.1+ (5.1 and 7.x compatible)
 - **Memory**: Minimum 2GB RAM
@@ -273,4 +285,4 @@ For technical support or feature requests, contact the development team or refer
 
 ---
 
-**© 2025 Flecki (Tom) Garnreiter | MIT License | MUW-Regelwerk v9.6.2**
+### © 2025 Flecki (Tom) Garnreiter | MIT License | MUW-Regelwerk v9.6.2
