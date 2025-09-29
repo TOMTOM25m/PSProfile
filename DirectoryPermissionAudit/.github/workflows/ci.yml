@@ -1,0 +1,25 @@
+name: PowerShell CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup PowerShell
+        uses: actions/setup-powershell@v2
+      - name: Install PSScriptAnalyzer
+        run: Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+      - name: Run Analyzer
+        run: |
+          Invoke-ScriptAnalyzer -Path . -Settings PSScriptAnalyzerSettings.psd1 -Recurse -Severity Warning,Error | Tee-Object -Variable findings
+          if ($findings | Where-Object { $_.Severity -eq 'Error' }) { exit 1 }
+      - name: Smoke Test Module Import
+        run: |
+          Import-Module .\DirectoryPermissionAudit.psm1 -Force
+          Get-Command -Module DirectoryPermissionAudit | Select-Object -First 5
