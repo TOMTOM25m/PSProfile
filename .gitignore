@@ -1,4 +1,4 @@
-﻿# PowerShell und temporäre Dateien
+# PowerShell und temporäre Dateien
 *.log
 *.tmp
 *.temp
@@ -16,7 +16,7 @@ Thumbs.db
 *.pfx
 *.p12
 
-# Ausgabe- und Cache-Verzeichnisse
+# Ausgabe- und Cache-Verzeichnisse  
 LOG/
 TEMP/
 Cache/

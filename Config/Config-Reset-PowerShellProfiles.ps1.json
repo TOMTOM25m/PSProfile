@@ -1,0 +1,93 @@
+{
+  "ScriptVersion": "v11.2.6",
+  "RulebookVersion": "v9.6.2",
+  "Language": "de-DE",
+  "Environment": "PROD",
+  "WhatIfMode": false,
+  "Disclaimer": {
+    "DE": "Die bereitgestellten Skripte und die zugehÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¶rige Dokumentation werden \"wie besehen\" (\"as is\")\nohne ausdrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼ckliche oder stillschweigende GewÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤hrleistung jeglicher Art zur VerfÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼gung gestellt.\nInsbesondere wird keinerlei GewÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤hr ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼bernommen fÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼r die MarktgÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤ngigkeit, die Eignung fÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼r einen bestimmten Zweck\noder die Nichtverletzung von Rechten Dritter.\nEs besteht keine Verpflichtung zur Wartung, Aktualisierung oder UnterstÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼tzung der Skripte. Jegliche Nutzung erfolgt auf eigenes Risiko.\nIn keinem Fall haften Herr Flecki Garnreiter, sein Arbeitgeber oder die Mitwirkenden an der Erstellung,\nEntwicklung oder Verbreitung dieser Skripte fÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¼r direkte, indirekte, zufÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤llige, besondere oder FolgeschÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤den - einschlieÃƒÆ’Ã†â€™Ãƒâ€¦Ã‚Â¸lich,\naber nicht beschrÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤nkt auf entgangenen Gewinn, Betriebsunterbrechungen, Datenverlust oder sonstige wirtschaftliche Verluste -,\nselbst wenn sie auf die MÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¶glichkeit solcher SchÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤den hingewiesen wurden.\nDurch die Nutzung der Skripte erklÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¤ren Sie sich mit diesen Bedingungen einverstanden.",
+    "EN": "The scripts and accompanying documentation are provided \"as is,\" without warranty of any kind, either express or implied.\nFlecki Garnreiter and his employer disclaim all warranties, including but not limited to the implied warranties of merchantability,\nfitness for a particular purpose, and non-infringement.\nThere is no obligation to provide maintenance, support, updates, or enhancements for the scripts.\nUse of these scripts is at your own risk. Under no circumstances shall Flecki Garnreiter, his employer, the authors,\nor any party involved in the creation, production, or distribution of the scripts be held liable for any damages whatever,\nincluding but not not limited to direct, indirect, incidental, consequential, or special damages\n(such as loss of profits, business interruption, or loss of business data), even if advised of the possibility of such damages.\nBy using these scripts, you agree to be bound by the above terms."
+  },
+  "GuiAssets": {
+    "LogoPath": "Config\\MedUniWien_logo.png",
+    "IconPath": "Config\\MedUniWien_logo.ico"
+  },
+  "UNCPaths": {
+    "AssetDirectory": "\\\\itscmgmt03.srv.meduniwien.ac.at\\iso\\MUWLogo"
+  },
+  "Logging": {
+    "ReportPath": "\\\\itscmgmt03.srv.meduniwien.ac.at\\iso\\PROD\\Reports\\PSProfile",
+    "LogRetentionDays": 30,
+    "ArchiveLogs": true,
+    "ArchiveRetentionDays": 90,
+    "SevenZipPath": "C:\\Program Files\\7-Zip\\7z.exe",
+    "EnableEventLog": true,
+    "LogPath": "\\\\itscmgmt03.srv.meduniwien.ac.at\\iso\\PROD\\LOG\\PSProfile"
+  },
+  "TemplateFilePaths": {
+    "ProfileX": "Templates\\Profile-templateX.ps1",
+    "Profile": "Templates\\Profile-template.ps1",
+    "ProfileMOD": "Templates\\Profile-templateMOD.ps1"
+  },
+  "TemplateVersions": {
+    "ProfileX": "v8.0.0",
+    "Profile": "v25.0.0",
+    "ProfileMOD": "v7.0.0"
+  },
+  "TargetTemplateVersions": {
+    "ProfileX": "v8.0.0",
+    "Profile": "v25.0.0",
+    "ProfileMOD": "v7.0.0"
+  },
+  "LanguageFileVersions": {
+    "en-US": "v1.0.0",
+    "de-DE": "v1.0.0"
+  },
+  "Backup": {
+    "Path": "\\\\itscmgmt03.srv.meduniwien.ac.at\\iso\\PROD\\PSProfile\\Backup",
+    "Enabled": false
+  },
+  "Mail": {
+    "Sender": "ITSC020@meduniwien.ac.at",
+    "ProdRecipient": "win-admin@meduniwien.ac.at",
+    "SmtpServer": "smtpi.meduniwien.ac.at",
+    "SmtpPort": 25,
+    "DevRecipient": "thomas.garnreiter@meduniwien.ac.at",
+    "Enabled": false
+  },
+  "GitUpdate": {
+    "Branch": "main",
+    "Enabled": false,
+    "CachePath": "C:\\temp\\GitProfileCache",
+    "RepoUrl": "https://github.com/TOMTOM25m/PSProfile.git"
+  },
+  "NetworkProfiles": [
+    {
+      "Username": "",
+      "Path": "\\\\itscmgmt03.srv.meduniwien.ac.at\\iso",
+      "Name": "iso",
+      "EncryptedPassword": "",
+      "Enabled": false
+    }
+  ],
+  "Templates": [
+    {
+      "Name": "Standard Profile",
+      "FilePath": "Templates\\\\Profile-template.ps1",
+      "Enabled": true,
+      "Description": "Default PowerShell profile template"
+    },
+    {
+      "Name": "Extended Profile",
+      "FilePath": "Templates\\\\Profile-templateX.ps1",
+      "Enabled": true,
+      "Description": "Extended PowerShell profile with additional features"
+    },
+    {
+      "Name": "Modern Profile",
+      "FilePath": "Templates\\\\Profile-templateMOD.ps1",
+      "Enabled": true,
+      "Description": "Modern PowerShell profile with contemporary styling"
+    }
+  ]
+}
