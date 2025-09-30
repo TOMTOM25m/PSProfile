@@ -1,0 +1,16 @@
+﻿{
+    "IncludeInherited":  true,
+    "GroupExclude":  [
+                         "Domain-Admins",
+                         "Administrators"
+                     ],
+    "IncludeSystemAccounts":  false,
+    "GroupInclude":  {
+
+                     },
+    "DefaultDepth":  2,
+    "Throttle":  5,
+    "Parallel":  true,
+    "DefaultOutputFormat":  "Human",
+    "PruneEmpty":  false
+}

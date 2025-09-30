@@ -1,0 +1,905 @@
+<LogEntries>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\Personalentwicklung_2023-07-13_log.xml
+Auswertung der Berechtigungstruktur fuer das  Y:\Personalentwicklung -Verzeichnis</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\Administration_Internes
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_Admin_int_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_Admin_int_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_Admin_int_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\Karrieremodelle
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_personalabteilung_Karrieremodelle_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_personalabteilung_Karrieremodelle_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_personalabteilung_Karrieremodelle_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>,,
+,,
+,,
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Dokumentation
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Doku_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Doku_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Doku_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:01</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Evaluation
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Eval_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Eval_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Eval_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Finanzen
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Finanz_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Finanz_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Finanz_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:02</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Intern
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Intern_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Intern_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Intern_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Maßnahmen
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Massnahmen_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Massnahmen_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Massnahmen_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Projekte
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE Projekte_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:03</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE Projekte_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Veranstaltungen
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Veranstaltungen_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Veranstaltungen_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Veranstaltungen_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Verträge
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Vertrag_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Vertrag_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:04</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Vertrag_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Wissensmanagement
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Wissensmanagement_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Wissensmanagement_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Wissensmanagement_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE X Archiv
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_X_Archiv_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:05</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_X_Archiv_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_X_Archiv_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\Schuller_Neubauer
+---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_Schuller_Neubauer_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_Schuller_Neubauer_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_Schuller_Neubauer_R,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>No User in this Group</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>---------------------------------------------------------------------------------------</Message>
+  </LogEntry>
+  <LogEntry>
+    <TimeStamp>13.07.2023 10:53:06</TimeStamp>
+    <Message>
+***************************************************************************************</Message>
+  </LogEntry>
+</LogEntries>

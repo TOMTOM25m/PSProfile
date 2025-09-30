@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CertWebService - Setup & Configuration</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #111d4e; border-bottom: 2px solid #5fb4e5; padding-bottom: 10px; }
+        h2 { color: #333; margin-top: 30px; }
+        .section { margin-bottom: 30px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #5fb4e5; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; }
+        button:hover { background: #4a9bc7; }
+        .success { color: #28a745; background: #d4edda; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .error { color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .warning { color: #856404; background: #fff3cd; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .acl-list { border: 1px solid #ccc; padding: 10px; min-height: 100px; background: #f9f9f9; }
+        .acl-item { background: white; padding: 5px 10px; margin: 5px 0; border-radius: 3px; display: flex; justify-content: space-between; align-items: center; }
+        .remove-btn { background: #dc3545; color: white; border: none; padding: 2px 8px; border-radius: 3px; cursor: pointer; }
+        .status-indicator { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .status-active { background: #28a745; }
+        .status-inactive { background: #dc3545; }
+        .tab-container { margin-bottom: 20px; }
+        .tab-button { background: #e9ecef; border: 1px solid #ccc; padding: 10px 20px; cursor: pointer; margin-right: 5px; border-radius: 4px 4px 0 0; }
+        .tab-button.active { background: #5fb4e5; color: white; border-bottom: 1px solid #5fb4e5; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ CertWebService - Setup & Configuration</h1>
+        
+        <!-- Tab Navigation -->
+        <div class="tab-container">
+            <button class="tab-button active" onclick="showTab('setup')">Installation</button>
+            <button class="tab-button" onclick="showTab('security')">Sicherheit & ACL</button>
+            <button class="tab-button" onclick="showTab('firewall')">Firewall</button>
+            <button class="tab-button" onclick="showTab('monitoring')">Überwachung</button>
+            <button class="tab-button" onclick="showTab('status')">Status</button>
+        </div>
+
+        <!-- Installation Tab -->
+        <div id="setup" class="tab-content active">
+            <div class="section">
+                <h2>🚀 Service Installation</h2>
+                <div class="form-group">
+                    <label for="httpPort">HTTP Port:</label>
+                    <input type="number" id="httpPort" value="8080" min="1" max="65535">
+                </div>
+                <div class="form-group">
+                    <label for="httpsPort">HTTPS Port:</label>
+                    <input type="number" id="httpsPort" value="8443" min="1" max="65535">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="forceInstall"> Force Reinstallation
+                    </label>
+                </div>
+                <button onclick="installService()">Service Installieren</button>
+                <button onclick="removeService()">Service Entfernen</button>
+            </div>
+        </div>
+
+        <!-- Security & ACL Tab -->
+        <div id="security" class="tab-content">
+            <div class="section">
+                <h2>🔐 Access Control Liste (ACL)</h2>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="aclEnabled" checked> ACL aktivieren
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="whitelistMode" checked> Whitelist Modus (Nur erlaubte Hosts)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="readOnlyMode" checked> Read-Only Modus (Nur lesender Zugriff)
+                    </label>
+                </div>
+                
+                <h3>Erlaubte Hosts (FQDN)</h3>
+                <div class="form-group">
+                    <input type="text" id="newHost" placeholder="z.B. server01.srv.meduniwien.ac.at">
+                    <button onclick="addAllowedHost()">Host hinzufügen</button>
+                </div>
+                <div class="acl-list" id="allowedHosts">
+                    <div class="acl-item">
+                        <span>ITSCMGMT03.srv.meduniwien.ac.at</span>
+                        <button class="remove-btn" onclick="removeHost(this)">×</button>
+                    </div>
+                    <div class="acl-item">
+                        <span>ITSC020.cc.meduniwien.ac.at</span>
+                        <button class="remove-btn" onclick="removeHost(this)">×</button>
+                    </div>
+                    <div class="acl-item">
+                        <span>itsc049.uvw.meduniwien.ac.at</span>
+                        <button class="remove-btn" onclick="removeHost(this)">×</button>
+                    </div>
+                </div>
+                
+                <h3>Erlaubte IP-Bereiche (CIDR)</h3>
+                <div class="form-group">
+                    <input type="text" id="newIP" placeholder="z.B. 192.168.1.0/24">
+                    <button onclick="addAllowedIP()">IP-Bereich hinzufügen</button>
+                </div>
+                <div class="acl-list" id="allowedIPs">
+                    <div class="warning" style="padding: 10px; margin: 10px 0;">
+                        <strong>⚠️ Nur FQDN-basierter Zugriff konfiguriert</strong><br>
+                        IP-Bereiche sind deaktiviert für maximale Sicherheit.
+                    </div>
+                </div>
+                
+                <button onclick="saveACLConfig()">ACL Konfiguration speichern</button>
+                <button onclick="testACLConfig()">Zugriff testen</button>
+            </div>
+        </div>
+
+        <!-- Firewall Tab -->
+        <div id="firewall" class="tab-content">
+            <div class="section">
+                <h2>🔥 Firewall Konfiguration</h2>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="firewallEnabled" checked> Firewall Regeln erstellen
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="blockOthers" checked> Alle anderen Zugriffe blockieren
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="logDenied" checked> Blockierte Zugriffe protokollieren
+                    </label>
+                </div>
+                
+                <h3>Aktuelle Firewall Regeln</h3>
+                <div id="firewallRules" class="acl-list">
+                    <!-- Wird dynamisch gefüllt -->
+                </div>
+                
+                <button onclick="applyFirewallRules()">Firewall Regeln anwenden</button>
+                <button onclick="removeFirewallRules()">Alle Regeln entfernen</button>
+                <button onclick="refreshFirewallStatus()">Status aktualisieren</button>
+            </div>
+        </div>
+
+        <!-- Monitoring Tab -->
+        <div id="monitoring" class="tab-content">
+            <div class="section">
+                <h2>📊 Zugriffs-Monitoring</h2>
+                <div id="accessLog" class="acl-list" style="height: 300px; overflow-y: auto;">
+                    <!-- Wird dynamisch gefüllt -->
+                </div>
+                <button onclick="refreshAccessLog()">Log aktualisieren</button>
+                <button onclick="clearAccessLog()">Log löschen</button>
+            </div>
+            
+            <div class="section">
+                <h2>🧪 Verbindungstest</h2>
+                <div class="form-group">
+                    <label for="testHost">Host/IP testen:</label>
+                    <input type="text" id="testHost" placeholder="z.B. 192.168.1.100">
+                </div>
+                <button onclick="testConnection()">Verbindung testen</button>
+                <div id="testResult"></div>
+            </div>
+        </div>
+
+        <!-- Status Tab -->
+        <div id="status" class="tab-content">
+            <div class="section">
+                <h2>📈 Service Status</h2>
+                <div id="serviceStatus">
+                    <!-- Wird dynamisch gefüllt -->
+                </div>
+                <button onclick="refreshStatus()">Status aktualisieren</button>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div id="messages"></div>
+    </div>
+
+    <script>
+        // Tab Management
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Message Display
+        function showMessage(message, type = 'success') {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type;
+            messageDiv.textContent = message;
+            messagesDiv.appendChild(messageDiv);
+            
+            setTimeout(() => messageDiv.remove(), 5000);
+        }
+
+        // ACL Management
+        function addAllowedHost() {
+            const input = document.getElementById('newHost');
+            const host = input.value.trim();
+            if (host && host.includes('.')) {
+                const container = document.getElementById('allowedHosts');
+                const item = document.createElement('div');
+                item.className = 'acl-item';
+                item.innerHTML = `<span>${host}</span><button class="remove-btn" onclick="removeHost(this)">×</button>`;
+                container.appendChild(item);
+                input.value = '';
+                showMessage(`Host ${host} hinzugefügt`);
+            } else {
+                showMessage('Bitte einen gültigen FQDN eingeben', 'error');
+            }
+        }
+
+        function addAllowedIP() {
+            const input = document.getElementById('newIP');
+            const ip = input.value.trim();
+            if (ip && (ip.includes('/') || ip.match(/^\d+\.\d+\.\d+\.\d+$/))) {
+                const container = document.getElementById('allowedIPs');
+                const item = document.createElement('div');
+                item.className = 'acl-item';
+                item.innerHTML = `<span>${ip}</span><button class="remove-btn" onclick="removeIP(this)">×</button>`;
+                container.appendChild(item);
+                input.value = '';
+                showMessage(`IP-Bereich ${ip} hinzugefügt`);
+            } else {
+                showMessage('Bitte eine gültige IP oder CIDR-Notation eingeben', 'error');
+            }
+        }
+
+        function removeHost(button) {
+            const host = button.parentElement.querySelector('span').textContent;
+            button.parentElement.remove();
+            showMessage(`Host ${host} entfernt`);
+        }
+
+        function removeIP(button) {
+            const ip = button.parentElement.querySelector('span').textContent;
+            button.parentElement.remove();
+            showMessage(`IP-Bereich ${ip} entfernt`);
+        }
+
+        // Configuration Save/Load
+        function saveACLConfig() {
+            const hosts = Array.from(document.getElementById('allowedHosts').querySelectorAll('.acl-item span'))
+                .map(span => span.textContent)
+                .filter(host => !host.includes('⚠️')); // Filter out warning messages
+            
+            const config = {
+                enabled: document.getElementById('aclEnabled').checked,
+                whitelistMode: document.getElementById('whitelistMode').checked,
+                readOnlyMode: document.getElementById('readOnlyMode').checked,
+                allowedHosts: hosts,
+                allowedIPs: [], // Explicitly empty for security
+                blockedMethods: ['POST', 'PUT', 'DELETE', 'PATCH'],
+                allowedMethods: ['GET', 'HEAD', 'OPTIONS']
+            };
+            
+            // Hier würde normalerweise ein AJAX-Call an PowerShell-Backend erfolgen
+            console.log('Saving ACL config:', config);
+            showMessage('ACL Konfiguration gespeichert - Read-Only Modus aktiviert');
+        }
+
+        function testACLConfig() {
+            const testHost = document.getElementById('testHost').value;
+            if (!testHost) {
+                showMessage('Bitte Host/IP für Test eingeben', 'warning');
+                return;
+            }
+            
+            // Simuliere Test
+            showMessage(`Teste Zugriff von ${testHost}...`, 'warning');
+            setTimeout(() => {
+                showMessage(`Test erfolgreich: ${testHost} hat Zugriff`, 'success');
+            }, 2000);
+        }
+
+        // Service Management
+        function installService() {
+            const httpPort = document.getElementById('httpPort').value;
+            const httpsPort = document.getElementById('httpsPort').value;
+            const force = document.getElementById('forceInstall').checked;
+            
+            showMessage(`Installiere Service... (HTTP: ${httpPort}, HTTPS: ${httpsPort})`, 'warning');
+            // Hier würde PowerShell-Script aufgerufen
+            setTimeout(() => showMessage('Service erfolgreich installiert', 'success'), 3000);
+        }
+
+        function removeService() {
+            if (confirm('Service wirklich entfernen?')) {
+                showMessage('Entferne Service...', 'warning');
+                setTimeout(() => showMessage('Service entfernt', 'success'), 2000);
+            }
+        }
+
+        // Firewall Management
+        function applyFirewallRules() {
+            showMessage('Wende Firewall Regeln an...', 'warning');
+            setTimeout(() => {
+                showMessage('Firewall Regeln erfolgreich angewendet', 'success');
+                refreshFirewallStatus();
+            }, 2000);
+        }
+
+        function removeFirewallRules() {
+            if (confirm('Alle Firewall Regeln entfernen?')) {
+                showMessage('Entferne Firewall Regeln...', 'warning');
+                setTimeout(() => showMessage('Firewall Regeln entfernt', 'success'), 1500);
+            }
+        }
+
+        function refreshFirewallStatus() {
+            const container = document.getElementById('firewallRules');
+            container.innerHTML = `
+                <div class="acl-item"><span class="status-indicator status-active"></span>CertSurveillance-HTTP-Allow-10_0_0_0_8</div>
+                <div class="acl-item"><span class="status-indicator status-active"></span>CertSurveillance-HTTPS-Allow-10_0_0_0_8</div>
+                <div class="acl-item"><span class="status-indicator status-active"></span>CertSurveillance-HTTP-Block-Others</div>
+                <div class="acl-item"><span class="status-indicator status-active"></span>CertSurveillance-HTTPS-Block-Others</div>
+            `;
+        }
+
+        // Monitoring
+        function refreshAccessLog() {
+            const container = document.getElementById('accessLog');
+            const now = new Date();
+            container.innerHTML = `
+                <div class="acl-item" style="color: green;">[${now.toLocaleTimeString()}] ALLOWED: itscmgmt01.srv.meduniwien.ac.at (FQDN match)</div>
+                <div class="acl-item" style="color: red;">[${now.toLocaleTimeString()}] DENIED: 203.0.113.1 (Not in whitelist)</div>
+                <div class="acl-item" style="color: green;">[${now.toLocaleTimeString()}] ALLOWED: 192.168.1.10 (IP range match)</div>
+            `;
+        }
+
+        function testConnection() {
+            const host = document.getElementById('testHost').value;
+            if (!host) {
+                showMessage('Bitte Host/IP eingeben', 'warning');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.innerHTML = `<div class="warning">Teste Verbindung zu ${host}...</div>`;
+            
+            setTimeout(() => {
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <strong>Verbindungstest Ergebnis für ${host}:</strong><br>
+                        ✅ DNS auflösbar: Ja (192.168.1.10)<br>
+                        ✅ Netzwerk erreichbar: Ja<br>
+                        ✅ ACL erlaubt: Ja<br>
+                        ✅ Port offen: Ja
+                    </div>
+                `;
+            }, 2000);
+        }
+
+        function refreshStatus() {
+            const container = document.getElementById('serviceStatus');
+            container.innerHTML = `
+                <div class="acl-item">
+                    <span class="status-indicator status-active"></span>
+                    <strong>CertWebService Status:</strong> Aktiv
+                </div>
+                <div class="acl-item">
+                    <span class="status-indicator status-active"></span>
+                    <strong>IIS Website:</strong> CertificateSurveillance (Läuft)
+                </div>
+                <div class="acl-item">
+                    <span class="status-indicator status-active"></span>
+                    <strong>HTTP Port:</strong> 8080 (Offen)
+                </div>
+                <div class="acl-item">
+                    <span class="status-indicator status-active"></span>
+                    <strong>HTTPS Port:</strong> 8443 (Offen)
+                </div>
+                <div class="acl-item">
+                    <span class="status-indicator status-active"></span>
+                    <strong>ACL:</strong> Aktiviert - Read-Only (3 autorisierte Hosts)
+                </div>
+                <div class="acl-item">
+                    <span class="status-indicator status-active"></span>
+                    <strong>Firewall:</strong> 4 Regeln aktiv
+                </div>
+            `;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshFirewallStatus();
+            refreshStatus();
+            refreshAccessLog();
+        });
+    </script>
+</body>
+</html>

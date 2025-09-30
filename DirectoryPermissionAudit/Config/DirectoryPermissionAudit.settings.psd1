@@ -1,9 +1,1 @@
-@{
-    # Default settings for DirectoryPermissionAudit module
-    DefaultOutputFormat   = 'HTML'
-    DefaultDepth          = 0
-    IncludeInherited      = $true
-    IncludeSystemAccounts = $false
-    Parallel              = $false
-    Throttle              = 5
-}
+﻿@{    IncludeInherited = True    GroupExclude = Domain-Admins Administrators    IncludeSystemAccounts = False    GroupInclude =     DefaultDepth = 2    Throttle = 5    Parallel = True    DefaultOutputFormat = 'Human'    PruneEmpty = False}

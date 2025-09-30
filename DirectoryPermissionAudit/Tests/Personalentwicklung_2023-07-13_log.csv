@@ -1,0 +1,554 @@
+﻿---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\Personalentwicklung_2023-07-13_log.xml
+Auswertung der Berechtigungstruktur fuer das  Y:\Personalentwicklung -Verzeichnis
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\Administration_Internes
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_Admin_int_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_Admin_int_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_Admin_int_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\Karrieremodelle
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_personalabteilung_Karrieremodelle_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_personalabteilung_Karrieremodelle_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_personalabteilung_Karrieremodelle_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+,,
+,,
+,,
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Dokumentation
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Doku_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Doku_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Doku_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Evaluation
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Eval_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Eval_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Eval_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Finanzen
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Finanz_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Finanz_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Finanz_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Intern
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Intern_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Intern_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Intern_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Maßnahmen
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Massnahmen_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Massnahmen_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Massnahmen_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Projekte
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE Projekte_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE Projekte_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Veranstaltungen
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Veranstaltungen_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Veranstaltungen_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Veranstaltungen_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Verträge
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Vertrag_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Vertrag_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Vertrag_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE Wissensmanagement
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Wissensmanagement_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+KRIEGLER,Eva,False
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Wissensmanagement_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_Wissensmanagement_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\PE X Archiv
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_X_Archiv_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_X_Archiv_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+AIGNER,Michael,False
+MEMISEVIC,Samir,True
+CHRAMOSTA,Andreas,True
+MEINDL,Michael,True
+JEVTIMIJEVIC,Harald,True
+BUDIL,Hans-Christian,True
+STEINER,Margarete,True
+STIMAC,Maximilian,True
+MOSSER,Eva-Maria,True
+BUCEK,Alexander,True
+LOBINGER,Viviane Marita,True
+ILONYTE,Inga,True
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_PE_X_Archiv_R,Berechtigung: Lesen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,PC-SYSTEMS-ADMINS,Berechtigung: 
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+N/A,pbalin52_PC,True
+N/A,aesche98_PC,True
+N/A,mplank57_PC,True
+BALINT,Peter,True
+ESCHELMÜLLER,Andreas,True
+PLANK,Michael,True
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+Y:\Personalentwicklung\Schuller_Neubauer
+---------------------------------------------------------------------------------------
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_Schuller_Neubauer_C,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_Schuller_Neubauer_D,Berechtigung: Lesen/Schreiben/Loeschen
+***************************************************************************************
+Berechtigte Mitarbeiter:
+Name,GivenName,User ist aktiv:
+EDER,Maria,True
+SCHULLER,Julian,True
+NEUBAUER,Sophie,True
+
+***************************************************************************************
+BerechtigungsGruppe:,vz_PersEntw_Schuller_Neubauer_R,Berechtigung: Lesen/Ausfuehren/Schreiben
+***************************************************************************************
+Berechtigte Mitarbeiter:
+No User in this Group
+---------------------------------------------------------------------------------------
+
+***************************************************************************************

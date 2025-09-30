@@ -24,9 +24,32 @@
     "AllowedUsers": [],
     "AllowedGroups": ["Domain Admins", "Administrators"]
   },
+  "AccessControl": {
+    "Enabled": true,
+    "AllowedHosts": [
+      "ITSCMGMT03.srv.meduniwien.ac.at",
+      "ITSC020.cc.meduniwien.ac.at",
+      "itsc049.uvw.meduniwien.ac.at"
+    ],
+    "AllowedIPs": [],
+    "DenyByDefault": true,
+    "LogDenied": true,
+    "WhitelistMode": true,
+    "ReadOnlyMode": true,
+    "BlockedMethods": ["POST", "PUT", "DELETE", "PATCH"],
+    "AllowedMethods": ["GET", "HEAD", "OPTIONS"]
+  },
   "Firewall": {
     "CreateRules": true,
-    "RuleNamePrefix": "CertSurveillance"
+    "RuleNamePrefix": "CertSurveillance",
+    "EnableACLRules": true,
+    "AllowedRemoteAddresses": [
+      "10.0.0.0/8",
+      "172.16.0.0/12",
+      "192.168.0.0/16"
+    ],
+    "BlockAllOther": true,
+    "EnableLogging": true
   },
   "Logging": {
     "LogLevel": "INFO",

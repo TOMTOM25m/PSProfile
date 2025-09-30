@@ -1,5 +1,7 @@
 # Directory Permission Audit Tool
 
+[![CI](https://github.com/yourusername/DirectoryPermissionAudit/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/DirectoryPermissionAudit/actions/workflows/ci.yml)
+
 ## Overview
 
 Modern PowerShell solution for generating comprehensive reports about directory permissions, group memberships, and user access. This tool allows administrators to audit access rights across folders with detailed user and group information.
@@ -160,10 +162,10 @@ Hinweis: Filtering passiert vor Export; HTML/CSV/JSON enthalten nur verbleibende
 - [x] Filter: -GroupInclude / -GroupExclude
 - [x] Option: -PruneEmpty
 - [ ] Persistenter Cache (optional JSON)
-- [ ] Pester Tests (Analyse / Export)
-- [ ] CI Matrix (PS 5.1 + 7.x) + Badge
-- [ ] HTML Template externalisierbar
-- [ ] Logging-Rotation / Retention
+- [x] Pester Tests (Analyse / Export)
+- [x] CI Matrix (PS 5.1 + 7.x) + Badge
+- [x] HTML Template externalisierbar
+- [x] Logging-Rotation / Retention
 - [ ] Code Signing / Release Automation
 
 ## Support / Meldungen

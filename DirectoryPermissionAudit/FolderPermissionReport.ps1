@@ -16,7 +16,7 @@ using namespace System.Windows.Forms
     CSV or text report of folder permissions structure with user access rights
 
 .NOTES
-    Version:    v2.2.0
+    Version:    v2.3.0
     Author:     Thomas Garnreiter 
     Creation:   2022-01-12
     Modified:   2025-09-29
@@ -52,9 +52,14 @@ using namespace System.Windows.Forms
   [switch]$NoLogo
 )
 $ScriptDirectory = Split-Path -Path $MyInvocation.MyCommand.Path -Parent
-$modulePath = Join-Path $ScriptDirectory 'DirectoryPermissionAudit.psm1'
-if (-not (Test-Path $modulePath)) { Write-Error "Module not found: $modulePath"; exit 1 }
-try { Import-Module $modulePath -Force -ErrorAction Stop } catch { Write-Error "Failed to import module: $($_.Exception.Message)"; exit 1 }
+$moduleRoot = Join-Path $ScriptDirectory 'Modules'
+$manifest   = Join-Path $moduleRoot 'DirectoryPermissionAudit.psd1'
+if (-not (Test-Path $manifest)) {
+    # Fallback: development layout
+    $devManifest = Join-Path $ScriptDirectory 'DirectoryPermissionAudit.psd1'
+    if (Test-Path $devManifest) { $manifest = $devManifest } else { Write-Error "Module manifest not found: $manifest"; exit 1 }
+}
+try { Import-Module $manifest -Force -ErrorAction Stop } catch { Write-Error "Failed to import module manifest: $($_.Exception.Message)"; exit 1 }
 Start-DirectoryPermissionAudit -Path $Path -Depth $Depth -OutputFormat $OutputFormat -OutputPath $OutputPath -IncludeInherited:$IncludeInherited.IsPresent -IncludeSystemAccounts:$IncludeSystemAccounts.IsPresent -Interactive:$Interactive.IsPresent -NoLogo:$NoLogo.IsPresent
 # zgXAulwZ1XlLEVmoNW85dNAUTy/MBbDwD3tcN5C1SX07hdl1J8bM7tUarCMR8C+e
 # OY1oaOATUJPukm7I/BnrE20bqXN7gpII0seLXVOZs0aNenzlOyVXxJS43mnKgVTH
