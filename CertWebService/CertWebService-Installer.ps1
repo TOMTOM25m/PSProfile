@@ -1,85 +1,210 @@
-# CertWebService v2.3.0 PowerShell Installer
-# Supports UNC paths natively with PowerShell 7.x compatibility
+# CertWebService PowerShell Installer (Enhanced)
+# Regelwerk v10.0.0 compliant wrapper around simplified setup script
 param(
-    [int]$Port = 9080
+    [int]$Port = 9080,
+    [int]$SecurePort = 9443,
+    [string[]]$AuthorizedHosts = @(
+        'ITSCMGMT03.srv.meduniwien.ac.at',
+        'ITSC020.cc.meduniwien.ac.at',
+        'itsc049.uvw.meduniwien.ac.at'
+    ),
+    [switch]$SkipIISFeatures,
+    [switch]$NoPause,
+    [switch]$Json,
+    [switch]$VerboseLogging
 )
 
-Write-Host "======================================" -ForegroundColor Cyan
-Write-Host "CertWebService v2.3.0 PowerShell Setup" -ForegroundColor Green
-Write-Host "Read-Only Mode for 3 authorized servers" -ForegroundColor Yellow
-Write-Host "PowerShell Version: $($PSVersionTable.PSVersion) ($($PSVersionTable.PSEdition))" -ForegroundColor Gray
-Write-Host "======================================" -ForegroundColor Cyan
-Write-Host ""
+$ErrorActionPreference = 'Stop'
 
-# Get the directory where this script is located (works with UNC paths)
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
-$SetupScript = Join-Path $ScriptDir "Setup-Simple.ps1"
-
-Write-Host "[INFO] Script directory: $ScriptDir" -ForegroundColor Gray
-Write-Host "[INFO] Setup script: $SetupScript" -ForegroundColor Gray
-Write-Host ""
-
-# Check if running as Administrator
-$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
-if (-not $isAdmin) {
-    Write-Host "[ERROR] This script must be run as Administrator!" -ForegroundColor Red
-    Write-Host "[ERROR] Please right-click PowerShell and select 'Run as Administrator'" -ForegroundColor Red
-    exit 1
-}
-
-Write-Host "[INFO] Administrator privileges confirmed" -ForegroundColor Green
-
-# Check if Setup-Simple.ps1 exists
-if (-not (Test-Path $SetupScript)) {
-    Write-Host "[ERROR] Setup script not found: $SetupScript" -ForegroundColor Red
-    Write-Host "[ERROR] Please ensure Setup-Simple.ps1 is in the same directory" -ForegroundColor Red
-    exit 1
-}
-
-Write-Host "[INFO] Setup script found" -ForegroundColor Green
-Write-Host "[INFO] Starting installation..." -ForegroundColor Green
-Write-Host ""
-
-try {
-    # Execute the setup script with parameters
-    & $SetupScript -Port $Port
-    $exitCode = $LASTEXITCODE
-    
-    Write-Host ""
-    if ($exitCode -eq 0) {
-        Write-Host "=====================================" -ForegroundColor Green
-        Write-Host "Installation completed successfully!" -ForegroundColor Green
-        Write-Host "=====================================" -ForegroundColor Green
-        Write-Host ""
-        Write-Host "Service URL: http://localhost:$Port" -ForegroundColor Cyan
-        Write-Host "API Endpoint: http://localhost:$Port/certificates.json" -ForegroundColor Cyan
-        Write-Host "Health Check: http://localhost:$Port/health.json" -ForegroundColor Cyan
-        Write-Host ""
-        Write-Host "Read-Only Mode: Active for 3 servers" -ForegroundColor Yellow
-        Write-Host "- ITSCMGMT03.srv.meduniwien.ac.at" -ForegroundColor Gray
-        Write-Host "- ITSC020.cc.meduniwien.ac.at" -ForegroundColor Gray
-        Write-Host "- itsc049.uvw.meduniwien.ac.at" -ForegroundColor Gray
-        Write-Host ""
-        Write-Host "[SUCCESS] CertWebService v2.3.0 installed successfully!" -ForegroundColor Green
-    } else {
-        Write-Host "=====================================" -ForegroundColor Red
-        Write-Host "Installation failed!" -ForegroundColor Red
-        Write-Host "=====================================" -ForegroundColor Red
-        Write-Host ""
-        Write-Host "Please check the error messages above." -ForegroundColor Yellow
-        Write-Host "Make sure you have:" -ForegroundColor Yellow
-        Write-Host "- Administrator privileges" -ForegroundColor Gray
-        Write-Host "- PowerShell 5.1 or later" -ForegroundColor Gray
-        Write-Host "- IIS features available" -ForegroundColor Gray
-        Write-Host ""
+#region Helper / Logging
+$global:__log = @()
+function Write-Log {
+    param(
+        [string]$Message,
+        [ValidateSet('INFO','WARN','ERROR','SUCCESS','DETAIL')][string]$Level = 'INFO',
+        [ConsoleColor]$Color = [ConsoleColor]::Gray
+    )
+    $ts = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+    $entry = [PSCustomObject]@{ Timestamp=$ts; Level=$Level; Message=$Message }
+    $global:__log += $entry
+    if (-not $Json) {
+        switch ($Level) {
+            'ERROR'   { $Color = 'Red' }
+            'WARN'    { $Color = 'Yellow' }
+            'SUCCESS' { $Color = 'Green' }
+            'INFO'    { if ($Color -eq 'Gray') { $Color = 'Gray' } }
+            'DETAIL'  { $Color = 'DarkGray' }
+        }
+        Write-Host "[$($entry.Timestamp)] [$Level] $Message" -ForegroundColor $Color
     }
-    
-} catch {
-    Write-Host "[ERROR] Installation failed with exception: $($_.Exception.Message)" -ForegroundColor Red
-    $exitCode = 1
 }
 
-Write-Host ""
-Write-Host "Press any key to exit..." -ForegroundColor Gray
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-exit $exitCode
+function Out-JsonIfRequested {
+    param(
+        [int]$ExitCode,
+        [string]$Status,
+        [hashtable]$Extra
+    )
+    if ($Json) {
+        $payload = [ordered]@{
+            Script        = 'CertWebService-Installer.ps1'
+            Version       = $ScriptVersion
+            Regelwerk     = $RegelwerkVersion
+            BuildDate     = $BuildDate
+            PowerShell    = $PSVersionTable.PSVersion.ToString()
+            Edition       = $PSVersionTable.PSEdition
+            Status        = $Status
+            ExitCode      = $ExitCode
+            Port          = $Port
+            SecurePort    = $SecurePort
+            AuthorizedHosts = $AuthorizedHosts
+            Steps         = $global:__log
+        }
+        if ($Extra) { $Extra.GetEnumerator() | ForEach-Object { $payload[$_.Key] = $_.Value } }
+        $payload | ConvertTo-Json -Depth 6
+    }
+}
+#endregion
+
+#region Version Import
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$VersionFile = Join-Path $ScriptDir 'VERSION.ps1'
+if (Test-Path $VersionFile) {
+    try { . $VersionFile } catch { Write-Log "Failed to import VERSION.ps1: $($_.Exception.Message)" 'WARN' }
+}
+if (-not $ScriptVersion) { $ScriptVersion = 'v2.3.0' }
+if (-not $RegelwerkVersion) { $RegelwerkVersion = 'v10.0.0' }
+if (-not $BuildDate) { $BuildDate = (Get-Date -Format 'yyyy-MM-dd') }
+#endregion
+
+#region Banner
+if (-not $Json) {
+    $line = '=' * 46
+    Write-Host $line -ForegroundColor Cyan
+    if ($PSVersionTable.PSVersion.Major -ge 7) {
+        Write-Host "🚀 CertWebService $ScriptVersion Installer" -ForegroundColor Green
+    } else {
+        Write-Host "CertWebService $ScriptVersion Installer" -ForegroundColor Green
+    }
+    Write-Host "Regelwerk: $RegelwerkVersion | Build: $BuildDate" -ForegroundColor Cyan
+    Write-Host "Authorized Hosts (default): $((($AuthorizedHosts) -join ', '))" -ForegroundColor Yellow
+    Write-Host "PowerShell: $($PSVersionTable.PSVersion) ($($PSVersionTable.PSEdition))" -ForegroundColor Gray
+    Write-Host $line -ForegroundColor Cyan
+    Write-Host
+}
+#endregion
+
+#region Pre-Checks
+Write-Log 'Running pre-checks' 'INFO'
+$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')
+if (-not $isAdmin) {
+    Write-Log 'Must be run as Administrator' 'ERROR'
+    $__json = Out-JsonIfRequested -ExitCode 1 -Status 'NOT_ADMIN'
+    if ($__json) { Write-Output $__json }
+    if (-not $Json -and -not $NoPause) { Write-Host 'Press any key to exit...' -ForegroundColor DarkGray; $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown') | Out-Null }
+    exit 1
+}
+Write-Log 'Administrator privileges confirmed' 'SUCCESS'
+
+foreach ($p in @($Port,$SecurePort)) {
+    if ($p -lt 1 -or $p -gt 65535) { Write-Log "Invalid port: $p" 'ERROR'; $__json = Out-JsonIfRequested -ExitCode 1 -Status 'INVALID_PORT'; if ($__json) { Write-Output $__json }; exit 1 }
+}
+
+function Test-PortInUse {
+    param([int]$TestPort)
+    try {
+        $client = New-Object System.Net.Sockets.TcpClient
+        $iar = $client.BeginConnect('127.0.0.1',$TestPort,$null,$null)
+        $wait = $iar.AsyncWaitHandle.WaitOne(200)
+        if ($wait -and $client.Connected) { $client.Close(); return $true }
+        $client.Close(); return $false
+    } catch { return $false }
+}
+
+if (Test-PortInUse -TestPort $Port)       { Write-Log "Port $Port already in use (HTTP)" 'WARN' }
+if (Test-PortInUse -TestPort $SecurePort) { Write-Log "Port $SecurePort already in use (HTTPS)" 'WARN' }
+
+#endregion
+
+#region Locate Setup Script
+$PreferredOrder = @('Setup-Simple.ps1','Setup-Final.ps1','Setup.ps1')
+$SetupScript = $null
+foreach ($candidate in $PreferredOrder) {
+    $candidatePath = Join-Path $ScriptDir $candidate
+    if (Test-Path $candidatePath) { $SetupScript = $candidatePath; break }
+}
+if (-not $SetupScript) {
+    Write-Log 'No setup script found (expected one of Setup-Simple.ps1, Setup-Final.ps1, Setup.ps1)' 'ERROR'
+    $__json = Out-JsonIfRequested -ExitCode 1 -Status 'NO_SETUP_SCRIPT'
+    if ($__json) { Write-Output $__json }
+    exit 1
+}
+Write-Log "Using setup script: $SetupScript" 'INFO'
+#endregion
+
+#region IIS Feature Handling
+if ($SkipIISFeatures) {
+    Write-Log 'Skipping IIS feature installation as requested' 'WARN'
+} else {
+    Write-Log 'Ensuring IIS feature baseline (lightweight check)' 'INFO'
+    try {
+        $featureCmd = Get-Command Enable-WindowsOptionalFeature -ErrorAction SilentlyContinue
+        if ($featureCmd) {
+            $baseline = @('IIS-WebServerRole','IIS-WebServer')
+            foreach ($f in $baseline) {
+                try { Enable-WindowsOptionalFeature -Online -FeatureName $f -All -NoRestart -ErrorAction SilentlyContinue | Out-Null } catch { Write-Log "Feature $f enable attempt failed (may be present)" 'DETAIL' }
+            }
+        } else {
+            Write-Log 'Enable-WindowsOptionalFeature not available (non-Windows Core?) - continuing' 'WARN'
+        }
+    } catch { Write-Log "IIS baseline check failed: $($_.Exception.Message)" 'WARN' }
+}
+#endregion
+
+#region Execute Setup
+Write-Log 'Starting underlying setup script execution' 'INFO'
+$invokeParams = @{
+    Port = $Port
+    SecurePort = $SecurePort
+    AuthorizedHosts = $AuthorizedHosts
+}
+if ($VerboseLogging) { $invokeParams['Verbose'] = $true }
+
+$setupExitCode = 0
+try {
+    & $SetupScript @invokeParams
+    $setupExitCode = if ($LASTEXITCODE) { $LASTEXITCODE } else { 0 }
+    if ($setupExitCode -eq 0) {
+        Write-Log 'Underlying setup reported success' 'SUCCESS'
+    } else {
+        Write-Log "Underlying setup returned exit code $setupExitCode" 'ERROR'
+    }
+} catch {
+    Write-Log "Setup script threw exception: $($_.Exception.Message)" 'ERROR'
+    $setupExitCode = 1
+}
+#endregion
+
+#region Post Summary
+if ($setupExitCode -eq 0) {
+    Write-Log "Service (HTTP) Port: $Port" 'INFO'
+    Write-Log "Health Endpoint (relative): /health.json" 'INFO'
+    Write-Log "Certificates Endpoint (relative): /certificates.json" 'INFO'
+    Write-Log "Authorized Hosts: $((($AuthorizedHosts) -join ', '))" 'INFO'
+    Write-Log 'Installation completed successfully' 'SUCCESS'
+    $status = 'SUCCESS'
+} else {
+    Write-Log 'Installation failed - review log output' 'ERROR'
+    $status = 'FAILED'
+}
+
+$__json = Out-JsonIfRequested -ExitCode $setupExitCode -Status $status
+if ($__json) { Write-Output $__json }
+
+if (-not $Json -and -not $NoPause) {
+    Write-Host
+    Write-Host 'Press any key to exit...' -ForegroundColor DarkGray
+    try { $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown') | Out-Null } catch { }
+}
+
+exit $setupExitCode

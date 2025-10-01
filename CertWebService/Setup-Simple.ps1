@@ -16,12 +16,17 @@
 [CmdletBinding()]
 param(
     [int]$Port = 9080,
-    [int]$SecurePort = 9443
+    [int]$SecurePort = 9443,
+    [string[]]$AuthorizedHosts = @(
+        'ITSCMGMT03.srv.meduniwien.ac.at',
+        'ITSC020.cc.meduniwien.ac.at',
+        'itsc049.uvw.meduniwien.ac.at'
+    )
 )
 
 #region Initialization
 Write-Host "🚀 Certificate Web Service v2.3.0 Setup" -ForegroundColor Green
-Write-Host "📋 Read-Only Mode für 3 autorisierte Server" -ForegroundColor Yellow
+Write-Host "📋 Read-Only Mode für $($AuthorizedHosts.Count) autorisierte Server" -ForegroundColor Yellow
 Write-Host ""
 
 $ErrorActionPreference = 'Stop'
@@ -101,7 +106,7 @@ try {
         Remove-NetFirewallRule -DisplayName "CertWebService*" -ErrorAction SilentlyContinue
         
         # Create new rules for authorized servers
-        $authorizedHosts = @("ITSCMGMT03.srv.meduniwien.ac.at", "ITSC020.cc.meduniwien.ac.at", "itsc049.uvw.meduniwien.ac.at")
+    $authorizedHosts = $AuthorizedHosts
         
         New-NetFirewallRule -DisplayName "CertWebService-HTTP-Allow" -Direction Inbound -Protocol TCP -LocalPort $Port -Action Allow -Enabled True
         New-NetFirewallRule -DisplayName "CertWebService-HTTPS-Allow" -Direction Inbound -Protocol TCP -LocalPort $SecurePort -Action Allow -Enabled True
@@ -158,27 +163,29 @@ try {
         timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss')
         version = "v2.3.0"
         read_only_mode = $true
-        authorized_hosts = 3
-    } | ConvertTo-Json | Set-Content "$webPath\health.json" -Encoding UTF8
+        authorized_host_count = $AuthorizedHosts.Count
+        authorized_hosts = $AuthorizedHosts
+    } | ConvertTo-Json -Depth 5 | Set-Content "$webPath\health.json" -Encoding UTF8
     
     # Create summary
     @{
         service = "Certificate Web Service"
         version = "v2.3.0"
         mode = "Read-Only"
-        authorized_hosts = @("ITSCMGMT03.srv.meduniwien.ac.at", "ITSC020.cc.meduniwien.ac.at", "itsc049.uvw.meduniwien.ac.at")
+        authorized_host_count = $AuthorizedHosts.Count
+        authorized_hosts = $AuthorizedHosts
         last_update = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss')
         certificate_count = $certData.summary.total
-    } | ConvertTo-Json | Set-Content "$webPath\summary.json" -Encoding UTF8
+    } | ConvertTo-Json -Depth 5 | Set-Content "$webPath\summary.json" -Encoding UTF8
     
     Write-SetupLog "=== Setup completed successfully ==="
     Write-Host ""
     Write-Host "✅ Certificate Web Service installed successfully!" -ForegroundColor Green
-    Write-Host "   HTTP:  http://$($env:COMPUTERNAME):$Port" -ForegroundColor Cyan
-    Write-Host "   HTTPS: https://$($env:COMPUTERNAME):$SecurePort" -ForegroundColor Cyan
+    Write-Host "   HTTPS Endpoint: https://$($env:COMPUTERNAME):$SecurePort" -ForegroundColor Cyan
+    Write-Host "   (HTTP endpoint disabled in summary output to encourage TLS usage)" -ForegroundColor DarkGray
     Write-Host ""
     Write-Host "🔒 Read-Only Mode: Nur GET/HEAD/OPTIONS erlaubt" -ForegroundColor Yellow
-    Write-Host "👥 Autorisierte Server: 3" -ForegroundColor Yellow
+    Write-Host "👥 Autorisierte Server: $($AuthorizedHosts.Count)" -ForegroundColor Yellow
     Write-Host ""
     
 } catch {

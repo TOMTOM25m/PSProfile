@@ -29,13 +29,15 @@
 
 ## 🆕 Version 10.0.1 Änderungen / Changes
 
-### Neue Standards / New Standards:
+### Neue Standards / New Standards
+
 - **📧 Email-Standards:** MedUni Wien SMTP-Spezifikationen
 - **📊 Excel-Integration:** Vollständige Excel-Automatisierung
 - **🔐 Certificate Surveillance:** Enterprise-Zertifikatsüberwachung
 - **🚀 Robocopy-Mandatory:** IMMER Robocopy für File-Operations verwenden
 
-### Erweiterte Compliance:
+### Erweiterte Compliance
+
 - **Universal PowerShell:** 5.1, 6.x, 7.x Kompatibilität
 - **Network Deployment:** UNC-Path Installation Standards
 - **Read-Only Security:** HTTP-Method Filtering für WebServices
@@ -577,18 +579,21 @@ function Sync-NetworkDirectory {
 ## 🚀 Implementation Roadmap v10.0.1
 
 ### Phase 1: Email & Excel Standards (COMPLETED)
+
 - ✅ MedUni Wien SMTP-Konfiguration
 - ✅ Professional Email-Templates  
 - ✅ Excel-COM Integration
 - ✅ Spalten-Mappings definiert
 
 ### Phase 2: Certificate Surveillance (COMPLETED)
+
 - ✅ CertWebService v2.3.0 (Read-Only API)
 - ✅ CertSurv v2.0.0 (Scanner & Reports)
 - ✅ 3-Server Whitelist Security
 - ✅ HTTP-Method Filtering
 
 ### Phase 3: Robocopy Enforcement (CRITICAL)
+
 - ✅ Copy-Item/Move-Item VERBOTEN
 - ✅ Network UNC-Path Standards
 - ✅ Error Handling für Robocopy
@@ -598,13 +603,15 @@ function Sync-NetworkDirectory {
 
 ## 📝 Migration Guide: v10.0.0 → v10.0.1
 
-### Critical Changes:
+### Critical Changes
+
 1. **ALLE Copy-Item/Move-Item durch Robocopy ersetzen**
 2. **Email-Konfiguration auf MedUni Wien SMTP umstellen**
 3. **Excel-Operationen standardisieren**
 4. **Certificate Surveillance implementieren**
 
-### Migration Script:
+### Migration Script
+
 ```powershell
 # Migration Helper v10.0.1
 function Update-ToRegelwerk1001 {
@@ -631,19 +638,22 @@ function Update-ToRegelwerk1001 {
 
 ## 📜 Changelog v10.0.1
 
-### New Features:
+### New Features
+
 - **📧 §16:** Email Standards MedUni Wien
 - **📊 §17:** Excel Integration Guidelines  
 - **🔐 §18:** Certificate Surveillance Standards
 - **🚀 Enhanced §11:** Robocopy MANDATORY enforcement
 
-### Enhancements:
+### Enhancements
+
 - **Universal PowerShell:** 5.1, 6.x, 7.x compatibility
 - **Network Deployment:** UNC-Path installation standards
 - **Read-Only Security:** HTTP-method filtering
 - **Professional Templates:** Enterprise-grade email templates
 
-### Critical:
+### Critical
+
 - **Copy-Item/Move-Item:** Now FORBIDDEN - use Robocopy ALWAYS
 - **SMTP:** Must use `smtpi.meduniwien.ac.at`
 - **Excel:** Standardized column mappings mandatory
