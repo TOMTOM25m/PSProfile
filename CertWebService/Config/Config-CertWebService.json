@@ -72,6 +72,15 @@
     },
     "RefreshIntervalSeconds": 300
   },
+  "Deployment": {
+    "PowerShellVersionsPath": "PowerShell-Versions",
+    "PS5ScriptPath": "PowerShell-Versions\\Deploy-CertWebService-PS5.ps1",
+    "PS7ScriptPath": "PowerShell-Versions\\Deploy-CertWebService-PS7.ps1",
+    "ExcelPS5ScriptPath": "PowerShell-Versions\\Deploy-FromExcel-PS5.ps1",
+    "ExcelPS7ScriptPath": "PowerShell-Versions\\Deploy-FromExcel-PS7.ps1",
+    "GlobalAccess": true,
+    "Description": "PowerShell version-specific deployment scripts organized in subfolder"
+  },
   "API": {
     "EnableAPI": true,
     "APIPath": "/api/certificates.json",

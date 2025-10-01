@@ -20,8 +20,18 @@ $Script:Version = "v2.3.0"
 $Script:RulebookVersion = "v10.0.0"
 $Script:ScanDate = Get-Date
 
-# Logging setup
-$logPath = "C:\inetpub\CertWebService\Logs"
+# Logging setup - Support both possible paths
+$possibleLogPaths = @(
+    "C:\inetpub\wwwroot\CertWebService\Logs",
+    "C:\inetpub\CertWebService\Logs"
+)
+
+$logPath = $possibleLogPaths | Where-Object { Test-Path (Split-Path $_ -Parent) } | Select-Object -First 1
+
+if (-not $logPath) {
+    $logPath = "C:\inetpub\wwwroot\CertWebService\Logs"  # Default fallback
+}
+
 if (-not (Test-Path $logPath)) {
     New-Item -Path $logPath -ItemType Directory -Force | Out-Null
 }
@@ -100,8 +110,25 @@ try {
         }
     }
     
-    # Update certificates.json
-    $sitePath = "C:\inetpub\CertWebService"
+    # Update certificates.json - Support both possible IIS paths
+    $possiblePaths = @(
+        "C:\inetpub\wwwroot\CertWebService",  # Standard IIS path
+        "C:\inetpub\CertWebService"            # Alternative path
+    )
+    
+    $sitePath = $possiblePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+    
+    if (-not $sitePath) {
+        Write-Log "ERROR: Neither C:\inetpub\wwwroot\CertWebService nor C:\inetpub\CertWebService exists!" "ERROR"
+        # Try to create wwwroot path as fallback
+        $sitePath = "C:\inetpub\wwwroot\CertWebService"
+        if (-not (Test-Path $sitePath)) {
+            New-Item -Path $sitePath -ItemType Directory -Force | Out-Null
+            Write-Log "Created directory: $sitePath" "INFO"
+        }
+    }
+    
+    Write-Log "Using site path: $sitePath" "INFO"
     $certificatesFile = Join-Path $sitePath "certificates.json"
     
     $certificateData | ConvertTo-Json -Depth 5 | Set-Content -Path $certificatesFile -Encoding UTF8
