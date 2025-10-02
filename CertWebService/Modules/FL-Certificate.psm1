@@ -9,9 +9,9 @@
 .AUTHOR
     Flecki (Tom) Garnreiter
 .VERSION
-    v1.0.0
+    v1.1.0
 .RULEBOOK
-    v10.0.0
+    v10.0.2
 #>
 
 #----------------------------------------------------------[Functions]------------------------------------------------------------
@@ -134,6 +134,144 @@ function Get-CertificateWebData {
     }
 }
 
+<#
+.SYNOPSIS
+    Generates PowerShell-optimized certificate data in JSON format.
+.DESCRIPTION
+    Extracts certificate information and formats it in a PowerShell-friendly JSON structure
+    with PascalCase properties, ISO 8601 dates, and enhanced metadata.
+    Compliant with Regelwerk v10.0.0 §7.
+.PARAMETER LogFunction
+    A scriptblock for a logging function that conforms to Regelwerk v10.0.0 §5.
+.EXAMPLE
+    $certData = Get-PowerShellCertificateData -LogFunction $LogBlock
+#>
+function Get-PowerShellCertificateData {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [scriptblock]$LogFunction
+    )
+    
+    begin {
+        $Logger = { param($Message, $Level = 'INFO') & $LogFunction -Message $Message -Level $Level }
+    }
+
+    process {
+        try {
+            . $Logger "Extracting PowerShell-optimized certificate data for web service."
+            
+            # Get all certificates from all stores
+            $allStores = @('My', 'Root', 'CA', 'AuthRoot', 'TrustedPeople', 'TrustedPublisher')
+            $allCertificates = @()
+            
+            foreach ($storeName in $allStores) {
+                try {
+                    $storePath = "Cert:\LocalMachine\$storeName"
+                    if (Test-Path $storePath) {
+                        $storeCerts = Get-ChildItem -Path $storePath | Where-Object { -not $_.PSIsContainer }
+                        foreach ($cert in $storeCerts) {
+                            $allCertificates += [PSCustomObject]@{
+                                Certificate = $cert
+                                StoreName = $storeName
+                            }
+                        }
+                    }
+                } catch {
+                    . $Logger "Warning: Could not access store $storeName - $($_.Exception.Message)" "WARN"
+                }
+            }
+            
+            . $Logger "Found $($allCertificates.Count) total certificates across all stores."
+            
+            # Process certificates with enhanced data
+            $certificateData = foreach ($certObj in $allCertificates) {
+                $cert = $certObj.Certificate
+                $daysUntilExpiry = [math]::Floor(($cert.NotAfter - (Get-Date)).TotalDays)
+                
+                # Determine priority based on expiry
+                $priority = if ($daysUntilExpiry -lt 0) { "EXPIRED" }
+                           elseif ($daysUntilExpiry -le 7) { "URGENT" }
+                           elseif ($daysUntilExpiry -le 30) { "WARNING" }
+                           else { "OK" }
+                
+                # Get key algorithm info
+                $keyAlgorithm = "Unknown"
+                $keySize = 0
+                $signatureAlgorithm = "Unknown"
+                
+                try {
+                    if ($cert.PublicKey.Oid.FriendlyName) {
+                        $keyAlgorithm = $cert.PublicKey.Oid.FriendlyName
+                    }
+                    if ($cert.PublicKey.Key.KeySize) {
+                        $keySize = $cert.PublicKey.Key.KeySize
+                    }
+                    if ($cert.SignatureAlgorithm.FriendlyName) {
+                        $signatureAlgorithm = $cert.SignatureAlgorithm.FriendlyName
+                    }
+                } catch {
+                    # Ignore errors when accessing key properties
+                }
+                
+                @{
+                    Store = $certObj.StoreName
+                    Subject = $cert.Subject
+                    Issuer = $cert.Issuer
+                    ExpiryDate = $cert.NotAfter.ToString('yyyy-MM-ddTHH:mm:ssZ')
+                    IssuedDate = $cert.NotBefore.ToString('yyyy-MM-ddTHH:mm:ssZ')
+                    DaysUntilExpiry = $daysUntilExpiry
+                    Priority = $priority
+                    Status = if ($cert.NotAfter -gt (Get-Date)) { "Valid" } else { "Expired" }
+                    Serial = $cert.SerialNumber
+                    Thumbprint = $cert.Thumbprint
+                    KeyAlgorithm = $keyAlgorithm
+                    KeySize = $keySize
+                    SignatureAlgorithm = $signatureAlgorithm
+                    HasPrivateKey = $cert.HasPrivateKey
+                    IsSelfSigned = ($cert.Subject -eq $cert.Issuer)
+                }
+            }
+            
+            # Calculate statistics
+            $stats = @{
+                Valid = ($certificateData | Where-Object { $_.Status -eq "Valid" }).Count
+                Expired = ($certificateData | Where-Object { $_.Priority -eq "EXPIRED" }).Count
+                Urgent = ($certificateData | Where-Object { $_.Priority -eq "URGENT" }).Count
+                Warning = ($certificateData | Where-Object { $_.Priority -eq "WARNING" }).Count
+                OK = ($certificateData | Where-Object { $_.Priority -eq "OK" }).Count
+                SelfSigned = ($certificateData | Where-Object { $_.IsSelfSigned -eq $true }).Count
+                WithPrivateKey = ($certificateData | Where-Object { $_.HasPrivateKey -eq $true }).Count
+            }
+            
+            $result = @{
+                Timestamp = (Get-Date).ToString('yyyy-MM-ddTHH:mm:ssZ')
+                Server = $env:COMPUTERNAME
+                ApiVersion = "2.4.0-PowerShell"
+                ScanVersion = "v2.4.0-PowerShell"
+                TotalCount = $certificateData.Count
+                Statistics = $stats
+                Certificates = $certificateData
+                Metadata = @{
+                    PowerShellOptimized = $true
+                    GeneratedBy = "CertWebService PowerShell Module"
+                    FormatVersion = "1.0"
+                    Description = "PowerShell-optimized certificate data with PascalCase properties and ISO 8601 dates"
+                }
+            }
+            
+            . $Logger "PowerShell certificate data extraction completed. Found $($certificateData.Count) certificates."
+            . $Logger "Statistics: Valid=$($stats.Valid), Expired=$($stats.Expired), Urgent=$($stats.Urgent), Warning=$($stats.Warning), OK=$($stats.OK)"
+            
+            return $result
+        }
+        catch {
+            . $Logger "Failed to extract PowerShell certificate data: $($_.Exception.Message)" -Level 'ERROR'
+            throw
+        }
+    }
+}
+
 #----------------------------------------------------------[Module Exports]--------------------------------------------------------
 
-Export-ModuleMember -Function 'New-WebServiceCertificate', 'Get-CertificateWebData'
+Export-ModuleMember -Function 'New-WebServiceCertificate', 'Get-CertificateWebData', 'Get-PowerShellCertificateData'

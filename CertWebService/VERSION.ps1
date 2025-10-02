@@ -1,11 +1,12 @@
-#region Version Information (MANDATORY - Regelwerk v10.0.0)
-$ScriptVersion = "v2.3.0"  # Updated for v10.0.0 compliance
-$RegelwerkVersion = "v10.0.0"
-$BuildDate = "2025-09-30"
+#region Version Information (MANDATORY - Regelwerk v10.0.2)
+$ScriptVersion = "v2.4.0"  # Updated for v10.0.2 compliance
+$RegelwerkVersion = "v10.0.2"
+$BuildDate = "2025-10-02"
 $Author = "Flecki (Tom) Garnreiter"
 
 <#
 .VERSION HISTORY (MANDATORY)
+v2.4.0 - 2025-10-02 - Updated to Regelwerk v10.0.2 compliance, PowerShell-optimized JSON, ASCII-safe encoding.
 v2.3.0 - 2025-09-30 - Updated to Regelwerk v10.0.0 compliance.
 v2.2.0 - 2025-09-29 - Updated to Regelwerk v9.6.2 compliance, PowerShell 5.1/7.x compatibility
 v2.1.0 - 2025-09-27 - Updated to Regelwerk v9.6.0 compliance, added cross-script communication
@@ -21,12 +22,12 @@ function Show-ScriptInfo {
         [string]$CurrentVersion = $ScriptVersion
     )
     
-    # PowerShell 5.1/7.x compatibility (Regelwerk v10.0.0 §8)
+    # PowerShell 5.1/7.x compatibility (Regelwerk v10.0.2 §19.3 - ASCII-safe output)
     if ($PSVersionTable.PSVersion.Major -ge 7) {
-        Write-Host "🚀 $ScriptName v$CurrentVersion" -ForegroundColor Green
-        Write-Host "📅 Build: $BuildDate | Regelwerk: $RegelwerkVersion" -ForegroundColor Cyan
+        Write-Host "[ENHANCED] $ScriptName v$CurrentVersion" -ForegroundColor Green
+        Write-Host "[BUILD] $BuildDate | Regelwerk: $RegelwerkVersion" -ForegroundColor Cyan
     } else {
-        Write-Host ">> $ScriptName v$CurrentVersion" -ForegroundColor Green
+        Write-Host "[STANDARD] $ScriptName v$CurrentVersion" -ForegroundColor Green
         Write-Host "[BUILD] $BuildDate | Regelwerk: $RegelwerkVersion" -ForegroundColor Cyan
     }
 }

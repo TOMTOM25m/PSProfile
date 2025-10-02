@@ -16,8 +16,8 @@
 #>
 
 # Script Information
-$Script:Version = "v2.3.0"
-$Script:RulebookVersion = "v10.0.0"
+$Script:Version = "v2.4.0"
+$Script:RulebookVersion = "v10.0.2"
 $Script:ScanDate = Get-Date
 
 # Logging setup - Support both possible paths
@@ -54,9 +54,33 @@ function Write-Log {
 Write-Log "=== Certificate WebService Daily Scan Started ==="
 Write-Log "Version: $Script:Version | Regelwerk: $Script:RulebookVersion"
 
+# PowerShell Version Detection (Regelwerk v10.0.2 §19.1)
+$PSVersion = $PSVersionTable.PSVersion
+$IsPS7Plus = $PSVersion.Major -ge 7
+$IsPS51 = $PSVersion.Major -eq 5 -and $PSVersion.Minor -eq 1
+
+Write-Log "PowerShell: $($PSVersion.ToString()) | Compatibility: $(if($IsPS7Plus){'Enhanced'}else{'Standard'})"
+
+# Import required modules
+$moduleBase = Join-Path $PSScriptRoot "Modules"
+Import-Module (Join-Path $moduleBase "FL-Certificate.psm1") -Force
+Import-Module (Join-Path $moduleBase "FL-WebService-Content.psm1") -Force
+
+# Create logging function for modules
+$LogFunction = {
+    param($Message, $Level = 'INFO')
+    Write-Log -Message $Message -Level $Level
+}
+
 try {
-    # Discover certificates from local machine
-    Write-Log "Discovering certificates from local machine..."
+    Write-Log "Generating traditional certificate data..."
+    $traditionalCertData = Get-CertificateWebData -LogFunction $LogFunction
+    
+    Write-Log "Generating PowerShell-optimized certificate data..."
+    $powerShellCertData = Get-PowerShellCertificateData -LogFunction $LogFunction
+    
+    # Legacy code for backward compatibility - kept for existing integrations
+    Write-Log "Generating legacy certificate format for compatibility..."
     
     $certificates = @()
     $stores = @("My", "Root", "CA", "AuthRoot")
@@ -129,10 +153,12 @@ try {
     }
     
     Write-Log "Using site path: $sitePath" "INFO"
-    $certificatesFile = Join-Path $sitePath "certificates.json"
     
-    $certificateData | ConvertTo-Json -Depth 5 | Set-Content -Path $certificatesFile -Encoding UTF8
-    Write-Log "Updated certificates.json with $($certificates.Count) certificates"
+    # Update web service content - alle JSON-Endpunkte sind jetzt PowerShell-optimiert
+    Update-PowerShellWebServiceContent -SitePath $sitePath -CertificateData $certificateData -PowerShellCertificateData $powerShellCertData -LogFunction $LogFunction
+    
+    # Alle JSON-Dateien verwenden jetzt PowerShell-optimiertes Format
+    Write-Log "All JSON endpoints now use PowerShell-optimized format" "INFO"
     
     # Update summary.json
     $summary = @{
