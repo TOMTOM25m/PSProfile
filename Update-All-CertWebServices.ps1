@@ -60,6 +60,15 @@ function Test-CertWebServiceRunning {
     )
     
     try {
+        # Resolve FQDN if possible
+        $fqdn = $ServerName
+        try {
+            $dnsResult = [System.Net.Dns]::GetHostEntry($ServerName)
+            $fqdn = $dnsResult.HostName
+        } catch {
+            # Keep original name if DNS resolution fails
+        }
+        
         # Test HTTP port 9080
         $tcpClient = New-Object System.Net.Sockets.TcpClient
         $connect = $tcpClient.BeginConnect($ServerName, 9080, $null, $null)
@@ -76,6 +85,8 @@ function Test-CertWebServiceRunning {
                         IsRunning = $true
                         Version = $response.version
                         Status = "OK"
+                        FQDN = $fqdn
+                        Url = "http://${ServerName}:9080"
                     }
                 }
             } catch {
@@ -84,6 +95,8 @@ function Test-CertWebServiceRunning {
                     IsRunning = $true
                     Version = "Unknown"
                     Status = "Port open, no API response"
+                    FQDN = $fqdn
+                    Url = "http://${ServerName}:9080"
                 }
             }
         }
@@ -92,12 +105,16 @@ function Test-CertWebServiceRunning {
             IsRunning = $false
             Version = $null
             Status = "Not running"
+            FQDN = $fqdn
+            Url = $null
         }
     } catch {
         return @{
             IsRunning = $false
             Version = $null
             Status = "Connection failed: $($_.Exception.Message)"
+            FQDN = $ServerName
+            Url = $null
         }
     }
 }
@@ -291,13 +308,48 @@ foreach ($row in $allData) {
 
 Write-UpdateLog "Found $($servers.Count) potential servers in Excel"
 
+# Known working CertWebService servers (from user confirmation)
+$knownCertWebServiceServers = @(
+    "proman.uvw.meduniwien.ac.at",
+    "evaextest01.srv.meduniwien.ac.at", 
+    "wsus.srv.meduniwien.ac.at"
+)
+
+Write-UpdateLog "Adding known CertWebService servers: $($knownCertWebServiceServers -join ', ')"
+
 # Step 1: Test connectivity and CertWebService status
 Write-UpdateLog "=== Step 1: Testing server connectivity and CertWebService status ==="
 
 $serverStatus = @{}
 $webServiceServers = @()
 
+# First test known servers (prioritize them)
+foreach ($server in $knownCertWebServiceServers) {
+    Write-UpdateLog "Testing known server $server..."
+    
+    $certWebStatus = Test-CertWebServiceRunning -ServerName $server
+    $serverStatus[$server] = @{
+        Reachable = $true
+        CertWebService = $certWebStatus
+        Reason = $certWebStatus.Status
+        IsKnown = $true
+    }
+    
+    if ($certWebStatus.IsRunning) {
+        $displayName = if ($certWebStatus.FQDN -ne $server) { "$server ($($certWebStatus.FQDN))" } else { $server }
+        Write-UpdateLog "  [CONFIRMED] $displayName - CertWebService $($certWebStatus.Version) running - $($certWebStatus.Url)" -Level "SUCCESS"
+        $webServiceServers += $server
+    } else {
+        $displayName = if ($certWebStatus.FQDN -ne $server) { "$server ($($certWebStatus.FQDN))" } else { $server }
+        Write-UpdateLog "  [ISSUE] Known server $displayName - $($certWebStatus.Status)" -Level "WARN"
+    }
+}
+
+# Then test Excel servers
 foreach ($server in $servers) {
+    # Skip if already tested as known server
+    if ($knownCertWebServiceServers -contains $server) { continue }
+    
     Write-UpdateLog "Testing $server..."
     
     # Ping test (unless skipped)
@@ -323,10 +375,12 @@ foreach ($server in $servers) {
     }
     
     if ($certWebStatus.IsRunning) {
-        Write-UpdateLog "  [FOUND] $server - CertWebService $($certWebStatus.Version) running"
+        $displayName = if ($certWebStatus.FQDN -ne $server) { "$server ($($certWebStatus.FQDN))" } else { $server }
+        Write-UpdateLog "  [FOUND] $displayName - CertWebService $($certWebStatus.Version) running - $($certWebStatus.Url)"
         $webServiceServers += $server
     } else {
-        Write-UpdateLog "  [SKIP] $server - $($certWebStatus.Status)"
+        $displayName = if ($certWebStatus.FQDN -ne $server) { "$server ($($certWebStatus.FQDN))" } else { $server }
+        Write-UpdateLog "  [SKIP] $displayName - $($certWebStatus.Status)"
     }
 }
 
@@ -344,7 +398,9 @@ if ($webServiceServers.Count -eq 0) {
 Write-UpdateLog "CertWebService servers to update:"
 foreach ($server in $webServiceServers) {
     $status = $serverStatus[$server].CertWebService
-    Write-UpdateLog "  - $server (Version: $($status.Version))"
+    $displayName = if ($status.FQDN -ne $server) { "$server ($($status.FQDN))" } else { $server }
+    $urlInfo = if ($status.Url) { " - $($status.Url)" } else { "" }
+    Write-UpdateLog "  - $displayName (Version: $($status.Version))$urlInfo"
 }
 
 if ($WhatIf) {
@@ -436,7 +492,10 @@ if ($successCount -gt 0) {
     foreach ($server in $webServiceServers) {
         if ($updateResults[$server].Success) {
             $version = $updateResults[$server].Version
-            Write-UpdateLog "  ✅ $server ($version)"
+            $status = $serverStatus[$server].CertWebService
+            $displayName = if ($status.FQDN -ne $server) { "$server ($($status.FQDN))" } else { $server }
+            $urlInfo = if ($status.Url) { " - $($status.Url)" } else { "" }
+            Write-UpdateLog "  ✅ $displayName ($version)$urlInfo"
         }
     }
 }

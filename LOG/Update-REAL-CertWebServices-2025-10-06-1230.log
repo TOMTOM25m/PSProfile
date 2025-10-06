@@ -1,0 +1,64 @@
+﻿[2025-10-06 12:30:39] [INFO] === Update fÃ¼r ECHTE CertWebService-Server ===
+[2025-10-06 12:30:39] [INFO] Server zu aktualisieren: 3
+[2025-10-06 12:30:39] [INFO] WhatIf-Modus: True
+[2025-10-06 12:30:39] [INFO] Force Update: False
+[2025-10-06 12:30:39] [INFO] === Step 1: ÃœberprÃ¼fung der Server-Status ===
+[2025-10-06 12:30:39] [INFO] Checking proman.uvw.meduniwien.ac.at...
+[2025-10-06 12:30:39] [SUCCESS]   [OK] proman.uvw.meduniwien.ac.at - v10.0.2 - Ready for update
+[2025-10-06 12:30:39] [INFO] Checking evaextest01.srv.meduniwien.ac.at...
+[2025-10-06 12:30:39] [SUCCESS]   [OK] evaextest01.srv.meduniwien.ac.at - v10.0.2 - Ready for update
+[2025-10-06 12:30:39] [INFO] Checking wsus.srv.meduniwien.ac.at...
+[2025-10-06 12:30:39] [SUCCESS]   [OK] wsus.srv.meduniwien.ac.at - v10.0.2 - Ready for update
+[2025-10-06 12:30:39] [INFO] Server bereit: 3
+[2025-10-06 12:30:39] [INFO] Server fehlgeschlagen: 0
+[2025-10-06 12:30:39] [INFO] === Step 3: Server-Updates ===
+[2025-10-06 12:30:39] [INFO] Updating proman.uvw.meduniwien.ac.at...
+[2025-10-06 12:30:39] [INFO]   [WHATIF] WÃ¼rde proman.uvw.meduniwien.ac.at aktualisieren
+[2025-10-06 12:30:39] [INFO] Updating evaextest01.srv.meduniwien.ac.at...
+[2025-10-06 12:30:39] [INFO]   [WHATIF] WÃ¼rde evaextest01.srv.meduniwien.ac.at aktualisieren
+[2025-10-06 12:30:39] [INFO] Updating wsus.srv.meduniwien.ac.at...
+[2025-10-06 12:30:39] [INFO]   [WHATIF] WÃ¼rde wsus.srv.meduniwien.ac.at aktualisieren
+[2025-10-06 12:30:39] [INFO] === FINAL SUMMARY ===
+[2025-10-06 12:30:39] [INFO] Total servers: 3
+[2025-10-06 12:30:39] [INFO] Ready for update: 3
+[2025-10-06 12:30:39] [INFO] Update attempts: 3
+[2025-10-06 12:30:39] [SUCCESS] Successful updates: 3
+[2025-10-06 12:30:39] [INFO] Failed updates: 0
+[2025-10-06 12:30:39] [INFO] Successfully updated:
+[2025-10-06 12:30:39] [SUCCESS]   âœ… proman.uvw.meduniwien.ac.at
+[2025-10-06 12:30:39] [SUCCESS]   âœ… evaextest01.srv.meduniwien.ac.at
+[2025-10-06 12:30:39] [SUCCESS]   âœ… wsus.srv.meduniwien.ac.at
+[2025-10-06 12:30:39] [INFO] Log file: F:\DEV\repositories\LOG\Update-REAL-CertWebServices-2025-10-06-1230.log
+[2025-10-06 12:30:53] [INFO] === Update fÃ¼r ECHTE CertWebService-Server ===
+[2025-10-06 12:30:53] [INFO] Server zu aktualisieren: 3
+[2025-10-06 12:30:53] [INFO] WhatIf-Modus: False
+[2025-10-06 12:30:53] [INFO] Force Update: False
+[2025-10-06 12:30:53] [INFO] === Step 1: ÃœberprÃ¼fung der Server-Status ===
+[2025-10-06 12:30:53] [INFO] Checking proman.uvw.meduniwien.ac.at...
+[2025-10-06 12:30:53] [SUCCESS]   [OK] proman.uvw.meduniwien.ac.at - v10.0.2 - Ready for update
+[2025-10-06 12:30:53] [INFO] Checking evaextest01.srv.meduniwien.ac.at...
+[2025-10-06 12:30:53] [SUCCESS]   [OK] evaextest01.srv.meduniwien.ac.at - v10.0.2 - Ready for update
+[2025-10-06 12:30:53] [INFO] Checking wsus.srv.meduniwien.ac.at...
+[2025-10-06 12:30:53] [SUCCESS]   [OK] wsus.srv.meduniwien.ac.at - v10.0.2 - Ready for update
+[2025-10-06 12:30:53] [INFO] Server bereit: 3
+[2025-10-06 12:30:53] [INFO] Server fehlgeschlagen: 0
+[2025-10-06 12:30:53] [INFO] === Step 2: Deploy auf Netzlaufwerk ===
+[2025-10-06 12:30:54] [SUCCESS] Netzlaufwerk-Deployment erfolgreich
+[2025-10-06 12:30:54] [INFO] === Step 3: Server-Updates ===
+[2025-10-06 12:30:54] [INFO] Updating proman.uvw.meduniwien.ac.at...
+[2025-10-06 12:30:55] [ERROR]   [FAILED] proman.uvw.meduniwien.ac.at Update fehlgeschlagen: Connecting to remote server proman.uvw.meduniwien.ac.at failed with the following error message : The WinRM client cannot process the request. If the authentication scheme is different from Kerberos, or if the client computer is not joined to a domain, then HTTPS transport must be used or the destination machine must be added to the TrustedHosts configuration setting. Use winrm.cmd to configure TrustedHosts. Note that computers in the TrustedHosts list might not be authenticated. You can get more information about that by running the following command: winrm help config. For more information, see the about_Remote_Troubleshooting Help topic.
+[2025-10-06 12:30:55] [INFO] Updating evaextest01.srv.meduniwien.ac.at...
+[2025-10-06 12:30:55] [ERROR]   [FAILED] evaextest01.srv.meduniwien.ac.at Update fehlgeschlagen: Connecting to remote server evaextest01.srv.meduniwien.ac.at failed with the following error message : The WinRM client cannot process the request. If the authentication scheme is different from Kerberos, or if the client computer is not joined to a domain, then HTTPS transport must be used or the destination machine must be added to the TrustedHosts configuration setting. Use winrm.cmd to configure TrustedHosts. Note that computers in the TrustedHosts list might not be authenticated. You can get more information about that by running the following command: winrm help config. For more information, see the about_Remote_Troubleshooting Help topic.
+[2025-10-06 12:30:55] [INFO] Updating wsus.srv.meduniwien.ac.at...
+[2025-10-06 12:30:55] [ERROR]   [FAILED] wsus.srv.meduniwien.ac.at Update fehlgeschlagen: Connecting to remote server wsus.srv.meduniwien.ac.at failed with the following error message : The WinRM client cannot process the request. If the authentication scheme is different from Kerberos, or if the client computer is not joined to a domain, then HTTPS transport must be used or the destination machine must be added to the TrustedHosts configuration setting. Use winrm.cmd to configure TrustedHosts. Note that computers in the TrustedHosts list might not be authenticated. You can get more information about that by running the following command: winrm help config. For more information, see the about_Remote_Troubleshooting Help topic.
+[2025-10-06 12:30:55] [INFO] === FINAL SUMMARY ===
+[2025-10-06 12:30:55] [INFO] Total servers: 3
+[2025-10-06 12:30:55] [INFO] Ready for update: 3
+[2025-10-06 12:30:55] [INFO] Update attempts: 3
+[2025-10-06 12:30:55] [SUCCESS] Successful updates: 0
+[2025-10-06 12:30:55] [ERROR] Failed updates: 3
+[2025-10-06 12:30:55] [INFO] Failed updates:
+[2025-10-06 12:30:55] [ERROR]   âŒ proman.uvw.meduniwien.ac.at - Connecting to remote server proman.uvw.meduniwien.ac.at failed with the following error message : The WinRM client cannot process the request. If the authentication scheme is different from Kerberos, or if the client computer is not joined to a domain, then HTTPS transport must be used or the destination machine must be added to the TrustedHosts configuration setting. Use winrm.cmd to configure TrustedHosts. Note that computers in the TrustedHosts list might not be authenticated. You can get more information about that by running the following command: winrm help config. For more information, see the about_Remote_Troubleshooting Help topic.
+[2025-10-06 12:30:55] [ERROR]   âŒ evaextest01.srv.meduniwien.ac.at - Connecting to remote server evaextest01.srv.meduniwien.ac.at failed with the following error message : The WinRM client cannot process the request. If the authentication scheme is different from Kerberos, or if the client computer is not joined to a domain, then HTTPS transport must be used or the destination machine must be added to the TrustedHosts configuration setting. Use winrm.cmd to configure TrustedHosts. Note that computers in the TrustedHosts list might not be authenticated. You can get more information about that by running the following command: winrm help config. For more information, see the about_Remote_Troubleshooting Help topic.
+[2025-10-06 12:30:55] [ERROR]   âŒ wsus.srv.meduniwien.ac.at - Connecting to remote server wsus.srv.meduniwien.ac.at failed with the following error message : The WinRM client cannot process the request. If the authentication scheme is different from Kerberos, or if the client computer is not joined to a domain, then HTTPS transport must be used or the destination machine must be added to the TrustedHosts configuration setting. Use winrm.cmd to configure TrustedHosts. Note that computers in the TrustedHosts list might not be authenticated. You can get more information about that by running the following command: winrm help config. For more information, see the about_Remote_Troubleshooting Help topic.
+[2025-10-06 12:30:55] [INFO] Log file: F:\DEV\repositories\LOG\Update-REAL-CertWebServices-2025-10-06-1230.log
