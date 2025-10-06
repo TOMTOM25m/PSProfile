@@ -251,7 +251,17 @@ function Start-WebService {
                     }
                     "/certificates.json" {
                         $data = Get-CertificateData
-                        $json = $data | ConvertTo-Json -Depth 3
+                        
+                        # Strukturierte API-Response für CertSurv Kompatibilität
+                        $apiResponse = @{
+                            status = "success"
+                            total_count = if ($data -is [array]) { $data.Count } else { if ($data) { 1 } else { 0 } }
+                            certificates = $data
+                            timestamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+                            version = "v2.4.0"
+                        }
+                        
+                        $json = $apiResponse | ConvertTo-Json -Depth 4
                         $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
                         $response.ContentType = "application/json; charset=utf-8"
                         $response.ContentLength64 = $buffer.Length
