@@ -39,7 +39,7 @@ try {
     
     # 3. Test reading Excel file
     $excelPath = $config.ExcelFilePath
-    $worksheetName = $config.ExcelWorksheetName
+    $worksheetName = $config.ExcelWorksheet
     
     Write-TestLog "Reading Excel: $excelPath, Worksheet: $worksheetName"
     $allData = Import-Excel -Path $excelPath -WorksheetName $worksheetName -NoHeader -ErrorAction Stop
