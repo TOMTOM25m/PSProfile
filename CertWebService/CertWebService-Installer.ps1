@@ -4,6 +4,11 @@ param(
     [int]$Port = 9080,
     [int]$SecurePort = 9443,
     [string[]]$AuthorizedHosts = @(
+        'localhost',
+        '127.0.0.1',
+        '::1',
+        $env:COMPUTERNAME,
+        "$env:COMPUTERNAME.srv.meduniwien.ac.at",
         'ITSCMGMT03.srv.meduniwien.ac.at',
         'ITSC020.cc.meduniwien.ac.at',
         'itsc049.uvw.meduniwien.ac.at'

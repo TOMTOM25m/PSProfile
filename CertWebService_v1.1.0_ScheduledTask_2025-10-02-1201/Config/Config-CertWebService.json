@@ -2,8 +2,8 @@
     "Language":  "en-US",
     "RulebookVersion":  "v9.3.1",
     "WebService":  {
-                       "SiteName":  "CertWebService",
-                       "SitePath":  "C:\\CertWebService",
+                       "SiteName":  "CertificateSurveillance",
+                       "SitePath":  "C:\\inetpub\\wwwroot\\CertificateSurveillance",
                        "HttpPort":  9080,
                        "HttpsPort":  9443,
                        "SubjectName":  "localhost",

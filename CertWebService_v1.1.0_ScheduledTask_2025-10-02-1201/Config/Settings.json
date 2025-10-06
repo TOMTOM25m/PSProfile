@@ -1,0 +1,42 @@
+{
+    "ScriptVersion": "v2.2.0",
+    "RegelwerkVersion": "v9.6.2",
+    "Language": "de-DE",
+    "Environment": "PROD",
+    "SiteName": "CertificateWebService",
+    "WebService": {
+        "HttpPort": 8080,
+        "HttpsPort": 8443,
+        "EnableHttp": true,
+        "EnableHttps": true
+    },
+    "Certificate": {
+        "ValidityDays": 365,
+        "FilterMicrosoft": true,
+        "FilterRootCerts": false,
+        "AutoRenewDays": 30
+    },
+    "Security": {
+        "EnableWindowsAuth": true,
+        "EnableAnonymousAuth": false,
+        "AllowedGroups": ["Domain Admins", "Administrators"]
+    },
+    "Performance": {
+        "CacheEnabled": true,
+        "CacheDurationMinutes": 15,
+        "MaxCertificatesPerPage": 100
+    },
+    "Maintenance": {
+        "LogRetentionDays": 30,
+        "AutoCleanup": true,
+        "HealthCheckInterval": 60
+    },
+    "Compliance": {
+        "RegelwerkVersion": "v9.6.2",
+        "CrossScriptCommunication": true,
+        "MessageDirectory": "LOG\\Messages",
+        "StatusDirectory": "LOG\\Status",
+        "PowerShellCompatibility": "5.1+",
+        "UnicodeSupport": "conditional"
+    }
+}

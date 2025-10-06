@@ -5,14 +5,18 @@
 .SYNOPSIS
 CertWebService Setup Script
 .DESCRIPTION
-Installations-Script fuer CertWebService v2.4.0
-Regelwerk v10.0.2 | Stand: 02.10.2025
+Hauptinstallations-Script f?r CertWebService v2.4.0
+Regelwerk v10.0.Write-Host "📋 Next Steps:" -ForegroundColor Cyan
+Write-Host "   1. Open browser: http://localhost:$Port" -ForegroundColor White
+Write-Host "   2. Check tasks: Get-ScheduledTask *CertWebService*" -ForegroundColor White
+Write-Host "   3. View logs: Get-Content $InstallPath\Logs\*.log" -ForegroundColor White
+Write-Host "   4. Daily scan runs automatically at 06:00" -ForegroundColor Whitenform | Stand: 02.10.2025
 .PARAMETER Port
 Standard HTTP Port (Default: 9080)
 .PARAMETER InstallPath
 Installationspfad (Default: C:\CertWebService)
 .PARAMETER CreateService
-Erstellt Scheduled Tasks (Web-Service + Daily Scan) (Default: $true)
+Erstelle Scheduled Tasks (Web-Service + Daily Scan) (Default: $true)
 #>
 
 param(
@@ -55,7 +59,6 @@ if (-not (Test-Path $InstallPath)) {
 # === COPY FILES ===
 Write-Host "[2/5] Copying application files..." -ForegroundColor Yellow
 $sourceFiles = @(
-    "CertWebService.ps1",
     "ScanCertificates.ps1",
     "Modules",
     "Config", 
@@ -78,49 +81,23 @@ foreach ($item in $sourceFiles) {
 
 # === CONFIGURE PORT ===
 Write-Host "[3/5] Configuring port settings..." -ForegroundColor Yellow
-$configFile = Join-Path $InstallPath "Config\Config-CertWebService.json"
+$configFile = Join-Path $InstallPath "Config\CertSurv-Config.json"
 if (Test-Path $configFile) {
     $config = Get-Content $configFile | ConvertFrom-Json
-    # Handle both old and new config formats
-    if ($config.PSObject.Properties.Name -contains "WebServicePort") {
-        $config.WebServicePort = $Port
-    } elseif ($config.PSObject.Properties.Name -contains "WebService") {
-        $config.WebService.HttpPort = $Port
-    } else {
-        # Create WebService section if missing
-        $config | Add-Member -MemberType NoteProperty -Name "WebService" -Value @{
-            HttpPort = $Port
-            AllowedHosts = @("localhost", "*")
-        } -Force
-    }
-    $config | ConvertTo-Json -Depth 10 | Out-File $configFile -Encoding UTF8
+    $config.WebServicePort = $Port
+    $config | ConvertTo-Json -Depth 3 | Out-File $configFile -Encoding UTF8
     Write-Host "      Port configured: $Port" -ForegroundColor Green
 } else {
-    # Create Config directory if missing
-    $configDir = Join-Path $InstallPath "Config"
-    if (!(Test-Path $configDir)) {
-        New-Item -ItemType Directory -Path $configDir -Force | Out-Null
-    }
-    
-    # Create full CertWebService config
+    # Create basic config
     $basicConfig = @{
-        WebService = @{
-            Port = $Port
-            AllowedHosts = @("localhost", "*")
-        }
-        Paths = @{
-            Base = $InstallPath
-            Data = "$InstallPath\Data"
-            Reports = "$InstallPath\Reports"
-            Logs = "$InstallPath\Logs"
-        }
+        WebServicePort = $Port
         ScanInterval = 3600
         LogLevel = "INFO"
         EmailNotifications = $true
         CertificateThreshold = 30
     }
     $basicConfig | ConvertTo-Json -Depth 3 | Out-File $configFile -Encoding UTF8 -Force
-    Write-Host "      Full config created: $Port" -ForegroundColor Green
+    Write-Host "      Basic config created: $Port" -ForegroundColor Green
 }
 
 # === FIREWALL RULE ===
@@ -137,21 +114,6 @@ try {
     Write-Host "      Firewall configuration failed: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-# === URL ACL (HTTP.SYS) ===
-Write-Host "      Configuring URL ACL (http://+:$Port/)" -ForegroundColor Yellow
-try {
-    $url = "http://+:$Port/"
-    $existingAcl = (& netsh http show urlacl) 2>$null | Select-String -SimpleMatch $url
-    if (-not $existingAcl) {
-        & netsh http add urlacl url=$url user="NT AUTHORITY\SYSTEM" listen=yes 2>$null | Out-Null
-        Write-Host "      [OK] URL ACL added for SYSTEM" -ForegroundColor Green
-    } else {
-        Write-Host "      [OK] URL ACL already present" -ForegroundColor Green
-    }
-} catch {
-    Write-Host "      [WARN] URL ACL configuration skipped/failed: $($_.Exception.Message)" -ForegroundColor Yellow
-}
-
 # === SCHEDULED TASKS ===
 Write-Host "[5/5] Configuring Scheduled Tasks..." -ForegroundColor Yellow
 if ($CreateService) {
@@ -161,7 +123,7 @@ if ($CreateService) {
         $webServiceScript = Join-Path $InstallPath "CertWebService.ps1"
         
         Write-Host "      Erstelle Web-Service Task..." -ForegroundColor Cyan
-    $webAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoLogo -NoProfile -ExecutionPolicy Bypass -WorkingDirectory `"$InstallPath`" -WindowStyle Hidden -File `"$webServiceScript`" -ServiceMode"
+        $webAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass -WindowStyle Hidden -File `"$webServiceScript`" -ServiceMode"
         $webTrigger = New-ScheduledTaskTrigger -AtStartup
         $webSettings = New-ScheduledTaskSettingsSet -StartWhenAvailable -DontStopOnIdleEnd
         $webPrincipal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
@@ -169,24 +131,24 @@ if ($CreateService) {
         Unregister-ScheduledTask -TaskName $webServiceTaskName -Confirm:$false -ErrorAction SilentlyContinue
         Register-ScheduledTask -TaskName $webServiceTaskName -Action $webAction -Trigger $webTrigger -Settings $webSettings -Principal $webPrincipal -Force | Out-Null
         Start-ScheduledTask -TaskName $webServiceTaskName
-    Write-Host "      [OK] Web-Service Task erstellt und gestartet" -ForegroundColor Green
+        Write-Host "      ✅ Web-Service Task erstellt und gestartet" -ForegroundColor Green
         
         # 2. Daily Scan Scheduled Task (1x täglich um 06:00)
         $scanTaskName = "CertWebService-DailyScan" 
         $scanScript = Join-Path $InstallPath "ScanCertificates.ps1"
         
         Write-Host "      Erstelle Daily Scan Task..." -ForegroundColor Cyan
-    $scanAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoLogo -NoProfile -ExecutionPolicy Bypass -WorkingDirectory `"$InstallPath`" -WindowStyle Hidden -File `"$scanScript`""
+        $scanAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass -WindowStyle Hidden -File `"$scanScript`""
         $scanTrigger = New-ScheduledTaskTrigger -Daily -At "06:00"
         $scanSettings = New-ScheduledTaskSettingsSet -StartWhenAvailable
         $scanPrincipal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
         
         Unregister-ScheduledTask -TaskName $scanTaskName -Confirm:$false -ErrorAction SilentlyContinue  
         Register-ScheduledTask -TaskName $scanTaskName -Action $scanAction -Trigger $scanTrigger -Settings $scanSettings -Principal $scanPrincipal -Force | Out-Null
-    Write-Host "      [OK] Daily Scan Task erstellt (taeglich um 06:00)" -ForegroundColor Green
+        Write-Host "      ✅ Daily Scan Task erstellt (läuft täglich um 06:00)" -ForegroundColor Green
         
     } catch {
-    Write-Host "      [ERROR] Scheduled Tasks creation failed: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "      ❌ Scheduled Tasks creation failed: $($_.Exception.Message)" -ForegroundColor Red
         Write-Host "      You can start manually:" -ForegroundColor Yellow
         Write-Host "        Web-Service: powershell.exe -File `"$webServiceScript`"" -ForegroundColor Gray
         Write-Host "        Daily Scan: powershell.exe -File `"$scanScript`"" -ForegroundColor Gray
@@ -197,7 +159,7 @@ if ($CreateService) {
 Write-Host ""
 Write-Host "=== INSTALLATION COMPLETE ===" -ForegroundColor Green
 Write-Host "Web Service URL: http://localhost:$Port" -ForegroundColor Cyan
-Write-Host "API Endpoint: http://localhost:$Port/certificates.json" -ForegroundColor Cyan
+Write-Host "API Endpoint: http://localhost:$Port/api/certificates.json" -ForegroundColor Cyan
 Write-Host "Installation Path: $InstallPath" -ForegroundColor Gray
 Write-Host ""
 
@@ -217,12 +179,11 @@ try {
 
 Write-Host ""
 Write-Host " Next Steps:" -ForegroundColor Cyan
-Write-Host "   1. Browser:  http://localhost:$Port" -ForegroundColor White
-Write-Host "   2. Tasks:    Get-ScheduledTask *CertWebService*" -ForegroundColor White
-Write-Host "   3. Logs:     Get-Content $InstallPath\Logs\*.log" -ForegroundColor White
-Write-Host "   4. Manuell starten falls noetig: powershell.exe -ExecutionPolicy Bypass -File $InstallPath\CertWebService.ps1" -ForegroundColor White
+Write-Host "   1. Open browser: http://localhost:$Port" -ForegroundColor White
+Write-Host "   2. Check service: Get-Service CertWebService" -ForegroundColor White
+Write-Host "   3. View logs: Get-Content $InstallPath\Logs\*.log" -ForegroundColor White
 Write-Host ""
 
 if (-not $Quiet) {
-    Write-Host "Installation completed successfully." -ForegroundColor Green
+    Write-Host "Installation completed successfully! " -ForegroundColor Green
 }

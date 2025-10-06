@@ -1,0 +1,59 @@
+﻿{
+    "WebServicePort":  9080,
+    "SecurePort":  9443,
+    "ScanInterval":  3600,
+    "LogLevel":  "INFO",
+    "EmailNotifications":  true,
+    "CertificateThreshold":  30,
+    "ServerList":  [
+                       "itscmgmt03.srv.meduniwien.ac.at:443",
+                       "webmail.meduniwien.ac.at:443",
+                       "portal.meduniwien.ac.at:443"
+                   ],
+    "Paths":  {
+                  "LogDirectory":  "C:\\CertWebService\\Logs",
+                  "DataDirectory":  "C:\\CertWebService\\Data",
+                  "ConfigDirectory":  "C:\\CertWebService\\Config",
+                  "TempDirectory":  "C:\\Temp\\CertWebService"
+              },
+    "Service":  {
+                    "Name":  "CertWebService",
+                    "DisplayName":  "Certificate Web Service",
+                    "Description":  "SSL/TLS Certificate Monitoring Service for MedUni Wien",
+                    "StartType":  "Automatic"
+                },
+    "Firewall":  {
+                     "CreateRules":  true,
+                     "RuleName":  "CertWebService-HTTP",
+                     "AllowedPorts":  [
+                                          9080,
+                                          9443
+                                      ]
+                 },
+    "Security":  {
+                     "EnableAuth":  false,
+                     "AllowedHosts":  [
+                                          "localhost",
+                                          "127.0.0.1",
+                                          "::1",
+                                          "ITSC020",
+                                          "ITSC020.srv.meduniwien.ac.at",
+                                          "ITSCMGMT03.srv.meduniwien.ac.at",
+                                          "ITSC020.cc.meduniwien.ac.at",
+                                          "itsc049.uvw.meduniwien.ac.at"
+                                      ]
+                 },
+    "Monitoring":  {
+                       "CheckInterval":  300,
+                       "AlertThreshold":  30,
+                       "EnableEmailAlerts":  true,
+                       "EmailSettings":  {
+                                             "SmtpServer":  "mail.meduniwien.ac.at",
+                                             "SmtpPort":  587,
+                                             "FromAddress":  "certsurv@meduniwien.ac.at",
+                                             "ToAddresses":  [
+                                                                 "it-security@meduniwien.ac.at"
+                                                             ]
+                                         }
+                   }
+}
