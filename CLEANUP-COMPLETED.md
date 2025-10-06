@@ -30,7 +30,7 @@
 
 ### **VORHER (Chaos):**
 
-```
+```pathlist
 F:\DEV\repositories/
 ├── 50+ lose Dateien im Root-Verzeichnis
 ├── Keine klare Struktur  
@@ -40,7 +40,7 @@ F:\DEV\repositories/
 
 ### **NACHHER (Organisiert):**
 
-```
+```pathlist
 F:\DEV\repositories/
 ├── [8 Repositories]           ✅ Bestehende Projekte
 ├── Documentation/             📚 Alle Dokumente kategorisiert

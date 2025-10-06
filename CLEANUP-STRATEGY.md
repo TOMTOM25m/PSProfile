@@ -91,7 +91,7 @@
 
 ### 3️⃣ **DIRECTORIES TO CREATE**
 
-```
+```PathList
 F:\DEV\repositories\
 ├── [Existing Repos - Keep]
 ├── Documentation/           # All MD/TXT documentation
