@@ -1,0 +1,89 @@
+﻿[2025-10-06 12:34:03] [INFO] === CertWebService Update OHNE PowerShell Remoting ===
+[2025-10-06 12:34:03] [INFO] Server zu aktualisieren: 3
+[2025-10-06 12:34:03] [INFO] WhatIf-Modus: True
+[2025-10-06 12:34:03] [INFO] Manual-Modus: False
+[2025-10-06 12:34:03] [INFO] === Step 1: Server-Status Verification (HTTP) ===
+[2025-10-06 12:34:03] [INFO] Checking proman.uvw.meduniwien.ac.at...
+[2025-10-06 12:34:03] [SUCCESS]   [OK] proman.uvw.meduniwien.ac.at - v10.0.2 - CertWebService running
+[2025-10-06 12:34:03] [INFO] Checking evaextest01.srv.meduniwien.ac.at...
+[2025-10-06 12:34:03] [SUCCESS]   [OK] evaextest01.srv.meduniwien.ac.at - v10.0.2 - CertWebService running
+[2025-10-06 12:34:03] [INFO] Checking wsus.srv.meduniwien.ac.at...
+[2025-10-06 12:34:03] [SUCCESS]   [OK] wsus.srv.meduniwien.ac.at - v10.0.2 - CertWebService running
+[2025-10-06 12:34:03] [INFO] Server ready for update: 3
+[2025-10-06 12:34:03] [INFO] === Step 2: Deploy auf Netzlaufwerk ===
+[2025-10-06 12:34:05] [SUCCESS] Netzlaufwerk-Deployment erfolgreich
+[2025-10-06 12:34:05] [INFO] === Step 3: Erstelle Update-Scripts fÃ¼r jeden Server ===
+[2025-10-06 12:34:05] [INFO] Creating update script for proman.uvw.meduniwien.ac.at...
+[2025-10-06 12:34:05] [INFO]   [WHATIF] Would create: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\Update-proman.ps1
+[2025-10-06 12:34:05] [INFO] Creating update script for evaextest01.srv.meduniwien.ac.at...
+[2025-10-06 12:34:05] [INFO]   [WHATIF] Would create: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\Update-evaextest01.ps1
+[2025-10-06 12:34:05] [INFO] Creating update script for wsus.srv.meduniwien.ac.at...
+[2025-10-06 12:34:05] [INFO]   [WHATIF] Would create: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\Update-wsus.ps1
+[2025-10-06 12:34:05] [INFO] === Step 4: Erstelle Master-Execution-Script ===
+[2025-10-06 12:34:05] [INFO] [WHATIF] Would create master script: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\MASTER-Execute-All-Updates.ps1
+[2025-10-06 12:34:05] [INFO] === FINAL SUMMARY ===
+[2025-10-06 12:34:05] [INFO] Ready servers: 3
+[2025-10-06 12:34:05] [INFO] Scripts created: 0
+[2025-10-06 12:34:05] [INFO] Scripts location: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates
+[2025-10-06 12:34:05] [INFO] Log file: F:\DEV\repositories\LOG\Update-CertWebServices-NO-REMOTING-2025-10-06-1234.log
+[2025-10-06 12:34:09] [INFO] === CertWebService Update OHNE PowerShell Remoting ===
+[2025-10-06 12:34:09] [INFO] Server zu aktualisieren: 3
+[2025-10-06 12:34:09] [INFO] WhatIf-Modus: True
+[2025-10-06 12:34:09] [INFO] Manual-Modus: False
+[2025-10-06 12:34:09] [INFO] === Step 1: Server-Status Verification (HTTP) ===
+[2025-10-06 12:34:09] [INFO] Checking proman.uvw.meduniwien.ac.at...
+[2025-10-06 12:34:09] [SUCCESS]   [OK] proman.uvw.meduniwien.ac.at - v10.0.2 - CertWebService running
+[2025-10-06 12:34:09] [INFO] Checking evaextest01.srv.meduniwien.ac.at...
+[2025-10-06 12:34:09] [SUCCESS]   [OK] evaextest01.srv.meduniwien.ac.at - v10.0.2 - CertWebService running
+[2025-10-06 12:34:09] [INFO] Checking wsus.srv.meduniwien.ac.at...
+[2025-10-06 12:34:09] [SUCCESS]   [OK] wsus.srv.meduniwien.ac.at - v10.0.2 - CertWebService running
+[2025-10-06 12:34:09] [INFO] Server ready for update: 3
+[2025-10-06 12:34:09] [INFO] === Step 2: Deploy auf Netzlaufwerk ===
+[2025-10-06 12:34:10] [SUCCESS] Netzlaufwerk-Deployment erfolgreich
+[2025-10-06 12:34:10] [INFO] === Step 3: Erstelle Update-Scripts fÃ¼r jeden Server ===
+[2025-10-06 12:34:10] [INFO] Creating update script for proman.uvw.meduniwien.ac.at...
+[2025-10-06 12:34:10] [INFO]   [WHATIF] Would create: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\Update-proman.ps1
+[2025-10-06 12:34:10] [INFO] Creating update script for evaextest01.srv.meduniwien.ac.at...
+[2025-10-06 12:34:10] [INFO]   [WHATIF] Would create: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\Update-evaextest01.ps1
+[2025-10-06 12:34:11] [INFO] Creating update script for wsus.srv.meduniwien.ac.at...
+[2025-10-06 12:34:11] [INFO]   [WHATIF] Would create: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\Update-wsus.ps1
+[2025-10-06 12:34:11] [INFO] === Step 4: Erstelle Master-Execution-Script ===
+[2025-10-06 12:34:11] [INFO] [WHATIF] Would create master script: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\MASTER-Execute-All-Updates.ps1
+[2025-10-06 12:34:11] [INFO] === FINAL SUMMARY ===
+[2025-10-06 12:34:11] [INFO] Ready servers: 3
+[2025-10-06 12:34:11] [INFO] Scripts created: 0
+[2025-10-06 12:34:11] [INFO] Scripts location: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates
+[2025-10-06 12:34:11] [INFO] Log file: F:\DEV\repositories\LOG\Update-CertWebServices-NO-REMOTING-2025-10-06-1234.log
+[2025-10-06 12:34:23] [INFO] === CertWebService Update OHNE PowerShell Remoting ===
+[2025-10-06 12:34:23] [INFO] Server zu aktualisieren: 3
+[2025-10-06 12:34:23] [INFO] WhatIf-Modus: False
+[2025-10-06 12:34:23] [INFO] Manual-Modus: False
+[2025-10-06 12:34:23] [INFO] === Step 1: Server-Status Verification (HTTP) ===
+[2025-10-06 12:34:23] [INFO] Checking proman.uvw.meduniwien.ac.at...
+[2025-10-06 12:34:23] [SUCCESS]   [OK] proman.uvw.meduniwien.ac.at - v10.0.2 - CertWebService running
+[2025-10-06 12:34:23] [INFO] Checking evaextest01.srv.meduniwien.ac.at...
+[2025-10-06 12:34:23] [SUCCESS]   [OK] evaextest01.srv.meduniwien.ac.at - v10.0.2 - CertWebService running
+[2025-10-06 12:34:23] [INFO] Checking wsus.srv.meduniwien.ac.at...
+[2025-10-06 12:34:23] [SUCCESS]   [OK] wsus.srv.meduniwien.ac.at - v10.0.2 - CertWebService running
+[2025-10-06 12:34:23] [INFO] Server ready for update: 3
+[2025-10-06 12:34:23] [INFO] === Step 2: Deploy auf Netzlaufwerk ===
+[2025-10-06 12:34:25] [SUCCESS] Netzlaufwerk-Deployment erfolgreich
+[2025-10-06 12:34:25] [INFO] === Step 3: Erstelle Update-Scripts fÃ¼r jeden Server ===
+[2025-10-06 12:34:25] [INFO] Creating update script for proman.uvw.meduniwien.ac.at...
+[2025-10-06 12:34:25] [SUCCESS]   [OK] Created: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\Update-proman.ps1
+[2025-10-06 12:34:25] [INFO] Creating update script for evaextest01.srv.meduniwien.ac.at...
+[2025-10-06 12:34:25] [SUCCESS]   [OK] Created: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\Update-evaextest01.ps1
+[2025-10-06 12:34:25] [INFO] Creating update script for wsus.srv.meduniwien.ac.at...
+[2025-10-06 12:34:25] [SUCCESS]   [OK] Created: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\Update-wsus.ps1
+[2025-10-06 12:34:25] [INFO] === Step 4: Erstelle Master-Execution-Script ===
+[2025-10-06 12:34:25] [SUCCESS] Master script created: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\MASTER-Execute-All-Updates.ps1
+[2025-10-06 12:34:25] [INFO] === FINAL SUMMARY ===
+[2025-10-06 12:34:25] [INFO] Ready servers: 3
+[2025-10-06 12:34:25] [INFO] Scripts created: 3
+[2025-10-06 12:34:25] [INFO] Scripts location: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates
+[2025-10-06 12:34:25] [INFO] 
+[2025-10-06 12:34:25] [SUCCESS] ðŸŽ¯ NÃ
+[2025-10-06 12:34:25] [SUCCESS]   âœ… proman: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\Update-proman.ps1
+[2025-10-06 12:34:25] [SUCCESS]   âœ… evaextest01: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\Update-evaextest01.ps1
+[2025-10-06 12:34:25] [SUCCESS]   âœ… wsus: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertSurv\ServerUpdates\Update-wsus.ps1
+[2025-10-06 12:34:25] [INFO] Log file: F:\DEV\repositories\LOG\Update-CertWebServices-NO-REMOTING-2025-10-06-1234.log
