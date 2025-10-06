@@ -57,10 +57,30 @@ $Script:Version = "v2.5.0"
 $Script:RulebookVersion = "v10.0.0"
 $Script:StartTime = Get-Date
 
-Write-Host "🚀 CertWebService - Excel-Based Mass Update System" -ForegroundColor Cyan
-Write-Host "   Version: $Script:Version | Regelwerk: $Script:RulebookVersion" -ForegroundColor Gray
-Write-Host "   Start Time: $($Script:StartTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Gray
-Write-Host ""
+# Import PowerShell Version Compatibility Module
+try {
+    $compatibilityModulePath = Join-Path $PSScriptRoot "Modules\FL-PowerShell-VersionCompatibility.psm1"
+    if (Test-Path $compatibilityModulePath) {
+        Import-Module $compatibilityModulePath -Force
+        $Global:PSCompatibilityLoaded = $true
+        Write-Host "🔧 PowerShell version compatibility module loaded" -ForegroundColor Green
+    } else {
+        $Global:PSCompatibilityLoaded = $false
+        Write-Host "⚠️ PowerShell compatibility module not found - using fallback methods" -ForegroundColor Yellow
+    }
+} catch {
+    $Global:PSCompatibilityLoaded = $false
+    Write-Host "⚠️ PowerShell compatibility module failed to load: $($_.Exception.Message)" -ForegroundColor Yellow
+}
+
+if ($Global:PSCompatibilityLoaded) {
+    Write-VersionSpecificHeader "CertWebService - Excel-Based Mass Update System" -Version "$Script:Version | Regelwerk: $Script:RulebookVersion" -Color Cyan
+} else {
+    Write-Host "[START] CertWebService - Excel-Based Mass Update System" -ForegroundColor Cyan
+    Write-Host "   Version: $Script:Version | Regelwerk: $Script:RulebookVersion" -ForegroundColor Gray
+    Write-Host "   Start Time: $($Script:StartTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Gray
+    Write-Host ""
+}
 
 # Global tracking variables
 $Global:ExcelResults = @{
@@ -170,9 +190,43 @@ function Import-ServerListFromExcel {
         
         Import-Module ImportExcel -Force
         
-        # Read Excel data
-        $allData = Import-Excel -Path $ExcelPath -WorksheetName $WorksheetName -NoHeader -ErrorAction Stop
-        Write-Host "   📄 Loaded $($allData.Count) rows from Excel" -ForegroundColor Green
+        # Read Excel data using version-specific method
+        if ($Global:PSCompatibilityLoaded) {
+            if ($Global:PSCompatibilityLoaded) {
+                Write-VersionSpecificHost "Using PowerShell version-specific Excel import..." -IconType 'gear' -ForegroundColor Cyan
+            } else {
+                Write-Host "   [TOOL] Using PowerShell version-specific Excel import..." -ForegroundColor Cyan
+            }
+            $excelResult = Import-ExcelData-VersionSpecific -ExcelPath $ExcelPath -WorksheetName $WorksheetName -IncludeStrikethrough
+            
+            if ($excelResult.Success) {
+                $allData = $excelResult.Data
+                $strikethroughServers = $excelResult.StrikethroughServers
+                if ($Global:PSCompatibilityLoaded) {
+                    Write-VersionSpecificHost "Loaded $($allData.Count) rows from Excel ($($excelResult.Method))" -IconType 'file' -ForegroundColor Green
+                    if ($strikethroughServers.Count -gt 0) {
+                        Write-VersionSpecificHost "Detected $($strikethroughServers.Count) strikethrough servers (will be ignored)" -IconType 'warning' -ForegroundColor Yellow
+                    }
+                } else {
+                    Write-Host "   [FILE] Loaded $($allData.Count) rows from Excel ($($excelResult.Method))" -ForegroundColor Green
+                    if ($strikethroughServers.Count -gt 0) {
+                        Write-Host "   [WARN] Detected $($strikethroughServers.Count) strikethrough servers (will be ignored)" -ForegroundColor Yellow
+                    }
+                }
+            } else {
+                throw "Excel import failed: $($excelResult.ErrorMessage)"
+            }
+        } else {
+            # Fallback to direct ImportExcel
+            if (-not (Get-Module -ListAvailable -Name ImportExcel)) {
+                Write-Host "   📦 Installing ImportExcel module..." -ForegroundColor Cyan
+                Install-Module -Name ImportExcel -Force -Scope CurrentUser -ErrorAction Stop
+            }
+            Import-Module ImportExcel -Force
+            $allData = Import-Excel -Path $ExcelPath -WorksheetName $WorksheetName -NoHeader -ErrorAction Stop
+            $strikethroughServers = @()  # Fallback can't detect strikethrough
+            Write-Host "   📄 Loaded $($allData.Count) rows from Excel (Fallback ImportExcel)" -ForegroundColor Green
+        }
         
         # Parse server structure with domain/workgroup context
         $serverList = @()
@@ -183,21 +237,13 @@ function Import-ServerListFromExcel {
         
         Write-Host "   🔍 Parsing domain/workgroup structure..." -ForegroundColor Yellow
         
-        # Try to detect strikethrough servers using Excel COM if available
-        $strikethroughServers = @()
-        try {
-            $configToUse = if ($Config) { $Config } else { $Global:SystemConfig }
-            if ($configToUse -and $configToUse.IgnoreStrikethroughServers) {
-                Write-Host "   📋 Attempting strikethrough detection..." -ForegroundColor Gray
-                $strikethroughServers = Get-StrikethroughServers -ExcelPath $ExcelPath -WorksheetName $WorksheetName
-                if ($strikethroughServers.Count -gt 0) {
-                    Write-Host "   ⚠️ Found $($strikethroughServers.Count) strikethrough servers to ignore" -ForegroundColor Yellow
-                }
-            } else {
-                Write-Host "   📋 Strikethrough detection disabled in config" -ForegroundColor Gray
-            }
-        } catch {
-            Write-Host "   ⚠️ Strikethrough detection failed (will process all servers): $($_.Exception.Message)" -ForegroundColor Yellow
+        # Strikethrough detection is now handled by the version-specific Excel import above
+        # The $strikethroughServers array is already populated from Import-ExcelData-VersionSpecific
+        
+        $configToUse = if ($Config) { $Config } else { $Global:SystemConfig }
+        if ($configToUse -and -not $configToUse.IgnoreStrikethroughServers) {
+            Write-Host "   📋 Strikethrough detection disabled in config - processing all servers" -ForegroundColor Gray
+            $strikethroughServers = @()  # Clear strikethrough list if disabled in config
         }
         
         foreach ($row in $allData) {
@@ -351,10 +397,17 @@ function Test-CertWebServiceStatus {
     
     try {
         $targetName = $ServerInfo.FullDomainName
+        # DevSkim: ignore DS137138 - Internal network HTTP endpoint for CertWebService health check
         $healthUrl = "http://$targetName`:$Port/health.json"
         
         $startTime = Get-Date
-        $response = Invoke-WebRequest -Uri $healthUrl -UseBasicParsing -TimeoutSec $TimeoutSeconds -ErrorAction Stop
+        
+        if ($Global:PSCompatibilityLoaded) {
+            $response = Invoke-WebRequest-VersionSpecific -Uri $healthUrl -TimeoutSec $TimeoutSeconds -UseBasicParsing
+        } else {
+            $response = Invoke-WebRequest -Uri $healthUrl -UseBasicParsing -TimeoutSec $TimeoutSeconds -ErrorAction Stop
+        }
+        
         $result.ResponseTime = [math]::Round(((Get-Date) - $startTime).TotalMilliseconds, 0)
         
         if ($response.StatusCode -eq 200) {
@@ -376,8 +429,14 @@ function Test-CertWebServiceStatus {
         # Try alternative ports if main port failed
         if ($Port -eq 9080) {
             try {
+                # DevSkim: ignore DS137138 - Internal network HTTP endpoint for alternative port testing
                 $altUrl = "http://$($ServerInfo.FullDomainName):8080/health.json"
-                $altResponse = Invoke-WebRequest -Uri $altUrl -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+                
+                if ($Global:PSCompatibilityLoaded) {
+                    $altResponse = Invoke-WebRequest-VersionSpecific -Uri $altUrl -TimeoutSec 5 -UseBasicParsing
+                } else {
+                    $altResponse = Invoke-WebRequest -Uri $altUrl -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+                }
                 if ($altResponse.StatusCode -eq 200) {
                     $result.HasCertWebService = $true
                     $result.Version = "Port8080"
@@ -428,24 +487,39 @@ function Test-ServerConnectivity-Enhanced {
             $result.ErrorMessages += "SMB test failed: $($_.Exception.Message)"
         }
         
-        # Test 3: WMI Access (alternative to PSRemoting)
+        # Test 3: WMI/CIM Access (alternative to PSRemoting)
         try {
-            if ($Credential) {
-                $wmiTest = Get-WmiObject -Class Win32_OperatingSystem -ComputerName $ServerInfo.FullDomainName -Credential $Credential -ErrorAction Stop
+            if ($Global:PSCompatibilityLoaded) {
+                $systemInfo = Get-SystemInfo-VersionSpecific -ComputerName $ServerInfo.FullDomainName -Credential $Credential
+                $result.WMI = $true
             } else {
-                $wmiTest = Get-WmiObject -Class Win32_OperatingSystem -ComputerName $ServerInfo.FullDomainName -ErrorAction Stop
+                # Fallback to direct WMI
+                if ($Credential) {
+                    $systemInfo = Get-WmiObject -Class Win32_OperatingSystem -ComputerName $ServerInfo.FullDomainName -Credential $Credential -ErrorAction Stop
+                } else {
+                    $systemInfo = Get-WmiObject -Class Win32_OperatingSystem -ComputerName $ServerInfo.FullDomainName -ErrorAction Stop
+                }
+                $result.WMI = $true
             }
-            $result.WMI = $true
         } catch {
-            $result.ErrorMessages += "WMI test failed: $($_.Exception.Message)"
+            $result.ErrorMessages += "WMI/CIM test failed: $($_.Exception.Message)"
         }
         
         # Test 4: PSRemoting (if not already tested in main script)
         try {
-            if ($Credential) {
-                $psTest = Invoke-Command -ComputerName $ServerInfo.FullDomainName -Credential $Credential -ScriptBlock { $env:COMPUTERNAME } -ErrorAction Stop
+            if ($Global:PSCompatibilityLoaded) {
+                $psRemotingResult = Invoke-PSRemoting-VersionSpecific -ComputerName $ServerInfo.FullDomainName -Credential $Credential -ScriptBlock { $env:COMPUTERNAME }
+                $result.PSRemoting = ($psRemotingResult.Success -and $psRemotingResult.Data -eq $ServerInfo.FullDomainName)
             } else {
-                $psTest = Invoke-Command -ComputerName $ServerInfo.FullDomainName -ScriptBlock { $env:COMPUTERNAME } -ErrorAction Stop
+                # Fallback to direct Invoke-Command
+                if ($Credential) {
+                    # DevSkim: ignore DS104456 - Required for PSRemoting connectivity testing
+                    $psTest = Invoke-Command -ComputerName $ServerInfo.FullDomainName -Credential $Credential -ScriptBlock { $env:COMPUTERNAME } -ErrorAction Stop
+                } else {
+                    # DevSkim: ignore DS104456 - Required for PSRemoting connectivity testing
+                    $psTest = Invoke-Command -ComputerName $ServerInfo.FullDomainName -ScriptBlock { $env:COMPUTERNAME } -ErrorAction Stop
+                }
+                $result.PSRemoting = ($psTest -eq $ServerInfo.FullDomainName)
             }
             $result.PSRemoting = ($psTest -eq $ServerInfo.ServerName -or $psTest -eq $ServerInfo.FullDomainName)
         } catch {

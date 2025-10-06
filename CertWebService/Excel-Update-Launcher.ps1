@@ -1,8 +1,19 @@
 #requires -Version 5.1
 #Requires -RunAsAdministrator
 
-<#
-.SYNOPSIS
+<#if ($Global:PSCompatibilityLoaded) {
+    Write-VersionSpecificHeader "Excel-Based CertWebService Update Launcher" -Version $Script:Version -Color Cyan
+    Write-VersionSpecificHost "Mode: $Mode" -IconType 'gear' -ForegroundColor Gray
+    Write-VersionSpecificHost "Filter: $Filter $(if($FilterValue){"($FilterValue)"})" -IconType 'target' -ForegroundColor Gray
+} else {
+    Write-Host "[START] Excel-Based CertWebService Update Launcher" -ForegroundColor Cyan
+    Write-Host "==============================================" -ForegroundColor Cyan
+    Write-Host "   Version: $Script:Version" -ForegroundColor Gray
+    Write-Host "   Mode: $Mode" -ForegroundColor Gray
+    Write-Host "   Filter: $Filter $(if($FilterValue){"($FilterValue)"})" -ForegroundColor Gray
+    Write-Host "   Start: $($Script:LauncherStart.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Gray
+    Write-Host ""
+}PSIS
     Excel-Based CertWebService Update Launcher v2.5.0
 
 .DESCRIPTION
@@ -36,6 +47,26 @@ param(
 
 $Script:Version = "v2.5.0"
 $Script:LauncherStart = Get-Date
+
+# Import PowerShell Version Compatibility Module
+try {
+    $compatibilityModulePath = Join-Path $PSScriptRoot "Modules\FL-PowerShell-VersionCompatibility.psm1"
+    if (Test-Path $compatibilityModulePath) {
+        Import-Module $compatibilityModulePath -Force
+        $Global:PSCompatibilityLoaded = $true
+        Write-Host "🔧 PowerShell version compatibility module loaded" -ForegroundColor Green
+        
+        # Display PowerShell version information
+        $psVersionInfo = Get-PowerShellVersionInfo
+        Write-Host "   PS Version: $($psVersionInfo.Version) ($($psVersionInfo.Edition)) - $($psVersionInfo.Platform)" -ForegroundColor Gray
+    } else {
+        $Global:PSCompatibilityLoaded = $false
+        Write-Host "⚠️ PowerShell compatibility module not found - using fallback methods" -ForegroundColor Yellow
+    }
+} catch {
+    $Global:PSCompatibilityLoaded = $false
+    Write-Host "⚠️ PowerShell compatibility module failed to load: $($_.Exception.Message)" -ForegroundColor Yellow
+}
 
 Write-Host "🚀 Excel-Based CertWebService Update Launcher" -ForegroundColor Cyan
 Write-Host "=============================================" -ForegroundColor Cyan
@@ -244,7 +275,7 @@ try {
             Write-Host "1. Review deployment results above" -ForegroundColor White
             Write-Host "2. Complete any manual installations identified" -ForegroundColor White
             Write-Host "3. Test WebService endpoints:" -ForegroundColor White
-            Write-Host "   Check http://[SERVER]:9080/health.json on updated servers" -ForegroundColor Gray
+            Write-Host "   Check http://[SERVER]:9080/health.json on updated servers" -ForegroundColor Gray # DevSkim: ignore DS137138 - Internal network HTTP endpoint
             Write-Host "4. Update Certificate Surveillance (CertSurv) configuration" -ForegroundColor White
             Write-Host "5. Run integration tests" -ForegroundColor White
         }

@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "rules": {
+    "suppressions": [
+      {
+        "id": "DS104456",
+        "justification": "PSRemoting (Invoke-Command) is required for legitimate remote administration in enterprise environment. Used with proper authentication and in controlled network.",
+        "suppression_reason": "Enterprise Remote Administration",
+        "applies_to": [
+          "*.ps1",
+          "*.psm1"
+        ]
+      },
+      {
+        "id": "DS137138", 
+        "justification": "HTTP URLs are used for internal network CertWebService health endpoints. These are not exposed to external networks and run on internal infrastructure.",
+        "suppression_reason": "Internal Network HTTP Endpoints",
+        "applies_to": [
+          "*.ps1",
+          "*.psm1"
+        ]
+      }
+    ]
+  },
+  "comments": [
+    "DevSkim Configuration for CertWebService PowerShell Mass Update System",
+    "Suppresses security warnings that are acceptable in enterprise internal network context",
+    "- PSRemoting is required for legitimate remote server administration",
+    "- HTTP endpoints are internal CertWebService health checks, not exposed externally",
+    "Created: 2025-01-06",
+    "Version: 1.0.0"
+  ]
+}

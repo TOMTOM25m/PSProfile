@@ -44,10 +44,30 @@ $Script:Version = "v2.4.0"
 $Script:RulebookVersion = "v10.0.0"
 $Script:UpdateDate = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
-Write-Host "🚀 CertWebService - Hybrid Mass Update System" -ForegroundColor Cyan
-Write-Host "   Version: $Script:Version | Regelwerk: $Script:RulebookVersion" -ForegroundColor Gray
-Write-Host "   Update Date: $Script:UpdateDate" -ForegroundColor Gray
-Write-Host ""
+# Import PowerShell Version Compatibility Module v3.0
+try {
+    $compatibilityModulePath = Join-Path $PSScriptRoot "Modules\FL-PowerShell-VersionCompatibility-v3.psm1"
+    if (Test-Path $compatibilityModulePath) {
+        Import-Module $compatibilityModulePath -Force
+        $Global:PSCompatibilityLoaded = $true
+        Write-VersionSpecificHost "PowerShell version compatibility module loaded" -IconType 'gear' -ForegroundColor Green
+    } else {
+        $Global:PSCompatibilityLoaded = $false
+        Write-VersionSpecificHost "PowerShell compatibility module not found - using fallback methods" -IconType 'warning' -ForegroundColor Yellow
+    }
+} catch {
+    $Global:PSCompatibilityLoaded = $false
+    Write-VersionSpecificHost "PowerShell compatibility module failed to load: $($_.Exception.Message)" -IconType 'warning' -ForegroundColor Yellow
+}
+
+if ($Global:PSCompatibilityLoaded) {
+    Write-VersionSpecificHeader "CertWebService - Hybrid Mass Update System" -Version "$Script:Version | Regelwerk: $Script:RulebookVersion" -Color Cyan
+} else {
+    Write-Host "[START] CertWebService - Hybrid Mass Update System" -ForegroundColor Cyan
+    Write-Host "   Version: $Script:Version | Regelwerk: $Script:RulebookVersion" -ForegroundColor Gray
+    Write-Host "   Update Date: $Script:UpdateDate" -ForegroundColor Gray
+    Write-Host ""
+}
 
 # Define default server list if not provided
 if ($ServerList.Count -eq 0) {
@@ -60,7 +80,11 @@ if ($ServerList.Count -eq 0) {
         # Add your actual server names here
     )
     
-    Write-Host "⚠️ Using default server list. Specify -ServerList for custom servers." -ForegroundColor Yellow
+    if ($Global:PSCompatibilityLoaded) {
+        Write-VersionSpecificHost "Using default server list. Specify -ServerList for custom servers." -IconType 'warning' -ForegroundColor Yellow
+    } else {
+        Write-Host "[WARN] Using default server list. Specify -ServerList for custom servers." -ForegroundColor Yellow
+    }
     Write-Host ""
 }
 
@@ -94,7 +118,11 @@ function Test-ServerConnectivity {
     
     try {
         # Test 1: Basic ping connectivity
-        Write-Host "   🔍 Testing connectivity to $ServerName..." -ForegroundColor Gray
+        if ($Global:PSCompatibilityLoaded) {
+            Write-VersionSpecificHost "Testing connectivity to $ServerName..." -IconType 'network' -ForegroundColor Gray
+        } else {
+            Write-Host "   [NETWORK] Testing connectivity to $ServerName..." -ForegroundColor Gray
+        }
         $pingResult = Test-Connection -ComputerName $ServerName -Count 1 -Quiet -ErrorAction SilentlyContinue
         $connectivity.Ping = $pingResult
         
@@ -115,12 +143,20 @@ function Test-ServerConnectivity {
         
         # Test 3: PSRemoting capability
         try {
-            if ($Credential) {
-                $testPSRemoting = Invoke-Command -ComputerName $ServerName -Credential $Credential -ScriptBlock { $env:COMPUTERNAME } -ErrorAction SilentlyContinue
+            if ($Global:PSCompatibilityLoaded) {
+                $psRemotingResult = Invoke-PSRemoting-VersionSpecific -ComputerName $ServerName -Credential $Credential -ScriptBlock { $env:COMPUTERNAME }
+                $connectivity.PSRemoting = ($psRemotingResult.Success -and $psRemotingResult.Data -eq $ServerName)
             } else {
-                $testPSRemoting = Invoke-Command -ComputerName $ServerName -ScriptBlock { $env:COMPUTERNAME } -ErrorAction SilentlyContinue
+                # Fallback to direct Invoke-Command
+                if ($Credential) {
+                    # DevSkim: ignore DS104456 - Required for PSRemoting connectivity testing
+                    $testPSRemoting = Invoke-Command -ComputerName $ServerName -Credential $Credential -ScriptBlock { $env:COMPUTERNAME } -ErrorAction SilentlyContinue
+                } else {
+                    # DevSkim: ignore DS104456 - Required for PSRemoting connectivity testing
+                    $testPSRemoting = Invoke-Command -ComputerName $ServerName -ScriptBlock { $env:COMPUTERNAME } -ErrorAction SilentlyContinue
+                }
+                $connectivity.PSRemoting = ($testPSRemoting -eq $ServerName)
             }
-            $connectivity.PSRemoting = ($testPSRemoting -eq $ServerName)
         } catch {
             $connectivity.PSRemoting = $false
         }
@@ -174,8 +210,10 @@ function Deploy-ViaPSRemoting {
         }
         
         if ($Credential) {
+            # DevSkim: ignore DS104456 - Required for PSRemoting deployment execution
             $result = Invoke-Command -ComputerName $ServerName -Credential $Credential -ScriptBlock $scriptBlock -ArgumentList $NetworkSharePath
         } else {
+            # DevSkim: ignore DS104456 - Required for PSRemoting deployment execution
             $result = Invoke-Command -ComputerName $ServerName -ScriptBlock $scriptBlock -ArgumentList $NetworkSharePath
         }
         
@@ -199,7 +237,7 @@ function Deploy-ViaNetworkShare {
         [PSCredential]$Credential = $null
     )
     
-    Write-Host "   🌐 Deploying via Network Share to $ServerName..." -ForegroundColor Yellow
+    Write-Host "   [NET] Deploying via Network Share to $ServerName..." -ForegroundColor Yellow
     
     try {
         # Create installation package on target server
@@ -212,7 +250,7 @@ function Deploy-ViaNetworkShare {
         New-Item -Path $serverPath -ItemType Directory -Force | Out-Null
         
         # Copy deployment files to server
-        Write-Host "   📂 Copying files to $serverPath..." -ForegroundColor Gray
+        Write-Host "   [DIR] Copying files to $serverPath..." -ForegroundColor Gray
         Copy-Item -Path "$NetworkSharePath\*" -Destination $serverPath -Recurse -Force
         
         # Create a remote execution batch file
@@ -304,7 +342,7 @@ INSTALLATION STEPS:
    PowerShell.exe -ExecutionPolicy Bypass -File Test.ps1
 
 6. Verify WebService is running:
-   Open browser: http://$ServerName`:9080/
+   Open browser: http://$ServerName`:9080/ # DevSkim: ignore DS137138 - Internal network HTTP endpoint for testing
 
 TROUBLESHOOTING:
 ===============
@@ -370,10 +408,20 @@ function Start-HybridUpdate {
         $connectivity = Test-ServerConnectivity -ServerName $server -Credential $AdminCredential
         
         Write-Host "   Connectivity Results:" -ForegroundColor Gray
-        Write-Host "     Ping: $(if($connectivity.Ping){'✅'}else{'❌'})" -ForegroundColor Gray
-        Write-Host "     SMB Share: $(if($connectivity.SMB){'✅'}else{'❌'})" -ForegroundColor Gray  
-        Write-Host "     PSRemoting: $(if($connectivity.PSRemoting){'✅'}else{'❌'})" -ForegroundColor Gray
-        Write-Host "     Recommended: $($connectivity.RecommendedMethod)" -ForegroundColor Cyan
+        if ($Global:PSCompatibilityLoaded) {
+            Write-Host "     Ping: $(if($connectivity.Ping){'[OK]'}else{'[FAIL]'})" -ForegroundColor $(if($connectivity.Ping){'Green'}else{'Red'})
+            Write-Host "     SMB Share: $(if($connectivity.SMB){'[OK]'}else{'[FAIL]'})" -ForegroundColor $(if($connectivity.SMB){'Green'}else{'Red'})
+            Write-Host "     PSRemoting: $(if($connectivity.PSRemoting){'[OK]'}else{'[FAIL]'})" -ForegroundColor $(if($connectivity.PSRemoting){'Green'}else{'Red'})
+        } else {
+            Write-Host "     Ping: $(if($connectivity.Ping){'[OK]'}else{'[FAIL]'})" -ForegroundColor $(if($connectivity.Ping){'Green'}else{'Red'})
+            Write-Host "     SMB Share: $(if($connectivity.SMB){'[OK]'}else{'[FAIL]'})" -ForegroundColor $(if($connectivity.SMB){'Green'}else{'Red'})
+            Write-Host "     PSRemoting: $(if($connectivity.PSRemoting){'[OK]'}else{'[FAIL]'})" -ForegroundColor $(if($connectivity.PSRemoting){'Green'}else{'Red'})
+        }
+        if ($Global:PSCompatibilityLoaded) {
+            Write-VersionSpecificHost "Recommended method: $($connectivity.RecommendedMethod)" -IconType 'target' -ForegroundColor Cyan
+        } else {
+            Write-Host "     Recommended: $($connectivity.RecommendedMethod)" -ForegroundColor Cyan
+        }
         
         if ($TestOnly) {
             Write-Host "   🧪 Test-only mode - skipping actual deployment" -ForegroundColor Yellow
@@ -477,7 +525,7 @@ function Show-UpdateSummary {
     
     # Next steps
     Write-Host "📋 NEXT STEPS:" -ForegroundColor Cyan
-    Write-Host "   1. Verify successful installations by visiting: http://[SERVER]:9080/" -ForegroundColor White
+    Write-Host "   1. Verify successful installations by visiting: http://[SERVER]:9080/" -ForegroundColor White # DevSkim: ignore DS137138 - Internal network HTTP endpoint
     Write-Host "   2. Complete manual installations where required" -ForegroundColor White
     Write-Host "   3. Update Certificate Surveillance configuration with new endpoints" -ForegroundColor White
     Write-Host "   4. Test end-to-end integration with CertSurv system" -ForegroundColor White
@@ -502,18 +550,34 @@ try {
     
     # Generate detailed report if requested
     if ($GenerateReports) {
-        Write-Host "📄 Generating detailed reports..." -ForegroundColor Yellow
+        if ($Global:PSCompatibilityLoaded) {
+            Write-VersionSpecificHost "Generating detailed reports..." -IconType 'file' -ForegroundColor Yellow
+        } else {
+            Write-Host "[FILE] Generating detailed reports..." -ForegroundColor Yellow
+        }
         
         $reportPath = "C:\Temp\CertWebService-Update-Report-$(Get-Date -Format 'yyyy-MM-dd-HH-mm').json"
         $Global:UpdateResults | ConvertTo-Json -Depth 5 | Set-Content -Path $reportPath -Encoding UTF8
         
-        Write-Host "✅ Detailed report saved: $reportPath" -ForegroundColor Green
+        if ($Global:PSCompatibilityLoaded) {
+            Write-VersionSpecificHost "Detailed report saved: $reportPath" -IconType 'success' -ForegroundColor Green
+        } else {
+            Write-Host "[OK] Detailed report saved: $reportPath" -ForegroundColor Green
+        }
     }
     
-    Write-Host "🎉 Hybrid update process completed!" -ForegroundColor Green
+    if ($Global:PSCompatibilityLoaded) {
+        Write-VersionSpecificHost "Hybrid update process completed!" -IconType 'party' -ForegroundColor Green
+    } else {
+        Write-Host "[DONE] Hybrid update process completed!" -ForegroundColor Green
+    }
     
 } catch {
-    Write-Host "❌ Hybrid update process failed: $($_.Exception.Message)" -ForegroundColor Red
+    if ($Global:PSCompatibilityLoaded) {
+        Write-VersionSpecificHost "Hybrid update process failed: $($_.Exception.Message)" -IconType 'error' -ForegroundColor Red
+    } else {
+        Write-Host "[ERROR] Hybrid update process failed: $($_.Exception.Message)" -ForegroundColor Red
+    }
     exit 1
 }
 
