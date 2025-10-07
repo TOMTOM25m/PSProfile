@@ -29,16 +29,19 @@
 
 param(
     [Parameter(Mandatory = $false)]
+    [string]$ConfigPath = "C:\CertSurv\Config\Config-Cert-Surveillance.json",
+    
+    [Parameter(Mandatory = $false)]
     [string]$ServerListPath = "C:\CertSurv\Config\ServerList.txt",
     
     [Parameter(Mandatory = $false)]
-    [string]$OutputDirectory = "C:\CertSurv\Reports",
+    [string]$OutputDirectory,
     
     [Parameter(Mandatory = $false)]
-    [int]$Port = 9080,
+    [int]$Port,
     
     [Parameter(Mandatory = $false)]
-    [int]$MaxConcurrent = 5,
+    [int]$MaxConcurrent,
     
     [Parameter(Mandatory = $false)]
     [switch]$Detailed
@@ -58,6 +61,55 @@ Write-Host "  Regelwerk: $Script:RulebookVersion" -ForegroundColor Cyan
 Write-Host "  PowerShell: $($PSVersionTable.PSVersion)" -ForegroundColor Gray
 Write-Host "=========================================" -ForegroundColor Cyan
 Write-Host ""
+
+#region Config Loading
+
+# Load configuration from JSON
+if (Test-Path $ConfigPath) {
+    Write-Host "[CONFIG] Loading configuration: $ConfigPath" -ForegroundColor Yellow
+    
+    try {
+        $configContent = Get-Content -Path $ConfigPath -Raw -Encoding UTF8
+        $config = $configContent | ConvertFrom-Json
+        
+        # Override parameters from config if not explicitly set
+        if (-not $PSBoundParameters.ContainsKey('OutputDirectory')) {
+            $OutputDirectory = $config.ReportsDirectory
+        }
+        
+        if (-not $PSBoundParameters.ContainsKey('Port')) {
+            $Port = $config.WebServicePort
+        }
+        
+        if (-not $PSBoundParameters.ContainsKey('MaxConcurrent')) {
+            $MaxConcurrent = $config.MaxConcurrentScans
+        }
+        
+        Write-Host "  [OK] Configuration loaded" -ForegroundColor Green
+        Write-Host "  Port: $Port | MaxConcurrent: $MaxConcurrent" -ForegroundColor Gray
+        Write-Host "  Output: $OutputDirectory" -ForegroundColor Gray
+        
+    } catch {
+        Write-Host "  [WARN] Config load failed, using defaults: $($_.Exception.Message)" -ForegroundColor Yellow
+        
+        # Defaults
+        if (-not $OutputDirectory) { $OutputDirectory = "C:\CertSurv\Reports" }
+        if (-not $Port) { $Port = 9080 }
+        if (-not $MaxConcurrent) { $MaxConcurrent = 5 }
+    }
+} else {
+    Write-Host "[WARN] Config file not found: $ConfigPath" -ForegroundColor Yellow
+    Write-Host "  Using default values" -ForegroundColor Gray
+    
+    # Defaults
+    if (-not $OutputDirectory) { $OutputDirectory = "C:\CertSurv\Reports" }
+    if (-not $Port) { $Port = 9080 }
+    if (-not $MaxConcurrent) { $MaxConcurrent = 5 }
+}
+
+Write-Host ""
+
+#endregion
 
 #region Functions
 

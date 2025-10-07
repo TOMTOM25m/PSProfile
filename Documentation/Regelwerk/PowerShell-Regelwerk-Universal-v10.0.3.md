@@ -900,6 +900,6 @@ SOFTWARE.
 
 ---
 
-**PowerShell-Regelwerk Universal v10.0.1 Enterprise Complete Edition**  
-**© 2025 Flecki (Tom) Garnreiter | Release: 2025-09-30**  
-**Status: ENTERPRISE READY | Compliance: Certificate Surveillance, Email Automation, Excel Integration**
+**PowerShell-Regelwerk Universal v10.0.3 Enterprise Complete Edition**  
+**© 2025 Flecki (Tom) Garnreiter | Release: 2025-10-07**  
+**Status: ENTERPRISE READY | Compliance: Certificate Surveillance, Email Automation, Excel Integration, 3-Tier Credential Management**

@@ -1,6 +1,9 @@
 #requires -Version 5.1
 #Requires -RunAsAdministrator
 
+# Import FL-CredentialManager für 3-Stufen-Strategie
+Import-Module "$PSScriptRoot\Modules\FL-CredentialManager-v1.0.psm1" -Force
+
 <#
 .SYNOPSIS
     Update CertSurv Server List from Excel v1.0.0
@@ -213,13 +216,89 @@ function Get-ServersFromExcel {
                     continue
                 }
                 
+                # Filter ungültige Servernamen
+                $invalidPatterns = @(
+                    '^SUMME:',                           # SUMME-Zeilen
+                    '^ServerName$',                       # Header
+                    '^\s*$',                             # Leer
+                    'NEUE SERVER',                        # Beschreibungen
+                    'Stand:',                            # Datumsangaben
+                    'Servers',                           # Plural-Bezeichnung
+                    'DATACENTER',                        # Beschreibungen
+                    '^\(Domain',                         # Block-Marker
+                    '^\(Workgroup',                      # Block-Marker
+                    '^\(.*\)',                           # Alles in Klammern
+                    '\s+',                               # Enthält Leerzeichen
+                    '^[0-9]+$'                          # Nur Zahlen
+                )
+                
+                $isInvalid = $false
+                foreach ($pattern in $invalidPatterns) {
+                    if ($col1Value -match $pattern) {
+                        Write-Host "    [SKIP] $col1Value (Row $row) - Invalid pattern: $pattern" -ForegroundColor DarkGray
+                        $skippedCount++
+                        $isInvalid = $true
+                        break
+                    }
+                }
+                
+                if ($isInvalid) {
+                    continue
+                }
+                
+                # Minimale Länge-Prüfung (Server-Namen sollten mind. 2 Zeichen haben)
+                if ($col1Value.Length -lt 2) {
+                    Write-Host "    [SKIP] $col1Value (Row $row) - Too short" -ForegroundColor DarkGray
+                    $skippedCount++
+                    continue
+                }
+                
                 # Filter anwenden
                 if ($FilterString -and $col1Value -notmatch $FilterString) {
                     continue
                 }
                 
+                # FQDN konstruieren basierend auf Block
+                $fqdn = $col1Value
+                
+                # Domain-basierte FQDN-Konstruktion
+                if ($currentBlock -match '^\(Domain\)(.+)$') {
+                    $domain = $matches[1].ToLower()
+                    
+                    # Spezial-Domains
+                    $domainMap = @{
+                        'UVW' = 'uvw.meduniwien.ac.at'
+                        'ITSC-TEST' = 'itsc-test.meduniwien.ac.at'
+                        'NEURO' = 'neuro.meduniwien.ac.at'
+                        'EX' = 'ex.meduniwien.ac.at'
+                        'DGMW' = 'dgmw.meduniwien.ac.at'
+                        'KHHYG' = 'khhyg.meduniwien.ac.at'
+                        'AD' = 'ad.meduniwien.ac.at'
+                        'Diagnostic' = 'diagnostic.meduniwien.ac.at'
+                    }
+                    
+                    # Wenn Domain bekannt ist, FQDN konstruieren
+                    if ($domainMap.ContainsKey($domain)) {
+                        $fqdn = "$col1Value.$($domainMap[$domain])"
+                    } else {
+                        $fqdn = "$col1Value.$domain.meduniwien.ac.at"
+                    }
+                    
+                # Workgroup-basierte FQDN (SRV Domain)
+                } elseif ($currentBlock -match '^\(Workgroup\)SRV$') {
+                    $fqdn = "$col1Value.srv.meduniwien.ac.at"
+                    
+                # Andere Workgroups - versuche mit .meduniwien.ac.at
+                } elseif ($currentBlock -match '^\(Workgroup\)') {
+                    # Wenn kein Punkt im Namen, füge .meduniwien.ac.at hinzu
+                    if ($col1Value -notmatch '\.') {
+                        $fqdn = "$col1Value.meduniwien.ac.at"
+                    }
+                }
+                
                 $serverInfo = @{
-                    Name = $col1Value
+                    Name = $fqdn
+                    Hostname = $col1Value
                     IP = if ($ipColumn -gt 0) { $Worksheet.Cells.Item($row, $ipColumn).Text.Trim() } else { "" }
                     Status = if ($statusColumn -gt 0) { $Worksheet.Cells.Item($row, $statusColumn).Text.Trim() } else { "" }
                     OS = $Worksheet.Cells.Item($row, 2).Text.Trim()
@@ -378,11 +457,29 @@ function Update-RemoteServerList {
 #region Main Execution
 
 try {
-    # Credentials
+    # Credentials - use Credential Manager
     if (-not $Credential) {
         Write-Host ""
-        $computerShortName = $TargetServer.Split('.')[0]
-        $Credential = Get-Credential -UserName "$computerShortName\Administrator" -Message "Admin credentials for $TargetServer"
+        
+        # Versuche Credential Manager zu laden
+        $credManagerPath = Join-Path $PSScriptRoot "Modules\FL-CredentialManager-v1.0.psm1"
+        
+        if (Test-Path $credManagerPath) {
+            Import-Module $credManagerPath -Force -ErrorAction SilentlyContinue
+            
+            # Verwende Get-OrPromptCredential wenn verfügbar
+            if (Get-Command Get-OrPromptCredential -ErrorAction SilentlyContinue) {
+                $computerShortName = $TargetServer.Split('.')[0]
+                $Credential = Get-OrPromptCredential -Target $computerShortName -Username "$computerShortName\Administrator" -SaveIfNew
+            }
+        }
+        
+        # Fallback: 3-Stufen-Strategie
+        if (-not $Credential) {
+            $computerShortName = $TargetServer.Split('.')[0]
+            Write-Host "[*] Using 3-tier credential strategy (Default -> Vault -> Prompt)..." -ForegroundColor Yellow
+            $Credential = Get-OrPromptCredential -Target $TargetServer -Username "$computerShortName\Administrator" -AutoSave
+        }
     }
     
     Write-Host ""

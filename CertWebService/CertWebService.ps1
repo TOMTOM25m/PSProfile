@@ -2,10 +2,18 @@
 
 <#
 .SYNOPSIS
-CertWebService - HTTP Web Service
+CertWebService - HTTP Web Service v2.5.0
 .DESCRIPTION
-Einfacher HTTP Web-Service fuer Certificate Monitoring
-Regelwerk v10.0.2 | Stand: 02.10.2025 (ASCII only output)
+HTTP Web-Service fuer Certificate Monitoring mit ECHTEN Windows Certificate Store Daten
+Regelwerk v10.0.3 | Stand: 07.10.2025
+
+FEATURES v2.5.0:
+- Echte Zertifikatsabfrage aus Windows Certificate Store
+- Support für LocalMachine\My, LocalMachine\WebHosting, CurrentUser\My
+- Filtert Zertifikate mit Private Key
+- Status-Klassifizierung: Valid, Warning (≤90d), Expiring Soon (≤30d), Expired
+- Erweiterte Dashboard-Anzeige mit Thumbprint, SerialNumber, Store-Path
+
 .PARAMETER Port
 HTTP Port (Default: 9080)
 .PARAMETER ServiceMode
@@ -56,37 +64,103 @@ function Write-Log {
     $logEntry | Out-File -FilePath $logFile -Append -Encoding UTF8
 }
 
-# Dummy Certificate Data
+# REAL Certificate Data from Windows Certificate Store
 function Get-CertificateData {
-    return @{
-        timestamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
-        certificates = @(
-            @{
-                hostname = "itscmgmt03.srv.meduniwien.ac.at"
-                port = 443
-                subject = "CN=itscmgmt03.srv.meduniwien.ac.at"
-                issuer = "MedUni Wien CA"
-                validFrom = "2024-01-01T00:00:00Z"
-                validUntil = "2025-12-31T23:59:59Z"
-                daysUntilExpiry = 90
-                status = "Valid"
-            },
-            @{
-                hostname = "webmail.meduniwien.ac.at"
-                port = 443
-                subject = "CN=webmail.meduniwien.ac.at"
-                issuer = "DigiCert Inc"
-                validFrom = "2024-06-01T00:00:00Z"
-                validUntil = "2025-06-01T23:59:59Z"
-                daysUntilExpiry = 242
-                status = "Valid"
-            }
+    Write-Log "Reading certificates from Windows Certificate Store..." "INFO"
+    
+    try {
+        # Lese Zertifikate aus allen wichtigen Stores
+        $stores = @(
+            'Cert:\LocalMachine\My',           # Personal Certificates
+            'Cert:\LocalMachine\WebHosting',   # IIS Web Hosting
+            'Cert:\CurrentUser\My'             # Current User Personal
         )
-        summary = @{
-            total = 2
-            valid = 2
-            expired = 0
-            expiringSoon = 0
+        
+        $allCerts = @()
+        $now = Get-Date
+        
+        foreach ($storePath in $stores) {
+            try {
+                if (Test-Path $storePath) {
+                    $certs = Get-ChildItem -Path $storePath -ErrorAction SilentlyContinue | Where-Object {
+                        # Nur Zertifikate mit Private Key (verwendbare Zertifikate)
+                        $_.HasPrivateKey -eq $true -and 
+                        $_.Subject -notmatch '^CN=localhost' # Filtere localhost-Zerts aus
+                    }
+                    
+                    foreach ($cert in $certs) {
+                        $daysUntilExpiry = ($cert.NotAfter - $now).Days
+                        
+                        # Bestimme Status
+                        $status = "Valid"
+                        if ($cert.NotAfter -lt $now) {
+                            $status = "Expired"
+                        } elseif ($daysUntilExpiry -le 30) {
+                            $status = "Expiring Soon"
+                        } elseif ($daysUntilExpiry -le 90) {
+                            $status = "Warning"
+                        }
+                        
+                        # Extrahiere Hostname aus Subject
+                        $hostname = if ($cert.Subject -match 'CN=([^,]+)') { $matches[1] } else { $cert.Subject }
+                        
+                        $allCerts += @{
+                            hostname = $hostname
+                            thumbprint = $cert.Thumbprint
+                            subject = $cert.Subject
+                            issuer = $cert.Issuer
+                            validFrom = $cert.NotBefore.ToString("yyyy-MM-ddTHH:mm:ssZ")
+                            validUntil = $cert.NotAfter.ToString("yyyy-MM-ddTHH:mm:ssZ")
+                            daysUntilExpiry = $daysUntilExpiry
+                            status = $status
+                            storePath = $storePath
+                            hasPrivateKey = $cert.HasPrivateKey
+                            serialNumber = $cert.SerialNumber
+                        }
+                    }
+                }
+            } catch {
+                Write-Log "Warning: Could not read from store $storePath - $($_.Exception.Message)" "WARN"
+            }
+        }
+        
+        # Sortiere nach Ablaufdatum (kritischste zuerst)
+        $allCerts = $allCerts | Sort-Object daysUntilExpiry
+        
+        # Berechne Summary
+        $expired = ($allCerts | Where-Object { $_.status -eq "Expired" }).Count
+        $expiringSoon = ($allCerts | Where-Object { $_.status -eq "Expiring Soon" }).Count
+        $warning = ($allCerts | Where-Object { $_.status -eq "Warning" }).Count
+        $valid = ($allCerts | Where-Object { $_.status -eq "Valid" }).Count
+        
+        Write-Log "Found $($allCerts.Count) certificates: $valid valid, $warning warning, $expiringSoon expiring soon, $expired expired" "INFO"
+        
+        return @{
+            timestamp = $now.ToString("yyyy-MM-dd HH:mm:ss")
+            certificates = $allCerts
+            summary = @{
+                total = $allCerts.Count
+                valid = $valid
+                warning = $warning
+                expired = $expired
+                expiringSoon = $expiringSoon
+            }
+        }
+        
+    } catch {
+        Write-Log "ERROR reading certificates: $($_.Exception.Message)" "ERROR"
+        # Fallback zu leerer Liste bei Fehler
+        return @{
+            timestamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+            certificates = @()
+            summary = @{
+                total = 0
+                valid = 0
+                warning = 0
+                expired = 0
+                expiringSoon = 0
+            }
+            error = $_.Exception.Message
         }
     }
 }
@@ -110,14 +184,17 @@ function Get-HTMLDashboard {
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
         th { background: #111d4e; color: white; }
         .status-valid { color: #28a745; font-weight: bold; }
+        .status-warning { color: #ffc107; font-weight: bold; }
+        .status-expiring { color: #ff6b35; font-weight: bold; }
+        .status-expired { color: #dc3545; font-weight: bold; }
         .footer { margin-top: 20px; text-align: center; color: #666; }
     </style>
 </head>
 <body>
     <div class="header">
-    <h1>Certificate Surveillance Dashboard</h1>
+    <h1>Certificate Surveillance Dashboard v2.5.0</h1>
     <p>MedUni Wien | WindowsServer-Infrastruktur | Port: $Port</p>
-    <p>Stand: $($data.timestamp) | Regelwerk v10.0.2</p>
+    <p>Stand: $($data.timestamp) | Regelwerk v10.0.3 | $($data.summary.total) Certificates</p>
     </div>
     
     <div class="stats">
@@ -127,15 +204,19 @@ function Get-HTMLDashboard {
         </div>
         <div class="stat-box">
             <h3 style="color: #28a745">$($data.summary.valid)</h3>
-            <p>Valid Certificates</p>
+            <p>Valid</p>
+        </div>
+        <div class="stat-box">
+            <h3 style="color: #ffc107">$($data.summary.warning)</h3>
+            <p>Warning (≤90d)</p>
+        </div>
+        <div class="stat-box">
+            <h3 style="color: #ff6b35">$($data.summary.expiringSoon)</h3>
+            <p>Expiring Soon (≤30d)</p>
         </div>
         <div class="stat-box">
             <h3 style="color: #dc3545">$($data.summary.expired)</h3>
             <p>Expired</p>
-        </div>
-        <div class="stat-box">
-            <h3 style="color: #ffc107">$($data.summary.expiringSoon)</h3>
-            <p>Expiring Soon</p>
         </div>
     </div>
     
@@ -144,24 +225,45 @@ function Get-HTMLDashboard {
             <thead>
                 <tr>
                     <th>Hostname</th>
-                    <th>Port</th>
                     <th>Subject</th>
+                    <th>Issuer</th>
                     <th>Valid Until</th>
                     <th>Days Remaining</th>
                     <th>Status</th>
+                    <th>Store</th>
                 </tr>
             </thead>
             <tbody>
 "@
     foreach ($cert in $data.certificates) {
+        # Status-spezifische CSS-Klasse
+        $statusClass = switch ($cert.status) {
+            "Valid" { "status-valid" }
+            "Warning" { "status-warning" }
+            "Expiring Soon" { "status-expiring" }
+            "Expired" { "status-expired" }
+            default { "status-valid" }
+        }
+        
+        # Store-Name kürzen
+        $storeName = if ($cert.storePath) { 
+            $cert.storePath -replace 'Cert:\\LocalMachine\\', 'LM\' -replace 'Cert:\\CurrentUser\\', 'CU\'
+        } else { 
+            "N/A" 
+        }
+        
+        # Issuer kürzen (nur CN)
+        $issuerShort = if ($cert.issuer -match 'CN=([^,]+)') { $matches[1] } else { $cert.issuer }
+        
         $html += @"
                 <tr>
-                    <td>$($cert.hostname)</td>
-                    <td>$($cert.port)</td>
-                    <td>$($cert.subject)</td>
+                    <td><strong>$($cert.hostname)</strong></td>
+                    <td style="font-size: 0.9em;">$($cert.subject)</td>
+                    <td style="font-size: 0.9em;">$issuerShort</td>
                     <td>$($cert.validUntil)</td>
-                    <td>$($cert.daysUntilExpiry)</td>
-                    <td class="status-valid">$($cert.status)</td>
+                    <td><strong>$($cert.daysUntilExpiry)</strong></td>
+                    <td class="$statusClass">$($cert.status)</td>
+                    <td style="font-size: 0.85em;">$storeName</td>
                 </tr>
 "@
     }
@@ -172,8 +274,9 @@ function Get-HTMLDashboard {
     </div>
     
     <div class="footer">
-        <p>CertWebService v2.4.0 | Regelwerk v10.0.2 | MedUni Wien IT-Security</p>
+        <p>CertWebService v2.5.0 | Regelwerk v10.0.3 | MedUni Wien IT-Security</p>
     <p>API: <a href="/certificates.json">/certificates.json</a> | Health: <a href="/health.json">/health.json</a></p>
+    <p style="font-size:0.85em; margin-top:10px;">Certificate Stores: LocalMachine\My, LocalMachine\WebHosting, CurrentUser\My</p>
     </div>
 </body>
 </html>
@@ -255,10 +358,11 @@ function Start-WebService {
                         # Strukturierte API-Response für CertSurv Kompatibilität
                         $apiResponse = @{
                             status = "success"
-                            total_count = if ($data -is [array]) { $data.Count } else { if ($data) { 1 } else { 0 } }
-                            certificates = $data
+                            total_count = if ($data.certificates -is [array]) { $data.certificates.Count } else { if ($data.certificates) { 1 } else { 0 } }
+                            certificates = $data.certificates
+                            summary = $data.summary
                             timestamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
-                            version = "v2.4.0"
+                            version = "v2.5.0"
                         }
                         
                         $json = $apiResponse | ConvertTo-Json -Depth 4
@@ -270,9 +374,10 @@ function Start-WebService {
                     "/health.json" {
                         $health = @{
                             status = "healthy"
-                            version = "v2.4.0"
+                            version = "v2.5.0"
                             timestamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
                             port = $Port
+                            certificateStores = @("LocalMachine\My", "LocalMachine\WebHosting", "CurrentUser\My")
                         }
                         $json = $health | ConvertTo-Json
                         $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
@@ -282,7 +387,7 @@ function Start-WebService {
                     }
                     default {
                         $response.StatusCode = 404
-                        $html = "<h1>404 - Not Found</h1><p>CertWebService v2.4.0</p>"
+                        $html = "<h1>404 - Not Found</h1><p>CertWebService v2.5.0</p>"
                         $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)
                         $response.ContentLength64 = $buffer.Length
                         $response.OutputStream.Write($buffer, 0, $buffer.Length)
@@ -315,10 +420,11 @@ function Start-WebService {
 
 # Main Execution
 if ($ServiceMode) {
-    Write-Log "=== CERTWEBSERVICE v2.4.0 GESTARTET (SERVICE MODE) ===" "INFO"
+    Write-Log "=== CERTWEBSERVICE v2.5.0 GESTARTET (SERVICE MODE) ===" "INFO"
 } else {
-    Write-Host "=== CERTWEBSERVICE v2.4.0 GESTARTET ===" -ForegroundColor Green
-    Write-Host "Regelwerk v10.0.2 | Stand: 02.10.2025" -ForegroundColor Gray
+    Write-Host "=== CERTWEBSERVICE v2.5.0 GESTARTET ===" -ForegroundColor Green
+    Write-Host "Regelwerk v10.0.3 | Stand: 07.10.2025" -ForegroundColor Gray
+    Write-Host "Reading REAL certificates from Windows Certificate Store" -ForegroundColor Cyan
     Write-Host ""
 }
 

@@ -1,6 +1,9 @@
 #requires -Version 5.1
 #Requires -RunAsAdministrator
 
+# Import FL-CredentialManager für 3-Stufen-Strategie
+Import-Module "$PSScriptRoot\Modules\FL-CredentialManager-v1.0.psm1" -Force
+
 <#
 .SYNOPSIS
     CertWebService - Hybrid Mass Update Script v2.5.0 - Pure ASCII
@@ -399,7 +402,8 @@ try {
     # Verify credentials if not in TestOnly mode
     if (-not $TestOnly -and -not $AdminCredential) {
         try {
-            $AdminCredential = Get-Credential -Message "Enter administrator credentials for remote deployment"
+            Write-Host "[*] Using 3-tier credential strategy..." -ForegroundColor Yellow
+            $AdminCredential = Get-OrPromptCredential -Target "CertWebService-Deployment" -Username "Administrator" -AutoSave
         } catch {
             Write-Host "[ERROR] Credentials required for deployment. Exiting." -ForegroundColor Red
             exit 1

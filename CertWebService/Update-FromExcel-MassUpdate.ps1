@@ -1,6 +1,9 @@
 #requires -Version 5.1
 #Requires -RunAsAdministrator
 
+# Import FL-CredentialManager für 3-Stufen-Strategie
+Import-Module "$PSScriptRoot\Modules\FL-CredentialManager-v1.0.psm1" -Force
+
 <#
 .SYNOPSIS
     CertWebService - Excel-Based Mass Update System v2.5.0
@@ -704,8 +707,8 @@ function Start-ExcelBasedMassUpdate {
         # Step 3: Get credentials if not in analyze-only mode
         $adminCredential = $null
         if (-not $AnalyzeOnly -and -not $TestConnectivityOnly) {
-            Write-Host "🔐 Administrator credentials required for server access..." -ForegroundColor Yellow
-            $adminCredential = Get-Credential -Message "Enter Administrator credentials for server access"
+            Write-Host "🔐 Using 3-tier credential strategy (Default -> Vault -> Prompt)..." -ForegroundColor Yellow
+            $adminCredential = Get-OrPromptCredential -Target "CertWebService-MassUpdate" -Username "Administrator" -AutoSave
             if (-not $adminCredential) {
                 throw "Administrator credentials are required for deployment operations"
             }

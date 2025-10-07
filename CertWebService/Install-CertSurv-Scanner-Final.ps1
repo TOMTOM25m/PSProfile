@@ -1,6 +1,9 @@
 #requires -Version 5.1
 #Requires -RunAsAdministrator
 
+# Import FL-CredentialManager für 3-Stufen-Strategie
+Import-Module "$PSScriptRoot\Modules\FL-CredentialManager-v1.0.psm1" -Force
+
 <#
 .SYNOPSIS
     CertSurv Scanner Installation - Final Version v1.0.0
@@ -100,12 +103,12 @@ function Get-AdminCredential {
         return $Credential
     }
     
-    # Option 2: Request credential
+    # Option 2: 3-Stufen-Strategie (Default -> Vault -> Prompt)
     Write-Host "  Server: $ServerName" -ForegroundColor Gray
-    Write-Host "  Suggested: $computerShortName\Administrator" -ForegroundColor Gray
+    Write-Host "  Using intelligent credential strategy..." -ForegroundColor Gray
     Write-Host ""
     
-    $cred = Get-Credential -UserName "$computerShortName\Administrator" -Message "Admin credentials for $ServerName"
+    $cred = Get-OrPromptCredential -Target $ServerName -Username "$computerShortName\Administrator" -AutoSave
     
     if (-not $cred) {
         throw "Credentials required for installation"

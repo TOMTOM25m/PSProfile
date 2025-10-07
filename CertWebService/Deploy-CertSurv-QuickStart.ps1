@@ -1,6 +1,9 @@
 #requires -Version 5.1
 #Requires -RunAsAdministrator
 
+# Import FL-CredentialManager für 3-Stufen-Strategie
+Import-Module "$PSScriptRoot\Modules\FL-CredentialManager-v1.0.psm1" -Force
+
 <#
 .SYNOPSIS
     CertSurv Quick-Start Deployment Script v1.0.0
@@ -215,9 +218,9 @@ function Start-DeploymentPhase {
     $creds = $null
     if (-not $TestMode) {
         Write-Host ""
-        Write-Host "Please provide administrator credentials for remote deployment:" -ForegroundColor Yellow
+        Write-Host "Using 3-tier credential strategy (Default -> Vault -> Prompt):" -ForegroundColor Yellow
         try {
-            $creds = Get-Credential -Message "Administrator Credentials for Server Deployment"
+            $creds = Get-OrPromptCredential -Target "CertSurv-Deployment" -Username "Administrator" -AutoSave
         } catch {
             Write-VersionSpecificHost "Credentials required for deployment. Exiting." -IconType 'error' -ForegroundColor Red
             return
