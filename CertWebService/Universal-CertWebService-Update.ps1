@@ -60,8 +60,8 @@ if (Test-Path $compatibilityScript) {
 }
 
 # Initialize compatibility
-$PSCompat = [PowerShellCompatibility]::new()
-$config = Get-UniversalConfiguration()
+$PSCompat = New-PowerShellCompatibility
+$config = Get-UniversalConfiguration
 
 # Set MaxConcurrent based on PowerShell version if not specified
 if ($MaxConcurrent -eq 0) {
@@ -73,7 +73,7 @@ Write-Host "  UNIVERSAL CERTWEBSERVICE UPDATE" -ForegroundColor Cyan
 Write-Host "  v2.0.0 | $(Get-Date -Format 'dd.MM.yyyy HH:mm')" -ForegroundColor Cyan
 Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "PowerShell: $($PSCompat.GetCompatibilityInfo())" -ForegroundColor Yellow
+Write-Host "PowerShell: $(& $PSCompat.GetCompatibilityInfo)" -ForegroundColor Yellow
 Write-Host "Excel Source: $(Split-Path $ExcelPath -Leaf)" -ForegroundColor Yellow
 Write-Host "Filter: $(if($Filter){"'$Filter'"}else{'None'})" -ForegroundColor Yellow
 Write-Host "Max Concurrent: $MaxConcurrent" -ForegroundColor Yellow

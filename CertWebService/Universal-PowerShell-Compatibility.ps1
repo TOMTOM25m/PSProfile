@@ -4,7 +4,13 @@
     Automatische Erkennung und Kompatibilität zwischen PowerShell 5.1 und 7.x
 
 .DESCRIPTION
-    Dieses Framework erkennt automatisch die PowerShell-Version und wählt die
+    Dieses Framework erkennt automatisch die PowerShefunction Test-PowerShellCompatibility {
+    param(
+        [switch]$Detailed = $false
+    )
+    
+    $PSCompat = New-PowerShellCompatibility
+    $config = Get-UniversalConfiguration()ion und wählt die
     entsprechenden Funktionen/Parameter für optimale Kompatibilität.
     
     Implementiert gemäß PowerShell-Regelwerk Universal v10.0.3
@@ -88,7 +94,7 @@ function Invoke-UniversalWebRequest {
         [string]$Method = 'GET'
     )
     
-    $PSCompat = [PowerShellCompatibility]::new()
+    $PSCompat = New-PowerShellCompatibility
     
     if ($PSCompat.Capabilities['TimeoutSec']) {
         # PowerShell 7.x mit TimeoutSec Parameter
@@ -104,7 +110,7 @@ function New-UniversalExcelConnection {
         [string]$ExcelPath
     )
     
-    $PSCompat = [PowerShellCompatibility]::new()
+    $PSCompat = New-PowerShellCompatibility
     
     if (-not $PSCompat.Capabilities['ExcelCOM']) {
         throw "Excel COM Objects are not available on this platform ($($PSCompat.Platform))"
@@ -139,7 +145,7 @@ function Start-UniversalJob {
         [string]$Name = "UniversalJob"
     )
     
-    $PSCompat = [PowerShellCompatibility]::new()
+    $PSCompat = New-PowerShellCompatibility
     
     if ($PSCompat.IsCore) {
         # PowerShell 7.x - Moderne Job Syntax
@@ -157,7 +163,7 @@ function Test-UniversalConnection {
         [int]$TimeoutSeconds = 10
     )
     
-    $PSCompat = [PowerShellCompatibility]::new()
+    $PSCompat = New-PowerShellCompatibility
     
     if ($PSCompat.IsCore) {
         # PowerShell 7.x - Test-NetConnection mit besserer Performance
@@ -198,7 +204,7 @@ function Test-UniversalConnection {
 # ==========================================
 
 function Get-UniversalConfiguration {
-    $PSCompat = [PowerShellCompatibility]::new()
+    $PSCompat = New-PowerShellCompatibility
     
     $config = @{
         'MaxConcurrentJobs' = if ($PSCompat.IsCore) { 10 } else { 5 }
@@ -223,7 +229,7 @@ function Test-PowerShellCompatibility {
         [switch]$Detailed = $false
     )
     
-    $PSCompat = [PowerShellCompatibility]::new()
+    $PSCompat = New-PowerShellCompatibility
     $config = Get-UniversalConfiguration
     
     Write-Host "==========================================" -ForegroundColor Cyan
@@ -258,7 +264,7 @@ function Test-PowerShellCompatibility {
         
         # Test Web Request
         try {
-            $testResult = Invoke-UniversalWebRequest -Uri "http://www.google.com" -TimeoutSeconds 5
+            $testResult = Invoke-UniversalWebRequest -Uri "https://www.google.com" -TimeoutSeconds 5
             Write-Host "  Web Request Test: PASSED" -ForegroundColor Green
         } catch {
             Write-Host "  Web Request Test: FAILED - $($_.Exception.Message)" -ForegroundColor Red
@@ -266,7 +272,7 @@ function Test-PowerShellCompatibility {
         
         # Test Connection
         try {
-            $testResult = Test-UniversalConnection -ComputerName "www.google.com" -Port 80 -TimeoutSeconds 5
+            $testResult = Test-UniversalConnection -ComputerName "www.google.com" -Port 443 -TimeoutSeconds 5
             Write-Host "  Connection Test: $(if($testResult){'PASSED'}else{'FAILED'})" -ForegroundColor $(if($testResult){'Green'}else{'Red'})
         } catch {
             Write-Host "  Connection Test: FAILED - $($_.Exception.Message)" -ForegroundColor Red
