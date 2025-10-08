@@ -1,0 +1,119 @@
+# =====================================================================
+# PSRemoting Network Share Installation - START HERE
+# =====================================================================
+# Network Share: \\itscmgmt03.srv.meduniwien.ac.at\iso\PSremotingAMServer
+# Version: v1.0.0
+# Regelwerk: v10.0.3
+# =====================================================================
+
+## SCHNELLSTART (3 Schritte)
+
+### SCHRITT 1: Test ausfuehren
+
+powershell -ExecutionPolicy Bypass -File "\\itscmgmt03.srv.meduniwien.ac.at\iso\PSremotingAMServer\Test-NetworkShareInstallation.ps1"
+
+### SCHRITT 2: Installation starten (als Administrator)
+
+\\itscmgmt03.srv.meduniwien.ac.at\iso\PSremotingAMServer\Install-PSRemoting.bat
+
+### SCHRITT 3: Status pruefen
+
+powershell -ExecutionPolicy Bypass -File "\\itscmgmt03.srv.meduniwien.ac.at\iso\PSremotingAMServer\Show-PSRemotingWhitelist.ps1"
+
+## =====================================================================
+## WAS WIRD KONFIGURIERT?
+## =====================================================================
+
+1. WinRM Service aktivieren
+2. PSRemoting aktivieren  
+3. TrustedHosts Whitelist setzen (ITSC020 + itscmgmt03)
+4. Firewall-Regeln erstellen (Port 5985)
+5. Logs erstellen (.\Logs\PSRemoting-Config_YYYY-MM-DD.log)
+
+## =====================================================================
+## WHITELIST (Automatisch konfiguriert)
+## =====================================================================
+
+Nur diese 2 Rechner duerfen PSRemoting verwenden:
+  - ITSC020.cc.meduniwien.ac.at
+  - itscmgmt03.srv.meduniwien.ac.at
+
+## =====================================================================
+## VERFUEGBARE DATEIEN
+## =====================================================================
+
+\\itscmgmt03.srv.meduniwien.ac.at\iso\PSremotingAMServer\
+  |
+  +-- START-HERE.txt                      (Diese Datei)
+  +-- Test-NetworkShareInstallation.ps1   (Pre-Installation Test)
+  |
+  +-- Install-PSRemoting.bat              (EMPFOHLEN - 1-Click Install)
+  +-- Configure-PSRemoting.ps1            (Haupt-Konfiguration)
+  +-- Show-PSRemotingWhitelist.ps1        (Status anzeigen)
+  |
+  +-- QUICK-INSTALL.md                    (Kurzanleitung)
+  +-- README.md                           (Vollstaendige Dokumentation)
+  +-- NETWORK-INSTALLATION.md             (Network Share Details)
+  |
+  +-- Examples\
+      +-- Test-RemoteConnection.ps1       (Verbindungstest)
+
+## =====================================================================
+## TROUBLESHOOTING
+## =====================================================================
+
+Problem: "UNC paths are not supported"
+Loesung: Normaler Fehler von CMD.EXE - Script funktioniert trotzdem!
+
+Problem: "Access Denied"  
+Loesung: Als Administrator ausfuehren
+
+Problem: "Execution Policy"
+Loesung: Script verwendet bereits -ExecutionPolicy Bypass
+
+Problem: "Network Share nicht erreichbar"
+Loesung: 
+  - Pruefe Netzwerk-Verbindung
+  - Teste: Test-Path "\\itscmgmt03.srv.meduniwien.ac.at\iso\PSremotingAMServer"
+
+## =====================================================================
+## REMOTE-INSTALLATION (von ITSC020/itscmgmt03)
+## =====================================================================
+
+Falls du von einem autorisierten Management-Server aus installieren moechtest:
+
+$cred = Get-Credential
+Invoke-Command -ComputerName SERVER01 -Credential $cred -ScriptBlock {
+    & "\\itscmgmt03.srv.meduniwien.ac.at\iso\PSremotingAMServer\Configure-PSRemoting.ps1"
+}
+
+## =====================================================================
+## SUPPORT
+## =====================================================================
+
+Author:  Flecki (Tom) Garnreiter
+Email:   thomas.garnreiter@meduniwien.ac.at
+Version: v1.0.0
+Date:    2025-10-07
+
+## =====================================================================
+## DEPLOYMENT INFORMATION
+## =====================================================================
+
+Last Deployment: 2025-10-07 15:30:00
+Deployed from:   ITSCMGMT03
+Source:          F:\DEV\repositories\PSremotingAmServer
+Regelwerk:       v10.0.3
+
+## =====================================================================
+## SECURITY
+## =====================================================================
+
+- Whitelist: Nur 2 autorisierte Rechner
+- Logging: Vollstaendige Audit-Trail lokal auf Servern
+- Firewall: Automatische Regeln fuer Port 5985
+- Admin: Installation erfordert Admin-Rechte
+
+## =====================================================================
+
+Fuer weitere Details siehe: QUICK-INSTALL.md oder README.md

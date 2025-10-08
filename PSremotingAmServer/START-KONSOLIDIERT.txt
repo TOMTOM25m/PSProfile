@@ -1,0 +1,133 @@
+===============================================================================
+  PSREMOTING INSTALLATION - KONSOLIDIERT
+  Version 1.0.0 | Regelwerk v10.0.3
+===============================================================================
+
+HAUPTDATEI:
+-----------
+  Install-PSRemoting.ps1
+  
+  => Alle Funktionen in EINEM Script!
+
+===============================================================================
+SCHNELLSTART
+===============================================================================
+
+1. PowerShell als Administrator oeffnen
+
+2. Zum Netzlaufwerk wechseln:
+   
+   cd "\\itscmgmt03.srv.meduniwien.ac.at\iso\PSremotingAMServer"
+
+3. Script ausfuehren:
+
+   .\Install-PSRemoting.ps1
+
+===============================================================================
+MODI
+===============================================================================
+
+INTERAKTIV (Standard):
+----------------------
+.\Install-PSRemoting.ps1
+
+=> Zeigt Menue mit folgenden Optionen:
+   [1] Pre-Installation Tests
+   [2] PSRemoting installieren
+   [3] Status anzeigen
+   [4] Log-Datei oeffnen
+   [0] Beenden
+
+
+AUTOMATISCH (Keine Interaktion):
+---------------------------------
+.\Install-PSRemoting.ps1 -Mode Auto
+
+=> Installiert PSRemoting ohne Rueckfragen
+
+
+NUR STATUS:
+-----------
+.\Install-PSRemoting.ps1 -Mode Status
+
+=> Zeigt nur aktuellen PSRemoting-Status
+
+===============================================================================
+WAS WIRD KONFIGURIERT?
+===============================================================================
+
+[+] WinRM Service (Automatic/Running)
+[+] TrustedHosts Whitelist:
+    - ITSC020.cc.meduniwien.ac.at
+    - itscmgmt03.srv.meduniwien.ac.at
+[+] Firewall-Regeln (Port 5985)
+[+] HTTP Listener
+[+] Status & Compliance Check
+
+===============================================================================
+LOGGING
+===============================================================================
+
+Alle Aktionen werden protokolliert:
+
+  .\Logs\PSRemoting-Install_YYYY-MM-DD.log
+
+===============================================================================
+MANAGEMENT-SERVER (ITSC020)
+===============================================================================
+
+Wenn Sie von ITSC020 aus zu anderen Servern verbinden:
+
+1. Server zu TrustedHosts hinzufuegen:
+   
+   .\Add-ServerToTrustedHosts.ps1 -ComputerName "SERVER.srv.meduniwien.ac.at"
+
+2. Verbindung testen:
+   
+   Test-WSMan -ComputerName "SERVER.srv.meduniwien.ac.at"
+
+3. Remote-Session starten:
+   
+   Enter-PSSession -ComputerName "SERVER.srv.meduniwien.ac.at"
+
+===============================================================================
+WEITERE DOKUMENTATION
+===============================================================================
+
+QUICK-START.md               - Schnellstart-Anleitung
+MANAGEMENT-SERVER-GUIDE.md   - Vollstaendige Anleitung fuer ITSC020
+README.md                    - Technische Details
+NETWORK-INSTALLATION.md      - Deployment-Informationen
+
+===============================================================================
+TROUBLESHOOTING
+===============================================================================
+
+"Execution of scripts is disabled"
+=> Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+
+"Access is denied"
+=> Als Administrator ausfuehren!
+
+"WinRM client cannot process the request"
+=> Server zu TrustedHosts hinzufuegen:
+   .\Add-ServerToTrustedHosts.ps1 -ComputerName "SERVER.srv.meduniwien.ac.at"
+
+===============================================================================
+VORTEILE DES KONSOLIDIERTEN SCRIPTS
+===============================================================================
+
+[+] ALLES IN EINEM - Keine separaten Scripts mehr
+[+] INTERAKTIVES MENUE - Einfache Bedienung
+[+] PRE-TESTS - Prueft Voraussetzungen automatisch
+[+] COMPLIANCE CHECK - Zeigt Status und Probleme
+[+] LOGGING - Vollstaendige Protokollierung
+[+] FLEXIBEL - 3 Modi (Interaktiv/Auto/Status)
+
+===============================================================================
+
+Author:  Flecki (Tom) Garnreiter
+Date:    2025-10-07
+Version: 1.0.0
+
+===============================================================================
