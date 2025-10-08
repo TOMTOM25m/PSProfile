@@ -1,0 +1,24 @@
+﻿[2025-10-08 11:16:04] [INFO] === DEPLOYMENT GESTARTET ===
+[2025-10-08 11:16:04] [INFO] Source: F:\DEV\repositories\CertWebService
+[2025-10-08 11:16:04] [INFO] Target: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertWebService
+[2025-10-08 11:16:04] [INFO] Pruefe Netzwerk-Share: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertWebService
+[2025-10-08 11:16:04] [SUCCESS] Netzwerk-Share erreichbar: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertWebService
+[2025-10-08 11:16:04] [SUCCESS] Schreibrechte: OK
+[2025-10-08 11:16:04] [INFO] Erstelle Verzeichnis-Struktur auf Netzwerk-Share...
+[2025-10-08 11:16:04] [INFO] Verzeichnis existiert: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertWebService
+[2025-10-08 11:16:04] [INFO] Verzeichnis existiert: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertWebService\Scripts
+[2025-10-08 11:16:04] [INFO] Verzeichnis existiert: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertWebService\Documentation
+[2025-10-08 11:16:04] [SUCCESS] Verzeichnis erstellt: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertWebService\Batch
+[2025-10-08 11:16:04] [INFO] Kopiere Dateien zum Netzwerk-Share...
+[2025-10-08 11:16:04] [SUCCESS] Datei kopiert: Install-CertWebService.ps1 (18,0 KB)
+[2025-10-08 11:16:04] [SUCCESS] Datei kopiert: Setup-CertWebService-Scheduler.ps1 (20,4 KB)
+[2025-10-08 11:16:04] [INFO] Datei unveraendert: CertWebService.ps1
+[2025-10-08 11:16:04] [SUCCESS] Datei kopiert: ScanCertificates.ps1 (9,4 KB)
+[2025-10-08 11:16:04] [SUCCESS] Datei kopiert: INSTALLATION-SCHEDULER-GUIDE.md
+[2025-10-08 11:16:04] [SUCCESS] Datei kopiert: REGELWERK-UPDATE-SUMMARY.md
+[2025-10-08 11:16:04] [SUCCESS] Datei kopiert: README.md
+[2025-10-08 11:16:04] [SUCCESS] Datei kopiert: Install.bat
+[2025-10-08 11:16:04] [INFO] 8 von 8 Dateien erfolgreich kopiert
+[2025-10-08 11:16:04] [INFO] Erstelle NETWORK-INSTALLATION.md...
+[2025-10-08 11:16:05] [SUCCESS] NETWORK-INSTALLATION.md erstellt: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertWebService\NETWORK-INSTALLATION.md
+[2025-10-08 11:16:05] [SUCCESS] === DEPLOYMENT BEENDET ===
