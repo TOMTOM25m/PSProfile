@@ -1,0 +1,49 @@
+﻿CertWebService v2.7.0 Enterprise Deployment Package
+===================================================
+Deployment Date: 2025-10-09 14:41:06
+Regelwerk: v10.1.0 Compliant
+Repository: Updated and committed (913abd9)
+
+PACKAGE CONTENTS:
+=================
+
+VERSIONS:
+- CertWebService-PS7x-Enhanced.ps1 (v2.6.0) - UTF-8 Enhanced
+- CertWebService-PS51-ASCII.ps1 (v2.7.0) - ASCII Compatible
+
+MANAGEMENT:
+- Dual-Version-Manager.ps1 - Version switching tool
+- Switch-CertWebService.bat - Interactive switcher
+- Simple-Cleanup-CertWebService.ps1 - Server cleanup
+
+DOCUMENTATION:
+- REPOSITORY-UPDATE-v2.7.0.md - Complete deployment guide
+
+DEPLOYMENT TARGETS:
+===================
+ Local Repository: F:\DEV\repositories\CertWebService
+ GitHub Repository: github.com/TOMTOM25m/CertWebService (master)
+ Production Server: itscmgmt03.srv.meduniwien.ac.at (C:\CertWebService)
+✅ Network Share: \\itscmgmt03.srv.meduniwien.ac.at\iso\CertWebService
+
+CURRENT STATUS:
+===============
+ Repository updated and committed
+ PowerShell 5.1 ASCII version active on production
+ No UTF-8 encoding issues
+ Dual version management available
+ Enterprise deployment ready
+
+NEXT STEPS:
+===========
+1. Files are ready for network distribution
+2. Use Dual-Version-Manager.ps1 for version switching
+3. Deploy to additional servers as needed
+4. Monitor service status via management tools
+
+SUPPORT:
+========
+- All versions Regelwerk v10.1.0 compliant
+- Professional cleanup completed
+- Enterprise-grade deployment structure
+- Maximum compatibility achieved
