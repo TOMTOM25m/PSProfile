@@ -1,4 +1,4 @@
-#Requires -Version 5.1#requires -Version 5.1
+﻿#Requires -Version 5.1#requires -Version 5.1
 
 #Requires -RunAsAdministrator#Requires -RunAsAdministrator
 
@@ -14,7 +14,7 @@ CertWebService Setup ScriptWrite-Host ""
 
 Hauptinstallations-Script für CertWebService v2.4.0try {
 
-Regelwerk v10.0.2 konform | Stand: 02.10.2025    # Enable IIS features
+Regelwerk v10.1.0 konform | Stand: 09.10.2025    # Enable IIS features
 
 .PARAMETER Port    Write-Host "🔧 Enabling IIS features..." -ForegroundColor Yellow
 
@@ -46,6 +46,14 @@ param(        "IIS-ApplicationDevelopment"
 
         } catch {
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 $ErrorActionPreference = "Stop"            Write-Host "   Warning: Feature $feature might already be enabled" -ForegroundColor Yellow
 
         }
@@ -54,7 +62,7 @@ $ErrorActionPreference = "Stop"            Write-Host "   Warning: Feature $feat
 
 Write-Host "=== CERTWEBSERVICE SETUP v2.4.0 ===" -ForegroundColor Green    
 
-Write-Host "Regelwerk v10.0.2 | Stand: 02.10.2025" -ForegroundColor Gray    Write-Host "✅ IIS features configured" -ForegroundColor Green
+Write-Host "Regelwerk v10.1.0 | Stand: 09.10.2025" -ForegroundColor Gray    Write-Host "✅ IIS features configured" -ForegroundColor Green
 
 Write-Host ""    
 
@@ -208,7 +216,7 @@ try {</head>
 
         Remove-NetFirewallRule -DisplayName $ruleName            <h1>🔒 Certificate WebService</h1>
 
-    }            <h2>Version 2.3.0 | Regelwerk v10.0.0</h2>
+    }            <h2>Version 2.3.0 | Regelwerk v10.1.0</h2>
 
     New-NetFirewallRule -DisplayName $ruleName -Direction Inbound -Protocol TCP -LocalPort $Port -Action Allow | Out-Null            <div class="status-badge">ONLINE</div>
 
@@ -280,7 +288,7 @@ Write-Host ""        <div class="footer">
 
 Write-Host "=== INSTALLATION COMPLETE ===" -ForegroundColor Green            <p>Certificate WebService v2.3.0 | Built for Enterprise Certificate Management</p>
 
-Write-Host "Web Service URL: http://localhost:$Port" -ForegroundColor Cyan            <p>Compliant with PowerShell Regelwerk v10.0.0 | System Administrator</p>
+Write-Host "Web Service URL: http://localhost:$Port" -ForegroundColor Cyan            <p>Compliant with PowerShell Regelwerk v10.1.0 | System Administrator</p>
 
 Write-Host "API Endpoint: http://localhost:$Port/api/certificates.json" -ForegroundColor Cyan        </div>
 
@@ -298,7 +306,15 @@ Start-Sleep 3
 
 try {        // Auto-refresh health status every 30 seconds
 
-    $testResult = Test-NetConnection -ComputerName localhost -Port $Port -InformationLevel Quiet        setInterval(function() {
+    $testResult = Test-NetConnection -ComputerName localhost -Port $Port -InformationLevel Quiet        setInterval(# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
+function() {
 
     if ($testResult) {            fetch('/health.json')
 

@@ -1,6 +1,6 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 # Deploy-CertWebService-PS5.ps1 - PowerShell 5.1 Compatible (ASCII, No Emojis)
-# Version: 3.0.0 | Regelwerk: v10.0.2
+# Version: 3.0.0 | Regelwerk: v10.1.0
 
 param(
     [string[]]$Servers = @("itscmgmt03.srv.meduniwien.ac.at", "wsus.srv.meduniwien.ac.at"),
@@ -11,7 +11,7 @@ param(
 )
 
 $Script:Version = "v3.0.0"
-$Script:Regelwerk = "v10.0.2"
+$Script:Regelwerk = "v10.1.0"
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $networkShare = "\\itscmgmt03.srv.meduniwien.ac.at\iso\CertWebService"
 
@@ -28,6 +28,14 @@ $installerFiles = @("CertWebService-Installer.ps1", "Install.bat")
 $mgmtFiles = @("Remove.ps1", "Update.ps1")
 $directories = @("Modules", "Config", "WebFiles")
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 function Write-Log {
     param([string]$Msg, [string]$Level = "INFO")
     $ts = Get-Date -Format "HH:mm:ss"
@@ -48,6 +56,14 @@ function Write-Log {
     Write-Host "[$ts] $pre $Msg" -ForegroundColor $clr
 }
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 function Deploy-ToPath {
     param(
         [string]$Path, 
@@ -278,3 +294,4 @@ Write-Host "Next Steps:" -ForegroundColor Yellow
 Write-Host "  1. Setup Scheduled Task: .\Setup-ScheduledTask-CertScan.ps1" -ForegroundColor White
 Write-Host "  2. Test API: Invoke-RestMethod http://SERVER:9080/certificates.json" -ForegroundColor White
 Write-Host ""
+

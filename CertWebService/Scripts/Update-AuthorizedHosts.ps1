@@ -1,11 +1,11 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 
 <#
 .SYNOPSIS
 Update-AuthorizedHosts.ps1 - Dynamische Authorized Hosts Konfiguration
 .DESCRIPTION
 Aktualisiert die AllowedHosts in den Konfigurationsdateien mit dem aktuellen System
-Regelwerk v10.0.2 konform | Stand: 02.10.2025
+Regelwerk v10.1.0 konform | Stand: 09.10.2025
 #>
 
 param(
@@ -14,7 +14,7 @@ param(
 )
 
 Write-Host "=== UPDATE AUTHORIZED HOSTS ===" -ForegroundColor Green
-Write-Host "Regelwerk v10.0.2 | Stand: 02.10.2025" -ForegroundColor Gray
+Write-Host "Regelwerk v10.1.0 | Stand: 09.10.2025" -ForegroundColor Gray
 Write-Host ""
 
 # Sammle System-Informationen
@@ -70,3 +70,4 @@ if (Test-Path $CertSurvConfigPath) {
 
 Write-Host "`n Authorized Hosts Update abgeschlossen" -ForegroundColor Green
 Write-Host "Alle Standard-Hosts (localhost, FQDN, etc.) sind jetzt konfiguriert" -ForegroundColor White
+

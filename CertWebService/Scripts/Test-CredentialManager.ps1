@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 <#
 .SYNOPSIS
     Credential Manager Test & Management Tool
@@ -11,7 +11,7 @@
     
 .NOTES
     Version: 1.0.0
-    Regelwerk: v10.0.2
+    Regelwerk: v10.1.0
 #>
 
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Definition
@@ -21,7 +21,7 @@ function Show-Menu {
     Clear-Host
     Write-Host "╔══════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
     Write-Host "║      CertWebService Credential Manager v1.0.0           ║" -ForegroundColor White
-    Write-Host "║              Regelwerk v10.0.2                           ║" -ForegroundColor Gray
+    Write-Host "║              Regelwerk v10.1.0                           ║" -ForegroundColor Gray
     Write-Host "╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "  1. ➕ Add/Update Credential" -ForegroundColor Green
@@ -256,3 +256,4 @@ do {
         Read-Host "Press Enter to continue"
     }
 } while ($choice -ne '0')
+

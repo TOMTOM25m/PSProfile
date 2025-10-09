@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 
 <#
@@ -33,7 +33,7 @@
     3.0.0
 
 .AUTHOR
-    PowerShell Regelwerk Universal v10.0.3
+    PowerShell Regelwerk Universal v10.1.0
 
 .EXAMPLE
     .\Mass-Excel-Update-SMB-PSRemoting.ps1

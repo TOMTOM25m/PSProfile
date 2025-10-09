@@ -1,8 +1,8 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 
 <#
 .SYNOPSIS
-    Test der neuen Regelwerk v10.0.2 §19 Hilfsfunktionen
+    Test der neuen Regelwerk v10.1.0 §19 Hilfsfunktionen
 
 .DESCRIPTION
     Demonstriert die neuen Universal Configuration Helper für PowerShell 5.1/7.x Kompatibilität
@@ -11,7 +11,7 @@
     1.0.0
 
 .RULEBOOK
-    v10.0.2
+    v10.1.0
 #>
 
 # Import des aktualisierten Moduls
@@ -19,7 +19,7 @@ Import-Module ".\Modules\FL-PowerShell-VersionCompatibility-v3.1.psm1" -Force
 
 Write-Host ""
 Write-Host "=============================================" -ForegroundColor Cyan
-Write-Host "  REGELWERK v10.0.2 - §19 HILFSFUNKTIONEN" -ForegroundColor Cyan  
+Write-Host "  REGELWERK v10.1.0 - §19 HILFSFUNKTIONEN" -ForegroundColor Cyan  
 Write-Host "  Universal Configuration Helper Functions" -ForegroundColor Cyan
 Write-Host "=============================================" -ForegroundColor Cyan
 Write-Host ""
@@ -80,7 +80,7 @@ Write-Host "Empty Array: '$empty'" -ForegroundColor Yellow
 Write-Host "Non-Existent Array: $nonExistentArray" -ForegroundColor Yellow
 
 Write-Host ""
-Write-Host "=== Regelwerk v10.0.2 Demonstration ===" -ForegroundColor White
+Write-Host "=== Regelwerk v10.1.0 Demonstration ===" -ForegroundColor White
 
 # Demonstration der §19.4 Best Practices
 Write-Host "[DEMO] PowerShell Version Detection:" -ForegroundColor Cyan
@@ -103,7 +103,7 @@ Write-Host "  From Email (Config): $fromEmail" -ForegroundColor Green
 Write-Host "  To Email (Default): $toEmail" -ForegroundColor Yellow
 
 Write-Host ""
-Write-Host "[SUCCESS] Regelwerk v10.0.2 §19 Standards erfolgreich implementiert!" -ForegroundColor Green
+Write-Host "[SUCCESS] Regelwerk v10.1.0 §19 Standards erfolgreich implementiert!" -ForegroundColor Green
 Write-Host "[INFO] Universal PowerShell 5.1/7.x Kompatibilität gewährleistet" -ForegroundColor Cyan
 
 Write-Host ""

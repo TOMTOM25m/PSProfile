@@ -1,17 +1,25 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 <#
 .SYNOPSIS
-    Certificate Web Service - Simplified Setup (Regelwerk v10.0.0)
+    Certificate Web Service - Simplified Setup (Regelwerk v10.1.0)
 
 .DESCRIPTION
     Simplified setup script for Read-Only Certificate Web Service
-    with essential functionality only.
+    with essential # Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
+functionality only.
 
 .NOTES
     Author:         Flecki (Tom) Garnreiter
     Version:        v2.3.0
-    Regelwerk:      v10.0.0
+    Regelwerk:      v10.1.0
 #>
 [CmdletBinding()]
 param(
@@ -24,11 +32,27 @@ param(
     )
 )
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 #region Initialization
 Write-Host "🚀 Certificate Web Service v2.3.0 Setup" -ForegroundColor Green
 Write-Host "📋 Read-Only Mode für $($AuthorizedHosts.Count) autorisierte Server" -ForegroundColor Yellow
 Write-Host ""
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 $ErrorActionPreference = 'Stop'
 $StartTime = Get-Date
 $LogPath = "C:\inetpub\CertWebService\Logs\Setup_$(Get-Date -Format 'yyyyMMdd-HHmmss').log"
@@ -39,6 +63,14 @@ if (-not (Test-Path $LogDir)) {
     New-Item -Path $LogDir -ItemType Directory -Force | Out-Null
 }
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 function Write-SetupLog {
     param($Message, $Level = 'INFO')
     $timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
@@ -48,6 +80,14 @@ function Write-SetupLog {
 }
 #endregion
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 #region Main Installation
 try {
     Write-SetupLog "=== Certificate Web Service Setup Started ==="

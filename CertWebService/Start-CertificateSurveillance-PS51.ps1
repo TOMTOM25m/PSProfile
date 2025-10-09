@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 
 <#
 .SYNOPSIS
@@ -24,7 +24,7 @@
     1.0.0
 
 .RULEBOOK
-    v10.0.2
+    v10.1.0
 #>
 
 param(
@@ -49,7 +49,7 @@ param(
 
 # Script Information
 $Script:Version = "v1.0.0"
-$Script:RulebookVersion = "v10.0.2"
+$Script:RulebookVersion = "v10.1.0"
 $Script:StartTime = Get-Date
 
 # ASCII Art Header (PS 5.1 Compatible)
@@ -450,3 +450,4 @@ try {
 }
 
 #endregion
+

@@ -1,11 +1,11 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 
 <#
 .SYNOPSIS
 CertWebService Path Manager - Zentrale Pfadverwaltung
 .DESCRIPTION
 L?dt alle Pfade aus der zentralen Config-CertWebService.json und stellt sie allen Scripts zur Verf?gung
-Regelwerk v10.0.2 konform | Stand: 02.10.2025
+Regelwerk v10.1.0 konform | Stand: 09.10.2025
 .EXAMPLE
 $Config = Get-CertWebServiceConfig
 Write-Host "Base Directory: $($Config.Paths.BaseDirectory)"
@@ -134,7 +134,7 @@ Export-ModuleMember -Function Get-CertWebServiceConfig, Get-CertWebServicePath, 
 # Wenn direkt ausgef?hrt, zeige Konfiguration
 if ($MyInvocation.InvocationName -ne '.') {
     Write-Host "=== CERTWEBSERVICE PFAD-MANAGER ===" -ForegroundColor Green
-    Write-Host "Regelwerk v10.0.2 | Stand: 02.10.2025" -ForegroundColor Gray
+    Write-Host "Regelwerk v10.1.0 | Stand: 09.10.2025" -ForegroundColor Gray
     Write-Host ""
     
     $config = Get-CertWebServiceConfig
@@ -164,3 +164,4 @@ if ($MyInvocation.InvocationName -ne '.') {
         Write-Host " Pfad-Manager bereit!" -ForegroundColor Green
     }
 }
+

@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 
 <#
@@ -19,7 +19,7 @@
     1.0.0
 
 .RULEBOOK
-    v10.0.2
+    v10.1.0
 #>
 
 param(
@@ -40,7 +40,7 @@ param(
 # Import Compatibility Module
 Import-Module ".\Modules\FL-PowerShell-VersionCompatibility-v3.1.psm1" -Force
 
-Write-VersionSpecificHeader "CertSurv Test Deployment - Excel Server Selection" -Version "v1.0.0 | Regelwerk: v10.0.2" -Color Cyan
+Write-VersionSpecificHeader "CertSurv Test Deployment - Excel Server Selection" -Version "v1.0.0 | Regelwerk: v10.1.0" -Color Cyan
 
 # Konfiguration
 $Config = @{
@@ -559,3 +559,4 @@ try {
 }
 
 #endregion
+

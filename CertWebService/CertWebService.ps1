@@ -1,11 +1,11 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 
 <#
 .SYNOPSIS
 CertWebService - HTTP Web Service v2.5.0
 .DESCRIPTION
 HTTP Web-Service fuer Certificate Monitoring mit ECHTEN Windows Certificate Store Daten
-Regelwerk v10.0.3 | Stand: 07.10.2025
+Regelwerk v10.1.0 | Stand: 09.10.2025
 
 FEATURES v2.5.0:
 - Echte Zertifikatsabfrage aus Windows Certificate Store
@@ -194,7 +194,7 @@ function Get-HTMLDashboard {
     <div class="header">
     <h1>Certificate Surveillance Dashboard v2.5.0</h1>
     <p>MedUni Wien | WindowsServer-Infrastruktur | Port: $Port</p>
-    <p>Stand: $($data.timestamp) | Regelwerk v10.0.3 | $($data.summary.total) Certificates</p>
+    <p>Stand: $($data.timestamp) | Regelwerk v10.1.0 | $($data.summary.total) Certificates</p>
     </div>
     
     <div class="stats">
@@ -274,7 +274,7 @@ function Get-HTMLDashboard {
     </div>
     
     <div class="footer">
-        <p>CertWebService v2.5.0 | Regelwerk v10.0.3 | MedUni Wien IT-Security</p>
+        <p>CertWebService v2.5.0 | Regelwerk v10.1.0 | MedUni Wien IT-Security</p>
     <p>API: <a href="/certificates.json">/certificates.json</a> | Health: <a href="/health.json">/health.json</a></p>
     <p style="font-size:0.85em; margin-top:10px;">Certificate Stores: LocalMachine\My, LocalMachine\WebHosting, CurrentUser\My</p>
     </div>
@@ -423,7 +423,7 @@ if ($ServiceMode) {
     Write-Log "=== CERTWEBSERVICE v2.5.0 GESTARTET (SERVICE MODE) ===" "INFO"
 } else {
     Write-Host "=== CERTWEBSERVICE v2.5.0 GESTARTET ===" -ForegroundColor Green
-    Write-Host "Regelwerk v10.0.3 | Stand: 07.10.2025" -ForegroundColor Gray
+    Write-Host "Regelwerk v10.1.0 | Stand: 09.10.2025" -ForegroundColor Gray
     Write-Host "Reading REAL certificates from Windows Certificate Store" -ForegroundColor Cyan
     Write-Host ""
 }

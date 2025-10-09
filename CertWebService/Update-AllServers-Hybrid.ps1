@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 
 <#
@@ -17,7 +17,7 @@
     2.4.0
 
 .RULEBOOK
-    v10.0.0
+    v10.1.0
 #>
 
 param(
@@ -41,7 +41,7 @@ param(
 )
 
 $Script:Version = "v2.4.0"
-$Script:RulebookVersion = "v10.0.0"
+$Script:RulebookVersion = "v10.1.0"
 $Script:UpdateDate = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
 # Import PowerShell Version Compatibility Module v3.0

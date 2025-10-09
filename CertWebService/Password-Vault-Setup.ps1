@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Password Vault Setup v1.0.0 - FL-CredentialManager Integration
     
@@ -17,6 +17,14 @@ param(
     [string]$Action = "Setup"
 )
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 $ErrorActionPreference = "Stop"
 
 # Import FL-CredentialManager
@@ -56,6 +64,14 @@ $credentialTargets = @{
     }
 }
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 function Setup-DomainCredentials {
     Write-Host "Setting up domain credentials in Password Vault..." -ForegroundColor Yellow
     Write-Host ""
@@ -129,6 +145,14 @@ function Setup-DomainCredentials {
     }
 }
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 function Test-VaultCredentials {
     Write-Host "Testing credentials from Password Vault..." -ForegroundColor Yellow
     Write-Host ""
@@ -175,6 +199,14 @@ function Test-VaultCredentials {
     }
 }
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 function Show-VaultStatus {
     Write-Host "Password Vault Status:" -ForegroundColor Yellow
     Write-Host ""

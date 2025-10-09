@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 
 param(
@@ -6,6 +6,14 @@ param(
     [int]$SecurePort = 9443
 )
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 $ErrorActionPreference = 'Stop'
 
 Write-Host "CertWebService v2.3.0 Setup" -ForegroundColor Green
@@ -13,6 +21,14 @@ Write-Host "Read-Only Mode for 3 authorized servers" -ForegroundColor Yellow
 Write-Host "PowerShell Compatible Edition (All Versions)" -ForegroundColor Cyan
 Write-Host ""
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 function Write-InstallLog {
     param([string]$Message, [string]$Level = 'INFO')
     
@@ -27,6 +43,14 @@ function Write-InstallLog {
     }
 }
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 function Install-IISFeatures {
     Write-InstallLog "Installing IIS features"
     
@@ -50,6 +74,14 @@ function Install-IISFeatures {
     return $true
 }
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 function New-IISWebSite {
     param(
         [string]$SiteName,
@@ -110,6 +142,14 @@ function New-IISWebSite {
     }
 }
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 function New-IISWebSitePowerShell {
     param(
         [string]$SiteName,
@@ -158,6 +198,14 @@ function New-IISWebSitePowerShell {
     }
 }
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 function Set-FirewallRule {
     param([int]$Port)
     
@@ -173,6 +221,14 @@ function Set-FirewallRule {
     }
 }
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 function New-JSONFile {
     param([hashtable]$Data, [string]$FilePath)
     

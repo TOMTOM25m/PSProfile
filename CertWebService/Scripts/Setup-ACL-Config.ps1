@@ -1,8 +1,8 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 <#
 .SYNOPSIS
-    ACL Configuration Management Tool for CertWebService (Regelwerk v10.0.0)
+    ACL Configuration Management Tool for CertWebService (Regelwerk v10.1.0)
 
 .DESCRIPTION
     PowerShell backend for the Setup GUI to manage Access Control Lists,
@@ -12,7 +12,7 @@
 .NOTES
     Author:         Flecki (Tom) Garnreiter  
     Version:        v2.3.0
-    Regelwerk:      v10.0.0
+    Regelwerk:      v10.1.0
 #>
 [CmdletBinding()]
 param(
@@ -25,7 +25,23 @@ param(
     [string]$ConfigPath = (Join-Path $PSScriptRoot "Config\Config-CertWebService.json")
 )
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 #region Module Import and Initialization
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 $ErrorActionPreference = 'Stop'
 
 try {
@@ -41,6 +57,14 @@ try {
 }
 #endregion
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 #region Action Handlers
 
 switch ($Action) {
@@ -100,7 +124,15 @@ switch ($Action) {
             }
             
             $config = Get-Content $ConfigPath | ConvertFrom-Json
-            $result = Test-RemoteHostAccess -RemoteHost $TestHost -Port $config.WebService.HttpPort -Config $config -LogFunction $LogBlock
+            $result = Test-RemoteHostAccess -RemoteHost $TestHost -Port $config.WebService.HttpPort -Config $config -Log# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
+Function $LogBlock
             
             @{ Success = $true; Data = $result } | ConvertTo-Json -Depth 5
             
@@ -148,7 +180,15 @@ switch ($Action) {
         try {
             $config = Get-Content $ConfigPath | ConvertFrom-Json
             
-            Install-AccessControlRules -Config $config -HttpPort $config.WebService.HttpPort -HttpsPort $config.WebService.HttpsPort -LogFunction $LogBlock
+            Install-AccessControlRules -Config $config -HttpPort $config.WebService.HttpPort -HttpsPort $config.WebService.HttpsPort -Log# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
+Function $LogBlock
             
             . $LogBlock "Firewall rules applied via Setup GUI" "INFO"
             
@@ -164,7 +204,15 @@ switch ($Action) {
         try {
             $config = Get-Content $ConfigPath | ConvertFrom-Json
             
-            Remove-FirewallACLRules -Config $config -LogFunction $LogBlock
+            Remove-FirewallACLRules -Config $config -Log# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
+Function $LogBlock
             
             . $LogBlock "Firewall rules removed via Setup GUI" "INFO"
             

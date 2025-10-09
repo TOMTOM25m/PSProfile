@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Universal PowerShell Compatibility Framework v1.0.0
     Automatische Erkennung und Kompatibilität zwischen PowerShell 5.1 und 7.x
@@ -13,7 +13,7 @@
     $config = Get-UniversalConfiguration()ion und wählt die
     entsprechenden Funktionen/Parameter für optimale Kompatibilität.
     
-    Implementiert gemäß PowerShell-Regelwerk Universal v10.0.3
+    Implementiert gemäß PowerShell-Regelwerk Universal v10.1.0
     
     § 15 PowerShell Version Compatibility Management
     § 15.1 Automatische Versionserkennung

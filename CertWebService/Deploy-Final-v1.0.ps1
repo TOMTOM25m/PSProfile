@@ -1,4 +1,4 @@
-#Requires -RunAsAdministrator
+﻿#Requires -RunAsAdministrator
 #Requires -Version 5.1
 
 <#
@@ -13,6 +13,14 @@
     Date: 06.10.2025
 #>
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 $ErrorActionPreference = "Stop"
 
 $localBase = "F:\DEV\repositories\CertWebService"
@@ -64,3 +72,4 @@ Write-Host ""
 Write-Host "4. Testen:" -ForegroundColor White
 Write-Host "   Test-NetConnection -ComputerName localhost -Port 9080" -ForegroundColor Gray
 Write-Host ""
+

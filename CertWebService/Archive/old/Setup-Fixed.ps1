@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 
 Write-Host "🚀 Certificate WebService Setup v2.3.0 (FIXED)" -ForegroundColor Cyan
@@ -103,7 +103,7 @@ try {
     <div class="container">
         <div class="header">
             <h1>🔒 Certificate WebService</h1>
-            <h2>Version 2.3.0 | Regelwerk v10.0.0</h2>
+            <h2>Version 2.3.0 | Regelwerk v10.1.0</h2>
             <div class="status-badge">ONLINE</div>
         </div>
         
@@ -139,7 +139,7 @@ try {
         
         <div class="footer">
             <p>Certificate WebService v2.3.0 | Built for Enterprise Certificate Management</p>
-            <p>Compliant with PowerShell Regelwerk v10.0.0 | System Administrator</p>
+            <p>Compliant with PowerShell Regelwerk v10.1.0 | System Administrator</p>
         </div>
     </div>
     
@@ -148,7 +148,15 @@ try {
         document.body.innerHTML = document.body.innerHTML.replace(/SERVER_NAME/g, window.location.hostname || 'localhost');
         
         // Auto-refresh health status every 30 seconds
-        setInterval(function() {
+        setInterval(# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
+function() {
             fetch('/health.json')
                 .then(response => response.json())
                 .then(data => {

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Universal CertWebService Update Deployment v2.0.0
     Smart PowerShell 5.1/7.x Compatible Update System
@@ -7,7 +7,7 @@
     Universelles Update-System das automatisch zwischen PowerShell 5.1 und 7.x 
     unterscheidet und die optimalen Funktionen verwendet.
     
-    Implementiert gemäß PowerShell-Regelwerk Universal v10.0.3:
+    Implementiert gemäß PowerShell-Regelwerk Universal v10.1.0:
     § 15 PowerShell Version Compatibility Management
     § 16 Automated Update Deployment
     § 17 Excel Integration Standards

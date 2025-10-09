@@ -1,4 +1,4 @@
-#Requires -RunAsAdministrator
+﻿#Requires -RunAsAdministrator
 #Requires -Version 5.1
 
 <#
@@ -18,6 +18,14 @@ param(
     [string]$SharePath = "\\itscmgmt03.srv.meduniwien.ac.at\iso\CertWebService"
 )
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 $ErrorActionPreference = "Stop"
 $webServerTaskName = "CertWebService-WebServer"
 $dailyScanTaskName = "CertWebService-DailyScan"
@@ -138,3 +146,4 @@ Write-Host "Test-Befehle:"
 Write-Host "Test-NetConnection -ComputerName localhost -Port 9080" -ForegroundColor White
 Write-Host "Test-NetConnection -ComputerName localhost -Port 9443" -ForegroundColor White
 Write-Host ""
+

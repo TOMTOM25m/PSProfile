@@ -1,11 +1,11 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 
 <#
 .SYNOPSIS
 Manage-CertWebService-Tasks.ps1 - Scheduled Tasks Management
 .DESCRIPTION
 Verwaltet die CertWebService Scheduled Tasks (Web-Service + Daily Scan)
-Regelwerk v10.0.2 konform | Stand: 02.10.2025
+Regelwerk v10.1.0 konform | Stand: 09.10.2025
 .PARAMETER Action
 Aktion: Status, Start, Stop, Restart, Remove
 #>
@@ -19,7 +19,7 @@ $webServiceTask = "CertWebService-WebServer"
 $dailyScanTask = "CertWebService-DailyScan"
 
 Write-Host "=== CERTWEBSERVICE SCHEDULED TASKS MANAGEMENT ===" -ForegroundColor Green
-Write-Host "Regelwerk v10.0.2 | Stand: 02.10.2025" -ForegroundColor Gray
+Write-Host "Regelwerk v10.1.0 | Stand: 09.10.2025" -ForegroundColor Gray
 Write-Host ""
 
 function Get-TaskStatus {
@@ -139,3 +139,4 @@ Write-Host "  .\Manage-CertWebService-Tasks.ps1 -Action Start    # Tasks starten
 Write-Host "  .\Manage-CertWebService-Tasks.ps1 -Action Stop     # Tasks stoppen" -ForegroundColor White
 Write-Host "  .\Manage-CertWebService-Tasks.ps1 -Action Restart  # Tasks neustarten" -ForegroundColor White
 Write-Host "  .\Manage-CertWebService-Tasks.ps1 -Action Remove   # Tasks entfernen" -ForegroundColor White
+

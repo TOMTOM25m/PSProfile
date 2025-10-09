@@ -1,6 +1,6 @@
-# PowerShell-Regelwerk Universal v10.0.4
+# PowerShell-Regelwerk Universal v10.1.0
 
-**Enterprise COMPLETE Edition - ALL Paragraphs Restored**
+**Enterprise COMPLETE Edition - ALL Paragraphs Restored + MUW Standards**
 
 ---
 
@@ -8,7 +8,7 @@
 
 | **Attribute** | **Value** |
 |---------------|-----------|
-| **Version** | v10.0.4 |
+| **Version** | v10.1.0 |
 | **Status** | Enterprise COMPLETE |
 | **Release Date** | 2025-10-09 |
 | **Author** | © Flecki (Tom) Garnreiter |
@@ -21,15 +21,29 @@
 
 ## 🎯 Executive Summary
 
-**[DE]** Das PowerShell-Regelwerk Universal v10.0.4 Enterprise COMPLETE Edition stellt die vollständige Wiederherstellung ALLER Basis-Paragraphen (§1-§15) dar, die in v10.0.1-v10.0.3 versehentlich fehlten. Mit 19 umfassenden Paragraphen definiert es moderne, robuste und wartbare PowerShell-Entwicklung für Unternehmensumgebungen. Diese Version kombiniert die bewährten Basis-Standards aus v10.0.0 mit den erweiterten Enterprise-Features aus v10.0.3.
+**[DE]** Das PowerShell-Regelwerk Universal v10.1.0 Enterprise COMPLETE Edition stellt die vollständige Wiederherstellung ALLER Basis-Paragraphen (§1-§15) dar, die in v10.0.1-v10.0.3 versehentlich fehlten, PLUS 7 neue MUW Enterprise Standards (§20-§26). Mit 26 umfassenden Paragraphen definiert es moderne, robuste und wartbare PowerShell-Entwicklung für Unternehmensumgebungen. Diese Version kombiniert die bewährten Basis-Standards aus v10.0.0 mit den erweiterten Enterprise-Features aus v10.0.3 und den neuen MUW-spezifischen Standards.
 
-**[EN]** The PowerShell-Regelwerk Universal v10.0.4 Enterprise COMPLETE Edition represents the complete restoration of ALL foundation paragraphs (§1-§15) that were inadvertently missing in v10.0.1-v10.0.3. With 19 comprehensive paragraphs, it defines modern, robust, and maintainable PowerShell development for enterprise environments. This version combines the proven foundation standards from v10.0.0 with the extended enterprise features from v10.0.3.
+**[EN]** The PowerShell-Regelwerk Universal v10.1.0 Enterprise COMPLETE Edition represents the complete restoration of ALL foundation paragraphs (§1-§15) that were inadvertently missing in v10.0.1-v10.0.3, PLUS 7 new MUW Enterprise Standards (§20-§26). With 26 comprehensive paragraphs, it defines modern, robust, and maintainable PowerShell development for enterprise environments. This version combines the proven foundation standards from v10.0.0 with the extended enterprise features from v10.0.3 and the new MUW-specific standards.
 
 ---
 
-## 🆕 Version 10.0.4 Änderungen / Changes
+## 🆕 Version 10.1.0 Änderungen / Changes
 
-### 🔴 CRITICAL FIX: Fehlende Paragraphen wiederhergestellt (v10.0.4)
+### 🚀 MAJOR ENHANCEMENT: MUW Enterprise Standards hinzugefügt (v10.1.0)
+
+**NEU in v10.1.0:**
+
+- ✅ 7 neue MUW Enterprise Standards (§20-§26) hinzugefügt
+- ✅ Teil D: MUW Enterprise Standards komplett implementiert
+- ✅ Config Version Control mit -Versionscontrol Parameter
+- ✅ Advanced GUI Standards (bilingual, browse buttons, progress bars)
+- ✅ Windows Event Log Integration für SIEM-Kompatibilität
+- ✅ Log Archiving & Rotation (30/90-Tage Retention, 7-Zip Support)
+- ✅ Enhanced Password Management (Credential Manager + SMTP Base64 Exception)
+- ✅ Environment Workflow Optimization (DEV/PROD spezifische Workflows)
+- ✅ MUW Compliance Standards (Datumsformate, Versionierung, Parameter-Externalisierung)
+
+### 🔴 CRITICAL FIX: Fehlende Paragraphen wiederhergestellt (v10.0.4 Basis)
 
 **PROBLEM in v10.0.1-v10.0.3:**
 
@@ -38,12 +52,13 @@
 - ❌ TOC-Links zeigten ins Leere (broken anchors)
 - ❌ Nur §11, §14, §16-§19 waren vorhanden (6 von 19 Paragraphen)
 
-**LÖSUNG in v10.0.4 COMPLETE:**
+**LÖSUNG in v10.1.0 COMPLETE:**
 
-- ✅ ALLE §1-§19 Paragraphen sind jetzt vollständig vorhanden
+- ✅ ALLE §1-§26 Paragraphen sind jetzt vollständig vorhanden (26 statt 19!)
 - ✅ Basis-Paragraphen aus v10.0.0 restauriert (§1-§10, §12-§13, §15)
 - ✅ Spezial-Paragraphen aus v10.0.3 beibehalten (§11 Updated, §14 NEU, §16-§19 NEU)
-- ✅ Korrekte Reihenfolge etabliert: Teil A (§1-§9), Teil B (§10-§15), Teil C (§16-§19)
+- ✅ MUW Enterprise Standards hinzugefügt (§20-§26 NEU)
+- ✅ Korrekte Reihenfolge etabliert: Teil A (§1-§9), Teil B (§10-§15), Teil C (§16-§19), Teil D (§20-§26)
 - ✅ Alle TOC-Links funktionieren wieder
 
 ### Wiederhergestellte Basis-Paragraphen (aus v10.0.0)
@@ -70,6 +85,16 @@
 - **§17: Excel Integration (NEW v10.0.1)** - COM Operations, Column Mappings
 - **§18: Certificate Surveillance (NEW v10.0.1)** - CertWebService Standards
 - **§19: PS-Versionserkennung (NEW v10.0.2)** - Encoding Strategy (PS5.1 ASCII, PS7+ UTF-8 BOM)
+
+### MUW Enterprise Standards (NEW v10.1.0)
+
+- **§20: Config Version Control** - Automatic version sync, -Versionscontrol parameter
+- **§21: Advanced GUI Standards** - Bilingual support, browse buttons, progress bars
+- **§22: Windows Event Log Integration** - SIEM integration, dedicated event sources
+- **§23: Log Archiving & Rotation** - 30/90-day retention, 7-Zip compression
+- **§24: Enhanced Password Management** - Credential Manager, Base64 SMTP exception
+- **§25: Environment Workflow Optimization** - DEV/PROD workflows, file dialogs
+- **§26: MUW Compliance Standards** - Date formats, versioning, external parameters
 
 ---
 
@@ -126,6 +151,16 @@
 - **[§17: Excel Integration](#§17-excel-integration--excel-integration)**
 - **[§18: Certificate Surveillance](#§18-certificate-surveillance--zertifikatsüberwachung)**
 - **[§19: PowerShell-Versionserkennung](#§19-powershell-versionserkennung-und-kompatibilitätsfunktionen-mandatory)**
+
+### Teil D: MUW Enterprise Standards (v10.1.0) / MUW Enterprise Standards
+
+- **[§20: Config Version Control](#§20-config-version-control--konfigurationsversionskontrolle)**
+- **[§21: Advanced GUI Standards](#§21-advanced-gui-standards--erweiterte-gui-standards)**
+- **[§22: Windows Event Log Integration](#§22-windows-event-log-integration--windows-ereignisprotokoll-integration)**
+- **[§23: Log Archiving & Rotation](#§23-log-archiving--rotation--log-archivierung--rotation)**
+- **[§24: Enhanced Password Management](#§24-enhanced-password-management--erweiterte-passwort-verwaltung)**
+- **[§25: Environment Workflow Optimization](#§25-environment-workflow-optimization--umgebungs-workflow-optimierung)**
+- **[§26: MUW Compliance Standards](#§26-muw-compliance-standards--muw-compliance-standards)**
 
 ---
 
@@ -1345,6 +1380,13 @@ function Sync-NetworkDirectory {
 | **Email Standards MedUni** | ❌ | **🆕 NEW** | ✅ | **MANDATORY** |
 | **Excel Integration** | ❌ | **🆕 NEW** | ✅ | **MANDATORY** |
 | **Certificate Surveillance** | ❌ | **🆕 NEW** | ✅ | **ENTERPRISE** |
+| **§20: Config Version Control** | ❌ | ❌ | ❌ | **🆕 v10.1.0** |
+| **§21: Advanced GUI Standards** | ❌ | ❌ | ❌ | **🆕 v10.1.0** |
+| **§22: Event Log Integration** | ❌ | ❌ | ❌ | **🆕 v10.1.0** |
+| **§23: Log Archiving & Rotation** | ❌ | ❌ | ❌ | **🆕 v10.1.0** |
+| **§24: Enhanced Password Mgmt** | ❌ | ❌ | ❌ | **🆕 v10.1.0** |
+| **§25: Environment Optimization** | ❌ | ❌ | ❌ | **🆕 v10.1.0** |
+| **§26: MUW Compliance Standards** | ❌ | ❌ | ❌ | **🆕 v10.1.0** |
 
 ---
 
@@ -1408,7 +1450,17 @@ function Update-ToRegelwerk1001 {
 
 ---
 
-## 📜 Changelog v10.0.3
+## 📜 Changelog v10.1.0
+
+### New Features (v10.1.0) - MAJOR ENHANCEMENT
+
+- **🔧 §20:** Config Version Control with -Versionscontrol parameter
+- **🎨 §21:** Advanced GUI Standards (bilingual, browse buttons, progress bars)
+- **📊 §22:** Windows Event Log Integration for SIEM compatibility
+- **📦 §23:** Log Archiving & Rotation (30/90-day retention, 7-Zip support)
+- **🔐 §24:** Enhanced Password Management (Credential Manager + Base64 SMTP exception)
+- **⚙️ §25:** Environment Workflow Optimization (DEV/PROD specific workflows)
+- **✅ §26:** MUW Compliance Standards (date formats, versioning, parameter externalization)
 
 ### New Features (v10.0.3)
 
@@ -1469,6 +1521,720 @@ SOFTWARE.
 
 ---
 
-**PowerShell-Regelwerk Universal v10.0.3 Enterprise Complete Edition**  
-**© 2025 Flecki (Tom) Garnreiter | Release: 2025-10-07**  
-**Status: ENTERPRISE READY | Compliance: Certificate Surveillance, Email Automation, Excel Integration, 3-Tier Credential Management**
+# Teil D: MUW Enterprise Standards (v10.1.0)
+
+## §20 Config Version Control / Konfigurationsversionskontrolle
+
+### 🔧 **Mandatory Requirements**
+
+- **Version Comparison**: Every script MUST compare its own version with the config file version on startup.
+- **Automatic Updates**: When versions differ, offer automatic config file updates with clear warnings.
+- **`-Versionscontrol` Parameter**: MUST implement parameter to trigger version sync and show differences.
+- **MUW Rules Version**: Config file MUST store the MUW rules version for comparison.
+
+### 💻 **Version Control Implementation**
+
+```powershell
+function Compare-ConfigVersion {
+    param(
+        [Parameter(Mandatory)][string]$ConfigPath,
+        [Parameter(Mandatory)][string]$ScriptVersion,
+        [Parameter(Mandatory)][string]$RegelwerkVersion
+    )
+    
+    try {
+        $Config = Get-Content $ConfigPath | ConvertFrom-Json
+        $ConfigScriptVersion = $Config.ProjectInfo.Version
+        $ConfigRegelwerkVersion = $Config.ProjectInfo.RegelwerkVersion
+        
+        if ($ScriptVersion -ne $ConfigScriptVersion) {
+            Write-Warning "VERSION MISMATCH: Script v$ScriptVersion vs Config v$ConfigScriptVersion"
+            Write-Host "Consider updating config with -Versionscontrol parameter" -ForegroundColor Yellow
+        }
+        
+        if ($RegelwerkVersion -ne $ConfigRegelwerkVersion) {
+            Write-Warning "REGELWERK MISMATCH: Current $RegelwerkVersion vs Config $ConfigRegelwerkVersion"
+        }
+        
+        return @{
+            ScriptVersionMatch = ($ScriptVersion -eq $ConfigScriptVersion)
+            RegelwerkVersionMatch = ($RegelwerkVersion -eq $ConfigRegelwerkVersion)
+        }
+    }
+    catch {
+        Write-Error "Failed to compare config versions: $($_.Exception.Message)"
+        return $false
+    }
+}
+
+function Update-ConfigVersions {
+    param(
+        [Parameter(Mandatory)][string]$ConfigPath,
+        [Parameter(Mandatory)][string]$ScriptVersion,
+        [Parameter(Mandatory)][string]$RegelwerkVersion
+    )
+    
+    $Config = Get-Content $ConfigPath | ConvertFrom-Json
+    $Config.ProjectInfo.Version = $ScriptVersion
+    $Config.ProjectInfo.RegelwerkVersion = $RegelwerkVersion
+    $Config.ProjectInfo.LastUpdated = (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+    
+    $Config | ConvertTo-Json -Depth 10 | Out-File $ConfigPath -Encoding UTF8
+    Write-Host "Config versions updated successfully" -ForegroundColor Green
+}
+```
+
+---
+
+## §21 Advanced GUI Standards / Erweiterte GUI-Standards
+
+### 🔧 **Mandatory Requirements**
+
+- **Bilingual Support**: All GUIs MUST support German/English language selection via config and GUI.
+- **Browse Buttons**: ALL path input fields MUST have "Browse..." buttons with appropriate dialogs.
+- **Progress Indication**: Progress bars MUST be shown for operations longer than 2-3 seconds.
+- **Standard Button Layout**: Cancel (left-aligned), Apply & OK (right-aligned).
+- **Dynamic Window Title**: Format: `ConfigGUI <ScriptName> - vXX.YY.ZZ`.
+- **Corporate Design**: MUW design with `#111d4e`, hover effects, logo/icon handling.
+
+### 💻 **Advanced GUI Template**
+
+```powershell
+function Show-AdvancedConfigGUI {
+    param(
+        [Parameter(Mandatory)][string]$ScriptName,
+        [Parameter(Mandatory)][string]$Version,
+        [hashtable]$Config = @{}
+    )
+    
+    # Language selection from config
+    $Language = Get-ConfigValueSafe -Config $Config -PropertyName "Language" -DefaultValue "EN"
+    
+    # Localized strings
+    $Strings = @{
+        EN = @{
+            Title = "ConfigGUI $ScriptName - v$Version"
+            Browse = "Browse..."
+            Cancel = "Cancel"
+            Apply = "Apply"
+            OK = "OK"
+            Language = "Language:"
+            Paths = "Paths Configuration"
+        }
+        DE = @{
+            Title = "KonfigGUI $ScriptName - v$Version"
+            Browse = "Durchsuchen..."
+            Cancel = "Abbrechen"
+            Apply = "Anwenden"
+            OK = "OK"
+            Language = "Sprache:"
+            Paths = "Pfad-Konfiguration"
+        }
+    }
+    
+    $Text = $Strings[$Language]
+    
+    # WPF XAML with MUW Corporate Design
+    [xml]$xaml = @"
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        Title="$($Text.Title)" Height="500" Width="700">
+    <Grid>
+        <!-- Header with MUW Corporate Color -->
+        <Border Background="#111d4e" Height="60" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
+                <Image Source="./Images/MedUniWien_logo.png" Height="40" Margin="0,0,20,0"/>
+                <TextBlock Text="$($Text.Title)" Foreground="White" FontSize="18" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+        
+        <!-- Main Content Area -->
+        <TabControl Margin="10,70,10,60">
+            <TabItem Header="$($Text.Paths)">
+                <StackPanel Margin="10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Name="txtLogPath" Grid.Column="0" Margin="0,0,10,0"/>
+                        <Button Name="btnBrowseLog" Grid.Column="1" Content="$($Text.Browse)"/>
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+        
+        <!-- Progress Bar (initially hidden) -->
+        <ProgressBar Name="progressBar" Height="20" Margin="10,0,10,40" VerticalAlignment="Bottom" Visibility="Hidden"/>
+        
+        <!-- Bottom Button Panel -->
+        <DockPanel LastChildFill="False" Height="40" VerticalAlignment="Bottom" Margin="10">
+            <Button Name="btnCancel" Content="$($Text.Cancel)" Width="80" DockPanel.Dock="Left"/>
+            <Button Name="btnApply" Content="$($Text.Apply)" Width="80" DockPanel.Dock="Right" Margin="0,0,10,0"/>
+            <Button Name="btnOK" Content="$($Text.OK)" Width="80" DockPanel.Dock="Right" Background="#111d4e" Foreground="White"/>
+        </DockPanel>
+    </Grid>
+</Window>
+"@
+
+    $reader = (New-Object System.Xml.XmlNodeReader $xaml)
+    $window = [Windows.Markup.XamlReader]::Load($reader)
+    
+    # Event handlers for Browse buttons
+    $window.FindName("btnBrowseLog").Add_Click({
+        $dialog = New-Object System.Windows.Forms.FolderBrowserDialog
+        if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
+            $window.FindName("txtLogPath").Text = $dialog.SelectedPath
+        }
+    })
+    
+    # Progress bar helper
+    $window.Add_Loaded({
+        $window.FindName("progressBar").Visibility = "Visible"
+        # Simulate loading process
+        for ($i = 0; $i -le 100; $i += 10) {
+            $window.FindName("progressBar").Value = $i
+            Start-Sleep -Milliseconds 100
+        }
+        $window.FindName("progressBar").Visibility = "Hidden"
+    })
+    
+    $window.ShowDialog() | Out-Null
+}
+```
+
+---
+
+## §22 Windows Event Log Integration / Windows-Ereignisprotokoll-Integration
+
+### 🔧 **Mandatory Requirements**
+
+- **Event Source Registration**: Each script MUST register a dedicated Windows Event Source for clear identification.
+- **Critical Events**: All ERROR and WARNING level events MUST be written to Windows Event Log.
+- **SIEM Integration**: Enable centralized monitoring and SIEM tool integration.
+- **Event ID Schema**: Use standardized Event IDs for different event types.
+
+### 💻 **Event Log Integration Template**
+
+```powershell
+function Initialize-EventLogSource {
+    param(
+        [Parameter(Mandatory)][string]$SourceName,
+        [string]$LogName = "Application"
+    )
+    
+    try {
+        # Check if event source exists, create if not
+        if (-not [System.Diagnostics.EventLog]::SourceExists($SourceName)) {
+            Write-Verbose "Creating Event Log source: $SourceName"
+            [System.Diagnostics.EventLog]::CreateEventSource($SourceName, $LogName)
+            Write-Host "Event Log source '$SourceName' created successfully" -ForegroundColor Green
+        } else {
+            Write-Verbose "Event Log source '$SourceName' already exists"
+        }
+        return $true
+    }
+    catch {
+        Write-Warning "Failed to initialize Event Log source '$SourceName': $($_.Exception.Message)"
+        return $false
+    }
+}
+
+function Write-EventLogEntry {
+    param(
+        [Parameter(Mandatory)][string]$SourceName,
+        [Parameter(Mandatory)][string]$Message,
+        [Parameter(Mandatory)][ValidateSet("Information", "Warning", "Error")][string]$EntryType,
+        [int]$EventId = 1000
+    )
+    
+    try {
+        # Map log levels to Event IDs
+        $EventIdMap = @{
+            "Information" = 1000
+            "Warning" = 2000
+            "Error" = 3000
+        }
+        
+        $FinalEventId = $EventIdMap[$EntryType] + $EventId
+        
+        Write-EventLog -LogName "Application" -Source $SourceName -EntryType $EntryType -EventId $FinalEventId -Message $Message
+        Write-Verbose "Event logged: [$EntryType] ID:$FinalEventId - $Message"
+    }
+    catch {
+        Write-Warning "Failed to write Event Log entry: $($_.Exception.Message)"
+    }
+}
+
+# Enhanced Write-Log function with Event Log integration
+function Write-LogWithEventLog {
+    param(
+        [Parameter(Mandatory)][string]$Message,
+        [ValidateSet("DEBUG", "INFO", "WARNING", "ERROR", "FATAL")][string]$Level = "INFO",
+        [string]$LogPath = $Global:LogFilePath,
+        [string]$EventSource = $Global:EventLogSource
+    )
+    
+    # Standard console and file logging
+    Write-Log -Message $Message -Level $Level -LogPath $LogPath
+    
+    # Write to Event Log for WARNING, ERROR, FATAL
+    if ($Level -in @("WARNING", "ERROR", "FATAL") -and $EventSource) {
+        $EventType = switch ($Level) {
+            "WARNING" { "Warning" }
+            "ERROR" { "Error" }
+            "FATAL" { "Error" }
+        }
+        Write-EventLogEntry -SourceName $EventSource -Message $Message -EntryType $EventType
+    }
+}
+```
+
+---
+
+## §23 Log Archiving & Rotation / Log-Archivierung & Rotation
+
+### 🔧 **Mandatory Requirements**
+
+- **30-Day Rotation**: Log files older than 30 days MUST be compressed into monthly ZIP archives and deleted.
+- **90-Day Cleanup**: ZIP archives older than 90 days MUST be deleted.
+- **Configurable Timeframes**: All retention periods MUST be configurable via config file.
+- **7-Zip Preferred**: Use 7-Zip for compression (configurable path), fallback to `Compress-Archive`.
+
+### 💻 **Log Archiving Implementation**
+
+```powershell
+function Start-LogArchiving {
+    param(
+        [Parameter(Mandatory)][string]$LogDirectory,
+        [int]$LogRetentionDays = 30,
+        [int]$ArchiveRetentionDays = 90,
+        [string]$SevenZipPath = "C:\Program Files\7-Zip\7z.exe"
+    )
+    
+    try {
+        Write-Log "Starting log archiving process for: $LogDirectory" -Level INFO
+        
+        # Get log files older than retention period
+        $OldLogs = Get-ChildItem -Path $LogDirectory -Filter "*.log" | 
+                   Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-$LogRetentionDays) }
+        
+        if ($OldLogs.Count -eq 0) {
+            Write-Log "No log files found for archiving" -Level INFO
+            return
+        }
+        
+        # Group logs by year-month for monthly archives
+        $LogGroups = $OldLogs | Group-Object { $_.LastWriteTime.ToString("yyyy-MM") }
+        
+        foreach ($Group in $LogGroups) {
+            $ArchiveName = "Logs_$($Group.Name).zip"
+            $ArchivePath = Join-Path $LogDirectory $ArchiveName
+            
+            Write-Log "Creating archive: $ArchiveName ($($Group.Count) files)" -Level INFO
+            
+            # Try 7-Zip first, fallback to PowerShell Compress-Archive
+            if (Test-Path $SevenZipPath) {
+                $FileList = ($Group.Group | ForEach-Object { "`"$($_.FullName)`"" }) -join " "
+                $Command = "& `"$SevenZipPath`" a `"$ArchivePath`" $FileList"
+                Invoke-Expression $Command
+                
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Log "7-Zip compression successful for $ArchiveName" -Level INFO
+                    # Delete original log files after successful compression
+                    $Group.Group | Remove-Item -Force
+                } else {
+                    Write-Log "7-Zip compression failed, using PowerShell fallback" -Level WARNING
+                    Compress-Archive -Path $Group.Group.FullName -DestinationPath $ArchivePath -Force
+                    $Group.Group | Remove-Item -Force
+                }
+            } else {
+                Write-Log "7-Zip not found, using PowerShell Compress-Archive" -Level INFO
+                Compress-Archive -Path $Group.Group.FullName -DestinationPath $ArchivePath -Force
+                $Group.Group | Remove-Item -Force
+            }
+        }
+        
+        # Clean up old archives
+        $OldArchives = Get-ChildItem -Path $LogDirectory -Filter "Logs_*.zip" | 
+                       Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-$ArchiveRetentionDays) }
+        
+        foreach ($Archive in $OldArchives) {
+            Write-Log "Deleting old archive: $($Archive.Name)" -Level INFO
+            $Archive | Remove-Item -Force
+        }
+        
+        Write-Log "Log archiving completed successfully" -Level INFO
+    }
+    catch {
+        Write-Log "Log archiving failed: $($_.Exception.Message)" -Level ERROR
+        throw
+    }
+}
+
+# Scheduled task helper for automatic log rotation
+function Register-LogRotationTask {
+    param(
+        [Parameter(Mandatory)][string]$ScriptPath,
+        [string]$TaskName = "LogRotation-$(Split-Path -Leaf $ScriptPath)",
+        [string]$RunTime = "02:00"  # 2 AM daily
+    )
+    
+    $Action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File `"$ScriptPath`" -LogRotation"
+    $Trigger = New-ScheduledTaskTrigger -Daily -At $RunTime
+    $Principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount
+    $Settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+    
+    Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger -Principal $Principal -Settings $Settings
+    Write-Log "Log rotation scheduled task '$TaskName' registered" -Level INFO
+}
+```
+
+---
+
+## §24 Enhanced Password Management / Erweiterte Passwort-Verwaltung
+
+### 🔧 **Mandatory Requirements**
+
+- **No Plain Text**: Passwords MUST NEVER be stored in plain text in config files.
+- **SMTP Exception**: SMTP passwords MAY be stored Base64-encoded for compatibility reasons.
+- **Credential Manager**: Use Windows Credential Manager wherever possible for secure storage.
+- **Automatic Fallback**: Implement secure password prompting with automatic vault storage.
+
+### 💻 **Enhanced Password Management**
+
+```powershell
+function Set-SecureConfigPassword {
+    param(
+        [Parameter(Mandatory)][string]$ConfigPath,
+        [Parameter(Mandatory)][string]$PasswordKey,
+        [Parameter(Mandatory)][SecureString]$Password,
+        [switch]$Base64Encode  # Only for SMTP compatibility
+    )
+    
+    try {
+        $Config = Get-Content $ConfigPath | ConvertFrom-Json
+        
+        if ($Base64Encode) {
+            # Only for SMTP compatibility - still not recommended
+            $PlainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto(
+                [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))
+            $EncodedPassword = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($PlainPassword))
+            
+            # Set encoded password in config
+            $Config.$PasswordKey = $EncodedPassword
+            Write-Warning "Password stored Base64-encoded (SMTP compatibility mode)"
+        } else {
+            # Preferred: Store reference to Credential Manager
+            $CredentialTarget = "$($Config.ProjectInfo.Name)-$PasswordKey"
+            
+            # Store in Windows Credential Manager
+            $Credential = New-Object System.Management.Automation.PSCredential("ConfigUser", $Password)
+            
+            # Save to Credential Manager (requires FL-CredentialManager module)
+            Save-StoredCredential -Target $CredentialTarget -Username "ConfigUser" -Password $Password
+            
+            # Store only the reference in config
+            $Config.$PasswordKey = "CREDENTIAL_MANAGER:$CredentialTarget"
+            Write-Host "Password stored securely in Windows Credential Manager" -ForegroundColor Green
+        }
+        
+        $Config | ConvertTo-Json -Depth 10 | Out-File $ConfigPath -Encoding UTF8
+        return $true
+    }
+    catch {
+        Write-Error "Failed to set secure password: $($_.Exception.Message)"
+        return $false
+    }
+}
+
+function Get-SecureConfigPassword {
+    param(
+        [Parameter(Mandatory)][hashtable]$Config,
+        [Parameter(Mandatory)][string]$PasswordKey
+    )
+    
+    try {
+        $PasswordValue = $Config[$PasswordKey]
+        
+        if ($PasswordValue -like "CREDENTIAL_MANAGER:*") {
+            # Retrieve from Credential Manager
+            $CredentialTarget = $PasswordValue -replace "CREDENTIAL_MANAGER:", ""
+            $StoredCredential = Get-StoredCredential -Target $CredentialTarget
+            return $StoredCredential.Password
+        }
+        elseif ($PasswordValue) {
+            # Assume Base64 encoded (SMTP compatibility)
+            Write-Verbose "Decoding Base64 password (SMTP compatibility mode)"
+            $DecodedPassword = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($PasswordValue))
+            return ConvertTo-SecureString -String $DecodedPassword -AsPlainText -Force
+        }
+        else {
+            Write-Warning "No password found for key: $PasswordKey"
+            return $null
+        }
+    }
+    catch {
+        Write-Error "Failed to retrieve secure password: $($_.Exception.Message)"
+        return $null
+    }
+}
+```
+
+---
+
+## §25 Environment Workflow Optimization / Umgebungs-Workflow-Optimierung
+
+### 🔧 **Mandatory Requirements**
+
+- **DEV/PROD Separation**: Scripts MUST support configurable DEV/PROD environments.
+- **Environment-Specific Recipients**: Email recipients MUST differ between DEV (developer) and PROD (operations).
+- **DEV Workflow Optimization**: DEV mode MAY enable workflow optimizations like file dialogs instead of full directory scans.
+- **Configuration Switching**: Environment MUST be selectable via config file and GUI.
+
+### 💻 **Environment Optimization Implementation**
+
+```powershell
+function Initialize-EnvironmentOptimization {
+    param(
+        [Parameter(Mandatory)][hashtable]$Config
+    )
+    
+    $Environment = Get-ConfigValueSafe -Config $Config -PropertyName "Environment" -DefaultValue "DEV"
+    
+    Write-Log "Initializing $Environment environment optimizations" -Level INFO
+    
+    # Set global environment variables
+    $Global:Environment = $Environment
+    $Global:IsDevMode = ($Environment -eq "DEV")
+    $Global:IsProdMode = ($Environment -eq "PROD")
+    
+    # Environment-specific configurations
+    switch ($Environment) {
+        "DEV" {
+            $Global:EmailRecipients = $Config.Mail.Recipients.DEV
+            $Global:WorkflowOptimizations = @{
+                UseFileDialogs = $true
+                SkipLargeScans = $true
+                EnableVerboseLogging = $true
+                ShowProgressDialogs = $true
+            }
+            Write-Host "[DEV] Development optimizations enabled" -ForegroundColor Cyan
+        }
+        "PROD" {
+            $Global:EmailRecipients = $Config.Mail.Recipients.PROD
+            $Global:WorkflowOptimizations = @{
+                UseFileDialogs = $false
+                SkipLargeScans = $false
+                EnableVerboseLogging = $false
+                ShowProgressDialogs = $false
+            }
+            Write-Host "[PROD] Production mode active" -ForegroundColor Green
+        }
+        default {
+            Write-Warning "Unknown environment '$Environment', defaulting to PROD settings"
+            $Global:Environment = "PROD"
+            $Global:IsProdMode = $true
+        }
+    }
+}
+
+function Get-OptimizedFilePath {
+    param(
+        [Parameter(Mandatory)][string]$Purpose,
+        [string]$DefaultPath,
+        [string]$Filter = "All files (*.*)|*.*"
+    )
+    
+    if ($Global:IsDevMode -and $Global:WorkflowOptimizations.UseFileDialogs) {
+        # DEV: Show file dialog for easier development
+        Add-Type -AssemblyName System.Windows.Forms
+        $OpenFileDialog = New-Object System.Windows.Forms.OpenFileDialog
+        $OpenFileDialog.Title = "Select file for $Purpose"
+        $OpenFileDialog.Filter = $Filter
+        $OpenFileDialog.InitialDirectory = Split-Path $DefaultPath
+        
+        if ($OpenFileDialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
+            Write-Log "[DEV] User selected file: $($OpenFileDialog.FileName)" -Level DEBUG
+            return $OpenFileDialog.FileName
+        } else {
+            Write-Log "[DEV] File dialog cancelled, using default: $DefaultPath" -Level DEBUG
+            return $DefaultPath
+        }
+    } else {
+        # PROD: Use configured path without user interaction
+        Write-Log "[PROD] Using configured path: $DefaultPath" -Level DEBUG
+        return $DefaultPath
+    }
+}
+
+function Send-EnvironmentSpecificEmail {
+    param(
+        [Parameter(Mandatory)][string]$Subject,
+        [Parameter(Mandatory)][string]$Body,
+        [hashtable]$Config
+    )
+    
+    # Get environment-specific recipients and subject prefix
+    $Recipients = if ($Global:IsDevMode) { $Config.Mail.Recipients.DEV } else { $Config.Mail.Recipients.PROD }
+    $EnvPrefix = if ($Global:IsDevMode) { "[DEV] " } else { "" }
+    
+    $FinalSubject = "$EnvPrefix$Subject"
+    
+    Write-Log "Sending email to $($Global:Environment) recipients: $($Recipients -join ', ')" -Level INFO
+    
+    # Use standard email sending function with environment-specific settings
+    Send-Email -To $Recipients -Subject $FinalSubject -Body $Body -Config $Config
+}
+```
+
+---
+
+## §26 MUW Compliance Standards / MUW-Compliance-Standards
+
+### 🔧 **Mandatory Requirements**
+
+- **Standardized Date Format**: ALL logs and displays MUST use `yyyy.MM.dd` format.
+- **Versioning Scheme**: MUST follow `vXX.YY.ZZ` (Major.Minor.Patch) pattern.
+- **External Parameter Storage**: ALL external parameters (paths, formats, colors, servers) MUST be stored in config files.
+- **Full MUW Compliance**: ALL standards in this section are MANDATORY for MedUni Wien compliance.
+
+### 💻 **MUW Compliance Implementation**
+
+```powershell
+# MUW Standard Date Formatting
+function Get-MUWDateString {
+    param([DateTime]$Date = (Get-Date))
+    return $Date.ToString("yyyy.MM.dd")
+}
+
+function Get-MUWDateTimeString {
+    param([DateTime]$DateTime = (Get-Date))
+    return $DateTime.ToString("yyyy.MM.dd HH:mm:ss")
+}
+
+# MUW Version Validation
+function Test-MUWVersionFormat {
+    param([Parameter(Mandatory)][string]$Version)
+    
+    $VersionPattern = '^v\d{2}\.\d{2}\.\d{2}$'
+    if ($Version -match $VersionPattern) {
+        Write-Verbose "Version '$Version' follows MUW format"
+        return $true
+    } else {
+        Write-Warning "Version '$Version' does not follow MUW format (vXX.YY.ZZ)"
+        return $false
+    }
+}
+
+# MUW Configuration Validation
+function Test-MUWConfigCompliance {
+    param([Parameter(Mandatory)][hashtable]$Config)
+    
+    $ComplianceResults = @{
+        DateFormat = $true
+        VersionFormat = $true
+        ExternalParameters = $true
+        RequiredSections = $true
+        Overall = $true
+    }
+    
+    # Check version format compliance
+    if ($Config.ProjectInfo.Version) {
+        $ComplianceResults.VersionFormat = Test-MUWVersionFormat -Version $Config.ProjectInfo.Version
+    }
+    
+    # Check required configuration sections
+    $RequiredSections = @("ProjectInfo", "Environment", "Paths", "Mail")
+    foreach ($Section in $RequiredSections) {
+        if (-not $Config.ContainsKey($Section)) {
+            Write-Warning "Missing required config section: $Section"
+            $ComplianceResults.RequiredSections = $false
+        }
+    }
+    
+    # Check external parameters are properly externalized
+    $ExternalParams = @("LogPath", "ReportPath", "SMTPServer", "LogoPath")
+    foreach ($Param in $ExternalParams) {
+        $Found = $false
+        foreach ($Section in $Config.Keys) {
+            if ($Config[$Section] -is [hashtable] -and $Config[$Section].ContainsKey($Param)) {
+                $Found = $true
+                break
+            }
+        }
+        if (-not $Found) {
+            Write-Warning "External parameter '$Param' should be in config file"
+            $ComplianceResults.ExternalParameters = $false
+        }
+    }
+    
+    # Overall compliance
+    $ComplianceResults.Overall = $ComplianceResults.Values | ForEach-Object { $_ } | Measure-Object -Minimum | Select-Object -ExpandProperty Minimum
+    
+    if ($ComplianceResults.Overall) {
+        Write-Host "✓ MUW Compliance: PASSED" -ForegroundColor Green
+    } else {
+        Write-Warning "✗ MUW Compliance: FAILED - Please review warnings above"
+    }
+    
+    return $ComplianceResults
+}
+
+# MUW Standard Configuration Template
+function New-MUWConfigTemplate {
+    param(
+        [Parameter(Mandatory)][string]$ProjectName,
+        [Parameter(Mandatory)][string]$Version,
+        [string]$RegelwerkVersion = "v10.0.4"
+    )
+    
+    return @{
+        ProjectInfo = @{
+            Name = $ProjectName
+            Version = $Version
+            RegelwerkVersion = $RegelwerkVersion
+            MUWRulesVersion = "v6.1.0"
+            Created = (Get-MUWDateTimeString)
+            LastUpdated = (Get-MUWDateTimeString)
+        }
+        Environment = "DEV"
+        Settings = @{
+            LogLevel = "INFO"
+            DebugMode = $true
+            Language = "DE"
+            DateFormat = "yyyy.MM.dd"
+        }
+        Paths = @{
+            LogPath = "./LOG"
+            ReportPath = "./Reports"
+            LogoPath = "\\itscmgmt03.srv.meduniwien.ac.at\iso\MUWLogo"
+            SevenZipPath = "C:\Program Files\7-Zip\7z.exe"
+        }
+        Mail = @{
+            SMTPServer = "smtpi.meduniwien.ac.at"
+            Port = 25
+            FromEmail = "$env:COMPUTERNAME@meduniwien.ac.at"
+            Recipients = @{
+                DEV = @("thomas.garnreiter@meduniwien.ac.at")
+                PROD = @("win-admin@meduniwien.ac.at", "thomas.garnreiter@meduniwien.ac.at")
+            }
+        }
+        Archiving = @{
+            LogRetentionDays = 30
+            ArchiveRetentionDays = 90
+            UseSevenZip = $true
+        }
+        EventLog = @{
+            SourceName = $ProjectName
+            LogName = "Application"
+        }
+    }
+}
+```
+
+---
+
+**PowerShell-Regelwerk Universal v10.1.0 Enterprise Complete Edition**  
+**© 2025 Flecki (Tom) Garnreiter | Release: 2025-10-09**  
+**Status: ENTERPRISE READY | Compliance: Certificate Surveillance, Email Automation, Excel Integration, 3-Tier Credential Management, MUW Enterprise Standards**  
+**Total Standards: 26 Paragraphs | Full MUW Compliance | Complete Foundation + Enterprise + MUW**

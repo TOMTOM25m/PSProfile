@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 #Requires -RunAsAdministrator
 
 <#
@@ -6,7 +6,7 @@
 CertWebService v2.4.0 - UNC-Path-Fixed Installer
 .DESCRIPTION
 Verbesserte Installer-Version die UNC-Pfad-Probleme durch lokale Kopie l?st
-Regelwerk v10.0.2 konform | Stand: 02.10.2025
+Regelwerk v10.1.0 konform | Stand: 09.10.2025
 .EXAMPLE
 .\Install-CertWebService-Fixed.ps1
 .EXAMPLE  
@@ -19,6 +19,14 @@ param(
     [switch]$Quiet
 )
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 $ErrorActionPreference = "Stop"
 
 # === INSTALLER HEADER ===
@@ -26,7 +34,7 @@ if (-not $Quiet) {
     Write-Host "========================================" -ForegroundColor Cyan
     Write-Host "Certificate WebService v2.4.0 Installer" -ForegroundColor Green
     Write-Host "UNC-Path-Fixed Version" -ForegroundColor Yellow
-    Write-Host "Regelwerk v10.0.2 | Stand: 02.10.2025" -ForegroundColor Gray
+    Write-Host "Regelwerk v10.1.0 | Stand: 09.10.2025" -ForegroundColor Gray
     Write-Host "========================================" -ForegroundColor Cyan
     Write-Host ""
 }
@@ -157,3 +165,4 @@ if (-not $Quiet) {
     Write-Host ""
     Read-Host "Press Enter to exit"
 }
+

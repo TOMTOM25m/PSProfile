@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 
 <#
 .SYNOPSIS
@@ -16,7 +16,7 @@
     1.0.0
 
 .RULEBOOK
-    v10.0.2
+    v10.1.0
 #>
 
 param(
@@ -33,7 +33,7 @@ param(
 # Import Compatibility Module
 Import-Module ".\Modules\FL-PowerShell-VersionCompatibility-v3.1.psm1" -Force
 
-Write-VersionSpecificHeader "CertSurv Infrastructure Status Monitor" -Version "v1.0.0 | Regelwerk: v10.0.2" -Color Cyan
+Write-VersionSpecificHeader "CertSurv Infrastructure Status Monitor" -Version "v1.0.0 | Regelwerk: v10.1.0" -Color Cyan
 
 # Default Server List
 if ($Servers.Count -eq 0) {
@@ -329,3 +329,4 @@ try {
 }
 
 #endregion
+

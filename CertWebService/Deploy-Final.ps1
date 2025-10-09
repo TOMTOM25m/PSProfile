@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 
 param(
@@ -190,7 +190,7 @@ Works with Certificate Surveillance System (CertSurv)
 
 VERSION: v2.3.0
 BUILD: $(Get-Date -Format 'yyyy-MM-dd')
-COMPLIANCE: Regelwerk v10.0.0
+COMPLIANCE: Regelwerk v10.1.0
 "@
     
     $readmePath = Join-Path $NetworkPath "README.txt"
@@ -202,7 +202,7 @@ COMPLIANCE: Regelwerk v10.0.0
 Certificate WebService Deployment Package
 Version: v2.3.0
 Build: $(Get-Date -Format 'yyyy-MM-dd')
-Compliance: Regelwerk v10.0.0
+Compliance: Regelwerk v10.1.0
 
 FEATURES:
 - Network Share Deployment

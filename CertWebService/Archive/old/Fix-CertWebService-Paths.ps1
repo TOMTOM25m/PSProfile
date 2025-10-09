@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Quick Fix für CertWebService Path-Problem
 
@@ -19,7 +19,7 @@
     1.0.0
 
 .RULEBOOK
-    v10.0.2
+    v10.1.0
 #>
 
 param(
@@ -211,3 +211,4 @@ Write-Host "  1. Führe aus mit -UpdateScanScript zum Script-Update" -Foreground
 Write-Host "  2. Führe aus mit -RunScanNow zum sofortigen Scan" -ForegroundColor White
 Write-Host "  3. Teste API: Invoke-RestMethod -Uri 'http://SERVER:9080/certificates.json'" -ForegroundColor White
 Write-Host ""
+

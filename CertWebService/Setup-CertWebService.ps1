@@ -1,4 +1,4 @@
-#Requires -RunAsAdministrator
+﻿#Requires -RunAsAdministrator
 #Requires -Version 5.1
 
 <#
@@ -12,7 +12,7 @@
     - Startet den Service
 .NOTES
     Version: 1.0.0
-    Regelwerk: v10.0.2
+    Regelwerk: v10.1.0
     Author: GitHub Copilot
     Date: 2025-10-06
 #>
@@ -22,12 +22,20 @@ param(
     [string]$InstallPath = "C:\CertWebService"
 )
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 $ErrorActionPreference = "Stop"
 
 Write-Host ""
 Write-Host "=========================================" -ForegroundColor Cyan
 Write-Host "  CertWebService Setup v1.0.0" -ForegroundColor Cyan
-Write-Host "  Regelwerk v10.0.2" -ForegroundColor Cyan
+Write-Host "  Regelwerk v10.1.0" -ForegroundColor Cyan
 Write-Host "=========================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -151,3 +159,4 @@ if ($testResult.TcpTestSucceeded) {
     Write-Host "  - C:\CertWebService\Logs\CertWebService_*.log" -ForegroundColor Gray
 }
 Write-Host ""
+

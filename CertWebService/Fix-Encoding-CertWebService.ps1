@@ -1,4 +1,4 @@
-#requires -version 5.1
+﻿#requires -version 5.1
 
 <#
 .SYNOPSIS
@@ -16,12 +16,12 @@
     1.0.1
 
 .RULEBOOK
-    v10.0.3
+    v10.1.0
 #>
 
 $ErrorActionPreference = 'Stop'
 
-# PowerShell Version Detection (Regelwerk v10.0.3 compliant)
+# PowerShell Version Detection (Regelwerk v10.1.0 compliant)
 $PSVersion = $PSVersionTable.PSVersion
 $IsPS7Plus = $PSVersion.Major -ge 7
 $IsPS5 = $PSVersion.Major -eq 5
@@ -70,7 +70,7 @@ foreach ($file in $Files) {
         
         Copy-Item -Path $file.FullName -Destination $backupFile -Force
         
-        # Read content - REGELWERK v10.0.3 compliant
+        # Read content - REGELWERK v10.1.0 compliant
         if ($IsPS7Plus) {
             # PowerShell 7+: Use UTF-8 with BOM
             $content = Get-Content -Path $file.FullName -Raw -Encoding UTF8
@@ -88,7 +88,7 @@ foreach ($file in $Files) {
         $content = $content -replace ([char]0xC3 + [char]0x9C), 'Ü'  # Ü (UTF-8: C3 9C)
         $content = $content -replace ([char]0xC3 + [char]0x9F), 'ß'  # ß (UTF-8: C3 9F)
         
-        # Write with correct encoding - REGELWERK v10.0.3 compliant
+        # Write with correct encoding - REGELWERK v10.1.0 compliant
         if ($IsPS7Plus) {
             # PowerShell 7+: UTF-8 with BOM
             $utf8WithBom = New-Object System.Text.UTF8Encoding $true
@@ -121,3 +121,4 @@ Write-Host "Next Steps:" -ForegroundColor Yellow
 Write-Host "1. Restart CertWebService" -ForegroundColor White
 Write-Host "2. Check Dashboard: http://localhost:9080/" -ForegroundColor White
 Write-Host "3. Verify German characters are displayed correctly`n" -ForegroundColor White
+

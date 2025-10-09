@@ -1,9 +1,9 @@
-<#
+﻿<#
 .SYNOPSIS
     Smart CertWebService Update v3.1.0 - PowerShell Universal Compatibility
     
 .DESCRIPTION
-    Implementiert PowerShell-Regelwerk Universal v10.0.3
+    Implementiert PowerShell-Regelwerk Universal v10.1.0
     § 15 PowerShell Version Compatibility Management
     § 16 Automated Update Deployment
     
@@ -130,4 +130,4 @@ if (Test-Path $simpleScript) {
 }
 
 Write-Host ""
-Write-Host "PowerShell-Regelwerk Universal v10.0.3 implementation: SUCCESSFUL" -ForegroundColor Green
+Write-Host "PowerShell-Regelwerk Universal v10.1.0 implementation: SUCCESSFUL" -ForegroundColor Green

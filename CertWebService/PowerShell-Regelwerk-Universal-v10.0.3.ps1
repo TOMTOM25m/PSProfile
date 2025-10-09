@@ -1,13 +1,13 @@
-<#
+﻿<#
 .SYNOPSIS
-    PowerShell-Regelwerk Universal v10.0.3 - Implementation Guide
+    PowerShell-Regelwerk Universal v10.1.0 - Implementation Guide
     Smart CertWebService Update Deployment System
 
 .DESCRIPTION
     Regelwerk für universelle PowerShell-Kompatibilität zwischen Version 5.1 und 7.x
     mit automatischer Funktionsauswahl und optimaler Performance.
     
-    Implementiert § 15-17 des PowerShell-Regelwerks Universal v10.0.3
+    Implementiert § 15-17 des PowerShell-Regelwerks Universal v10.1.0
 
 .NOTES
     Author: PowerShell Team
@@ -25,7 +25,7 @@
 # ==========================================
 
 Write-Host "=====================================================================" -ForegroundColor Cyan
-Write-Host "  POWERSHELL-REGELWERK UNIVERSAL v10.0.3" -ForegroundColor Cyan
+Write-Host "  POWERSHELL-REGELWERK UNIVERSAL v10.1.0" -ForegroundColor Cyan
 Write-Host "  Smart Version Detection & Compatibility Framework" -ForegroundColor Cyan
 Write-Host "=====================================================================" -ForegroundColor Cyan
 Write-Host ""
@@ -329,5 +329,5 @@ Write-Host "  3. Test deployment with -TestOnly flag first" -ForegroundColor Whi
 Write-Host "  4. Monitor concurrent job performance" -ForegroundColor White
 Write-Host ""
 
-Write-Host "PowerShell-Regelwerk Universal v10.0.3 implementation complete!" -ForegroundColor Green
+Write-Host "PowerShell-Regelwerk Universal v10.1.0 implementation complete!" -ForegroundColor Green
 Write-Host "Ready for smart CertWebService deployment across mixed environments." -ForegroundColor Green

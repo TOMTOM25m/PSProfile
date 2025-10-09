@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 
 <#
 .SYNOPSIS
@@ -12,12 +12,12 @@
     2.3.0
 
 .RULEBOOK
-    v10.0.0
+    v10.1.0
 #>
 
 # Script Information
 $Script:Version = "v2.4.0"
-$Script:RulebookVersion = "v10.0.2"
+$Script:RulebookVersion = "v10.1.0"
 $Script:ScanDate = Get-Date
 
 # Logging setup - Support both possible paths
@@ -54,7 +54,7 @@ function Write-Log {
 Write-Log "=== Certificate WebService Daily Scan Started ==="
 Write-Log "Version: $Script:Version | Regelwerk: $Script:RulebookVersion"
 
-# PowerShell Version Detection (Regelwerk v10.0.2 §19.1)
+# PowerShell Version Detection (Regelwerk v10.1.0 §19.1)
 $PSVersion = $PSVersionTable.PSVersion
 $IsPS7Plus = $PSVersion.Major -ge 7
 $IsPS51 = $PSVersion.Major -eq 5 -and $PSVersion.Minor -eq 1

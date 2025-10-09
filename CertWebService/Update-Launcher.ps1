@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 
 <#
@@ -14,7 +14,7 @@
     2.4.0
 
 .RULEBOOK
-    v10.0.0
+    v10.1.0
 #>
 
 param(

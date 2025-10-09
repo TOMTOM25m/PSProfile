@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 
 # Import FL-CredentialManager für 3-Stufen-Strategie
@@ -31,7 +31,7 @@ Import-Module "$PSScriptRoot\Modules\FL-CredentialManager-v1.0.psm1" -Force
     1.0.0
 
 .RULEBOOK
-    v10.0.2
+    v10.1.0
 #>
 
 param(
@@ -57,7 +57,7 @@ param(
 # Import Compatibility Module
 Import-Module ".\Modules\FL-PowerShell-VersionCompatibility-v3.1.psm1" -Force
 
-Write-VersionSpecificHeader "Update CertSurv Server List from Excel" -Version "v1.0.0 | Regelwerk: v10.0.2" -Color Cyan
+Write-VersionSpecificHeader "Update CertSurv Server List from Excel" -Version "v1.0.0 | Regelwerk: v10.1.0" -Color Cyan
 
 Write-Host ""
 Write-Host "Configuration:" -ForegroundColor Cyan
@@ -585,3 +585,4 @@ try {
 }
 
 #endregion
+

@@ -1,11 +1,11 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 
 <#
 .SYNOPSIS
 Beispiel-Script f?r die Verwendung der zentralen Pfad-Konfiguration
 .DESCRIPTION
 Zeigt wie alle Scripts die Config-CertWebService.json f?r Pfade verwenden sollen
-Regelwerk v10.0.2 konform | Stand: 02.10.2025
+Regelwerk v10.1.0 konform | Stand: 09.10.2025
 #>
 
 # Lade zentrale Pfad-Management-Funktionen
@@ -78,3 +78,4 @@ function Example-UseCentralPaths {
 
 # F?hre Beispiel aus
 Example-UseCentralPaths
+

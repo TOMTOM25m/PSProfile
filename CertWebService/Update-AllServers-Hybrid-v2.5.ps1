@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 
 # Import FL-CredentialManager für 3-Stufen-Strategie
@@ -21,7 +21,7 @@ Import-Module "$PSScriptRoot\Modules\FL-CredentialManager-v1.0.psm1" -Force
     2.5.0 - Pure ASCII for PS 5.1 compatibility
 
 .RULEBOOK
-    v10.0.2
+    v10.1.0
 #>
 
 param(
@@ -45,7 +45,7 @@ param(
 )
 
 $Script:Version = "v2.5.0"
-$Script:RulebookVersion = "v10.0.2"
+$Script:RulebookVersion = "v10.1.0"
 $Script:UpdateDate = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
 # Import PowerShell Version Compatibility Module v3.1

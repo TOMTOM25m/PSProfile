@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 <#
 .SYNOPSIS
     Remote Setup für Scheduled Task auf wsus Server
@@ -8,7 +8,7 @@
 .VERSION
     1.0.0
 .REGELWERK
-    v10.0.2
+    v10.1.0
 #>
 
 param(
@@ -142,3 +142,4 @@ Write-Host "Or try PsExec (if available):" -ForegroundColor Yellow
 Write-Host "  PsExec.exe \\${ServerName} -s powershell.exe -ExecutionPolicy Bypass -File C:\Temp\Setup-ScheduledTask-Local.ps1" -ForegroundColor White
 Write-Host ""
 Write-Host "================================================================" -ForegroundColor Cyan
+

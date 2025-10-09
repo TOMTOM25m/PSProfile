@@ -1,9 +1,9 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 
 <#
 .SYNOPSIS
-    Certificate WebService - Network Deployment Package Creator (Regelwerk v10.0.0)
+    Certificate WebService - Network Deployment Package Creator (Regelwerk v10.1.0)
 
 .DESCRIPTION
     Creates a complete deployment package for the Certificate WebService
@@ -17,7 +17,7 @@
     2.3.0
 
 .RULEBOOK
-    v10.0.0
+    v10.1.0
 #>
 
 param(
@@ -33,7 +33,7 @@ param(
 
 # Script Information
 $Script:Version = "v2.3.0"
-$Script:RulebookVersion = "v10.0.0"
+$Script:RulebookVersion = "v10.1.0"
 $Script:BuildDate = Get-Date -Format "yyyy-MM-dd"
 
 Write-Host "🚀 Certificate WebService - Network Deployment Package Creator" -ForegroundColor Cyan
@@ -156,11 +156,11 @@ try {
 
 <#
 .SYNOPSIS
-    Certificate WebService - Modern Setup Script (Regelwerk v10.0.0)
+    Certificate WebService - Modern Setup Script (Regelwerk v10.1.0)
 
 .DESCRIPTION
     Complete setup script for the modernized Certificate WebService
-    with modular architecture and strict compliance to Regelwerk v10.0.0.
+    with modular architecture and strict compliance to Regelwerk v10.1.0.
     
 .VERSION
     $Script:Version
@@ -227,7 +227,7 @@ Compliance: Regelwerk $Script:RulebookVersion
 
 === MODERNIZED PACKAGE v$Script:Version ===
 
-🎯 REGELWERK v10.0.0 COMPLIANCE:
+🎯 REGELWERK v10.1.0 COMPLIANCE:
 ✅ Strict Modularity (§10) - All modules < 300 lines
 ✅ PowerShell 5.1/7.x Compatibility (§3)
 ✅ Modern Architecture with Orchestration Pattern
@@ -257,7 +257,7 @@ Documentation/
 
 🚀 FEATURES:
 =============
-✅ Modular Architecture (Regelwerk v10.0.0)
+✅ Modular Architecture (Regelwerk v10.1.0)
 ✅ Network Share Deployment
 ✅ Local Installation Execution
 ✅ Automatic Certificate Management

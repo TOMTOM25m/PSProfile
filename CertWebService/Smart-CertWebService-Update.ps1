@@ -1,10 +1,10 @@
-<#
+﻿<#
 .SYNOPSIS
     Smart CertWebService Update v3.0.0 - Universal PowerShell Compatibility
     Automatische PS 5.1/7.x Erkennung mit optimaler Funktionsauswahl
 
 .DESCRIPTION
-    Universelles Update-System basierend auf PowerShell-Regelwerk Universal v10.0.3
+    Universelles Update-System basierend auf PowerShell-Regelwerk Universal v10.1.0
     Nutzt automatische Versionserkennung und wählt die optimalen Funktionen
     
     § 15 PowerShell Version Compatibility Management

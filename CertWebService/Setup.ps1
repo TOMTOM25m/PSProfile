@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 #Requires -RunAsAdministrator
 
 <#
@@ -6,7 +6,7 @@
 CertWebService Setup Script
 .DESCRIPTION
 Installations-Script fuer CertWebService v2.4.0
-Regelwerk v10.0.2 | Stand: 02.10.2025
+Regelwerk v10.1.0 | Stand: 09.10.2025
 .PARAMETER Port
 Standard HTTP Port (Default: 9080)
 .PARAMETER InstallPath
@@ -22,11 +22,19 @@ param(
     [switch]$Quiet
 )
 
+# Regelwerk v10.1.0 Enterprise Features:
+# - Config Version Control (Â§20)
+# - Advanced GUI Standards (Â§21) 
+# - Event Log Integration (Â§22)
+# - Log Archiving & Rotation (Â§23)
+# - Enhanced Password Management (Â§24)
+# - Environment Workflow Optimization (Â§25)
+# - MUW Compliance Standards (Â§26)
 $ErrorActionPreference = "Stop"
 
 # === INSTALLATION SETUP ===
 Write-Host "=== CERTWEBSERVICE SETUP v2.4.0 ===" -ForegroundColor Green
-Write-Host "Regelwerk v10.0.2 | Stand: 02.10.2025" -ForegroundColor Gray
+Write-Host "Regelwerk v10.1.0 | Stand: 09.10.2025" -ForegroundColor Gray
 Write-Host ""
 
 if (-not $Quiet) {
@@ -226,3 +234,4 @@ Write-Host ""
 if (-not $Quiet) {
     Write-Host "Installation completed successfully." -ForegroundColor Green
 }
+

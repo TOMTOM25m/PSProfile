@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 #Requires -RunAsAdministrator
 
 <#
@@ -12,7 +12,7 @@
     2.3.0
 
 .RULEBOOK
-    v10.0.0
+    v10.1.0
 #>
 
 param(
@@ -252,7 +252,7 @@ Works with Certificate Surveillance System (CertSurv)
 
 VERSION: v$Script:Version
 BUILD: $Script:BuildDate
-COMPLIANCE: Regelwerk v10.0.0
+COMPLIANCE: Regelwerk v10.1.0
 "@
     
     $readmePath = Join-Path $NetworkPath "README.txt"
@@ -263,7 +263,7 @@ COMPLIANCE: Regelwerk v10.0.0
 Certificate WebService Deployment Package
 Version: v$Script:Version  
 Build: $Script:BuildDate
-Compliance: Regelwerk v10.0.0
+Compliance: Regelwerk v10.1.0
 
 MODERNIZED FEATURES:
 ✅ Network Share Deployment

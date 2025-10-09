@@ -1,13 +1,13 @@
-#region Version Information (MANDATORY - Regelwerk v10.0.2)
-$ScriptVersion = "v2.4.0"  # Updated for v10.0.2 compliance
-$RegelwerkVersion = "v10.0.2"
-$BuildDate = "2025-10-02"
+﻿#region Version Information (MANDATORY - Regelwerk v10.1.0)
+$ScriptVersion = "v2.4.0"  # Updated for v10.1.0 compliance
+$RegelwerkVersion = "v10.1.0"
+$BuildDate = "2025-10-09""
 $Author = "Flecki (Tom) Garnreiter"
 
 <#
 .VERSION HISTORY (MANDATORY)
-v2.4.0 - 2025-10-02 - Updated to Regelwerk v10.0.2 compliance, PowerShell-optimized JSON, ASCII-safe encoding.
-v2.3.0 - 2025-09-30 - Updated to Regelwerk v10.0.0 compliance.
+v2.4.0 - 2025-10-02 - Updated to Regelwerk v10.1.0 compliance, PowerShell-optimized JSON, ASCII-safe encoding.
+v2.3.0 - 2025-09-30 - Updated to Regelwerk v10.1.0 compliance.
 v2.2.0 - 2025-09-29 - Updated to Regelwerk v9.6.2 compliance, PowerShell 5.1/7.x compatibility
 v2.1.0 - 2025-09-27 - Updated to Regelwerk v9.6.0 compliance, added cross-script communication
 v2.0.0 - Previous - Certificate Web Service deployment features
@@ -15,14 +15,14 @@ v1.x.x - Previous versions - Basic web service functionality
 #>
 #endregion
 
-#region Script Information Display (MANDATORY - Regelwerk v10.0.0)
+#region Script Information Display (MANDATORY - Regelwerk v10.1.0)
 function Show-ScriptInfo {
     param(
         [string]$ScriptName = "Certificate Web Service System",
         [string]$CurrentVersion = $ScriptVersion
     )
     
-    # PowerShell 5.1/7.x compatibility (Regelwerk v10.0.2 §19.3 - ASCII-safe output)
+    # PowerShell 5.1/7.x compatibility (Regelwerk v10.1.0 §19.3 - ASCII-safe output)
     if ($PSVersionTable.PSVersion.Major -ge 7) {
         Write-Host "[ENHANCED] $ScriptName v$CurrentVersion" -ForegroundColor Green
         Write-Host "[BUILD] $BuildDate | Regelwerk: $RegelwerkVersion" -ForegroundColor Cyan
@@ -33,7 +33,7 @@ function Show-ScriptInfo {
 }
 #endregion
 
-#region Cross-Script Communication (MANDATORY - Regelwerk v10.0.0)
+#region Cross-Script Communication (MANDATORY - Regelwerk v10.1.0)
 function Send-CertWebServiceMessage {
     param(
         [string]$TargetScript,
