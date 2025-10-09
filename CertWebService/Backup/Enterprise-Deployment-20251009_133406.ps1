@@ -284,8 +284,6 @@ function Get-HTMLDashboard {
 
 
 
-
-
 # HTTP Listener
 function Start-WebService {
     param([int]$Port)
@@ -443,5 +441,4 @@ try {
     Write-Log "Service konnte nicht gestartet werden: $($_.Exception.Message)" "FATAL"
     exit 1
 }
-
 

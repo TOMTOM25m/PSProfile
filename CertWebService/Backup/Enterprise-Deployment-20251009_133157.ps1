@@ -1,17 +1,17 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 
 <#
 .SYNOPSIS
 CertWebService - HTTP Web Service v2.5.0
 .DESCRIPTION
-HTTP Web Service for Certificate Monitoring with REAL Windows Certificate Store Data
-Regelwerk v10.1.0 | Last Updated: 09.10.2025
+HTTP Web-Service fuer Certificate Monitoring mit ECHTEN Windows Certificate Store Daten
+Regelwerk v10.1.0 | Stand: 09.10.2025
 
 FEATURES v2.5.0:
-- Echte Certificatesabfrage aus Windows Certificate Store
-- Support f?r LocalMachine\My, LocalMachine\WebHosting, CurrentUser\My
-- Filtert Certificatee mit Private Key
-- Status-Klassifizierung: Valid, Warning (?90d), Expiring Soon (?30d), Expired
+- Echte Zertifikatsabfrage aus Windows Certificate Store
+- Support für LocalMachine\My, LocalMachine\WebHosting, CurrentUser\My
+- Filtert Zertifikate mit Private Key
+- Status-Klassifizierung: Valid, Warning (≤90d), Expiring Soon (≤30d), Expired
 - Erweiterte Dashboard-Anzeige mit Thumbprint, SerialNumber, Store-Path
 
 .PARAMETER Port
@@ -69,7 +69,7 @@ function Get-CertificateData {
     Write-Log "Reading certificates from Windows Certificate Store..." "INFO"
     
     try {
-        # Lese Certificatee aus allen wichtigen Stores
+        # Lese Zertifikate aus allen wichtigen Stores
         $stores = @(
             'Cert:\LocalMachine\My',           # Personal Certificates
             'Cert:\LocalMachine\WebHosting',   # IIS Web Hosting
@@ -83,7 +83,7 @@ function Get-CertificateData {
             try {
                 if (Test-Path $storePath) {
                     $certs = Get-ChildItem -Path $storePath -ErrorAction SilentlyContinue | Where-Object {
-                        # Nur Certificatee mit Private Key (verwendbare Certificatee)
+                        # Nur Zertifikate mit Private Key (verwendbare Zertifikate)
                         $_.HasPrivateKey -eq $true -and 
                         $_.Subject -notmatch '^CN=localhost' # Filtere localhost-Zerts aus
                     }
@@ -168,45 +168,12 @@ function Get-CertificateData {
 # HTML Dashboard
 function Get-HTMLDashboard {
     $data = Get-CertificateData
-    
-    # Build certificate table rows
-    $tableRows = ""
-    foreach ($cert in $data.certificates) {
-        $statusClass = switch ($cert.status) {
-            "Valid" { "status-valid" }
-            "Warning" { "status-warning" }
-            "Expiring Soon" { "status-expiring" }
-            "Expired" { "status-expired" }
-            default { "status-valid" }
-        }
-        
-        $storeName = if ($cert.storePath) {
-            $cert.storePath -replace 'Cert:\\LocalMachine\\', 'LM\' -replace 'Cert:\\CurrentUser\\', 'CU\'
-        } else { "N/A" }
-        
-        $issuerShort = if ($cert.issuer -match 'CN=([^,]+)') { $matches[1] } else { $cert.issuer }
-        
-        # Build each table row
-        $tableRows += @"
-                <tr>
-                    <td><strong>$($cert.hostname)</strong></td>
-                    <td style="font-size: 0.9em;">$($cert.subject)</td>
-                    <td style="font-size: 0.9em;">$issuerShort</td>
-                    <td>$($cert.validUntil)</td>
-                    <td><strong>$($cert.daysUntilExpiry)</strong></td>
-                    <td class="$statusClass">$($cert.status)</td>
-                    <td style="font-size: 0.85em;">$storeName</td>
-                </tr>
-"@
-    }
-    
-    # Return complete HTML with populated table
     return @"
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CertWebService v2.5.0 - Dashboard</title>
-    <meta charset="UTF-8">
+    <title>CertWebService v2.4.0 - Dashboard</title>
+    <meta charset="utf-8">
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
         .header { background: #111d4e; color: white; padding: 20px; border-radius: 5px; }
@@ -225,34 +192,34 @@ function Get-HTMLDashboard {
 </head>
 <body>
     <div class="header">
-        <h1>Certificate Surveillance Dashboard v2.5.0</h1>
-        <p>MedUni Wien | Windows Server Infrastructure | Port: `$Port</p>
-        <p>Last Updated: `$(`$data.timestamp) | Regelwerk v10.1.0 | `$(`$data.summary.total) Certificates</p>
+    <h1>Certificate Surveillance Dashboard v2.5.0</h1>
+    <p>MedUni Wien | WindowsServer-Infrastruktur | Port: $Port</p>
+    <p>Stand: $($data.timestamp) | Regelwerk v10.1.0 | $($data.summary.total) Certificates</p>
     </div>
-
+    
     <div class="stats">
         <div class="stat-box">
-            <h3>`$(`$data.summary.total)</h3>
+            <h3>$($data.summary.total)</h3>
             <p>Total Certificates</p>
         </div>
         <div class="stat-box">
-            <h3 style="color: #28a745">`$(`$data.summary.valid)</h3>
+            <h3 style="color: #28a745">$($data.summary.valid)</h3>
             <p>Valid</p>
         </div>
         <div class="stat-box">
-            <h3 style="color: #ffc107">`$(`$data.summary.warning)</h3>
-            <p>Warning (&gt;90d)</p>
+            <h3 style="color: #ffc107">$($data.summary.warning)</h3>
+            <p>Warning (≤90d)</p>
         </div>
         <div class="stat-box">
-            <h3 style="color: #ff6b35">`$(`$data.summary.expiringSoon)</h3>
-            <p>Expiring Soon (&le;30d)</p>
+            <h3 style="color: #ff6b35">$($data.summary.expiringSoon)</h3>
+            <p>Expiring Soon (≤30d)</p>
         </div>
         <div class="stat-box">
-            <h3 style="color: #dc3545">`$(`$data.summary.expired)</h3>
+            <h3 style="color: #dc3545">$($data.summary.expired)</h3>
             <p>Expired</p>
         </div>
     </div>
-
+    
     <div class="cert-table">
         <table>
             <thead>
@@ -267,30 +234,61 @@ function Get-HTMLDashboard {
                 </tr>
             </thead>
             <tbody>
-`$tableRows
+"@
+    foreach ($cert in $data.certificates) {
+        # Status-spezifische CSS-Klasse
+        $statusClass = switch ($cert.status) {
+            "Valid" { "status-valid" }
+            "Warning" { "status-warning" }
+            "Expiring Soon" { "status-expiring" }
+            "Expired" { "status-expired" }
+            default { "status-valid" }
+        }
+        
+        # Store-Name kürzen
+        $storeName = if ($cert.storePath) { 
+            $cert.storePath -replace 'Cert:\\LocalMachine\\', 'LM\' -replace 'Cert:\\CurrentUser\\', 'CU\'
+        } else { 
+            "N/A" 
+        }
+        
+        # Issuer kürzen (nur CN)
+        $issuerShort = if ($cert.issuer -match 'CN=([^,]+)') { $matches[1] } else { $cert.issuer }
+        
+        $html += @"
+                <tr>
+                    <td><strong>$($cert.hostname)</strong></td>
+                    <td style="font-size: 0.9em;">$($cert.subject)</td>
+                    <td style="font-size: 0.9em;">$issuerShort</td>
+                    <td>$($cert.validUntil)</td>
+                    <td><strong>$($cert.daysUntilExpiry)</strong></td>
+                    <td class="$statusClass">$($cert.status)</td>
+                    <td style="font-size: 0.85em;">$storeName</td>
+                </tr>
+"@
+    }
+    
+    $html += @"
             </tbody>
         </table>
     </div>
-
+    
     <div class="footer">
         <p>CertWebService v2.5.0 | Regelwerk v10.1.0 | MedUni Wien IT-Security</p>
-        <p>API: <a href="/certificates.json">/certificates.json</a> | Health: <a href="/health.json">/health.json</a></p>
-        <p style="font-size:0.85em; margin-top:10px;">Certificate Stores: LocalMachine\My, LocalMachine\WebHosting, CurrentUser\My</p>
+    <p>API: <a href="/certificates.json">/certificates.json</a> | Health: <a href="/health.json">/health.json</a></p>
+    <p style="font-size:0.85em; margin-top:10px;">Certificate Stores: LocalMachine\My, LocalMachine\WebHosting, CurrentUser\My</p>
     </div>
 </body>
 </html>
 "@
+    return $html
 }
-
-
-
-
 
 # HTTP Listener
 function Start-WebService {
     param([int]$Port)
     
-    # Transcript-Logging f?r den Service-Modus
+    # Transcript-Logging für den Service-Modus
     if ($ServiceMode) {
         $transcriptLogPath = Join-Path $PSScriptRoot "Logs"
         $transcriptFile = Join-Path $transcriptLogPath "Transcript_$(Get-Date -Format 'yyyy-MM-dd_HH-mm-ss').log"
@@ -306,10 +304,10 @@ function Start-WebService {
     try {
         $listener = New-Object System.Net.HttpListener
 
-        # Listener-Pr?fixe: Verwende Wildcard f?r maximale Kompatibilit?t
-        # Dies erlaubt Zugriff ?ber alle Hostnamen/IPs
+        # Listener-Präfixe: Verwende Wildcard für maximale Kompatibilität
+        # Dies erlaubt Zugriff über alle Hostnamen/IPs
         $httpPrefix = "http://+:$Port/"
-        $httpsPrefix = "https://+:9443/" # Fester Port f?r HTTPS gem?? Regelwerk
+        $httpsPrefix = "https://+:9443/" # Fester Port für HTTPS gemäß Regelwerk
 
         $listener.Prefixes.Add($httpPrefix)
         $listener.Prefixes.Add($httpsPrefix)
@@ -340,7 +338,7 @@ function Start-WebService {
                     "/" {
                         $html = Get-HTMLDashboard
                         $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)
-                        $response.ContentType = "text/html; charset=UTF-8"
+                        $response.ContentType = "text/html; charset=utf-8"
                         $response.ContentLength64 = $buffer.Length
                         $response.OutputStream.Write($buffer, 0, $buffer.Length)
                     }
@@ -350,14 +348,14 @@ function Start-WebService {
                         $response.RedirectLocation = "/certificates.json"
                         $msg = '{"message":"Endpoint moved to /certificates.json"}'
                         $buffer = [System.Text.Encoding]::UTF8.GetBytes($msg)
-                        $response.ContentType = "application/json; charset=UTF-8"
+                        $response.ContentType = "application/json; charset=utf-8"
                         $response.ContentLength64 = $buffer.Length
                         $response.OutputStream.Write($buffer, 0, $buffer.Length)
                     }
                     "/certificates.json" {
                         $data = Get-CertificateData
                         
-                        # Strukturierte API-Response f?r CertSurv Kompatibilit?t
+                        # Strukturierte API-Response für CertSurv Kompatibilität
                         $apiResponse = @{
                             status = "success"
                             total_count = if ($data.certificates -is [array]) { $data.certificates.Count } else { if ($data.certificates) { 1 } else { 0 } }
@@ -369,7 +367,7 @@ function Start-WebService {
                         
                         $json = $apiResponse | ConvertTo-Json -Depth 4
                         $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
-                        $response.ContentType = "application/json; charset=UTF-8"
+                        $response.ContentType = "application/json; charset=utf-8"
                         $response.ContentLength64 = $buffer.Length
                         $response.OutputStream.Write($buffer, 0, $buffer.Length)
                     }
@@ -383,7 +381,7 @@ function Start-WebService {
                         }
                         $json = $health | ConvertTo-Json
                         $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
-                        $response.ContentType = "application/json; charset=UTF-8"
+                        $response.ContentType = "application/json; charset=utf-8"
                         $response.ContentLength64 = $buffer.Length
                         $response.OutputStream.Write($buffer, 0, $buffer.Length)
                     }
@@ -425,7 +423,7 @@ if ($ServiceMode) {
     Write-Log "=== CERTWEBSERVICE v2.5.0 GESTARTET (SERVICE MODE) ===" "INFO"
 } else {
     Write-Host "=== CERTWEBSERVICE v2.5.0 GESTARTET ===" -ForegroundColor Green
-    Write-Host "Regelwerk v10.1.0 | Last Updated: 09.10.2025" -ForegroundColor Gray
+    Write-Host "Regelwerk v10.1.0 | Stand: 09.10.2025" -ForegroundColor Gray
     Write-Host "Reading REAL certificates from Windows Certificate Store" -ForegroundColor Cyan
     Write-Host ""
 }
@@ -443,5 +441,3 @@ try {
     Write-Log "Service konnte nicht gestartet werden: $($_.Exception.Message)" "FATAL"
     exit 1
 }
-
-
