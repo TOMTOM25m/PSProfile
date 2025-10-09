@@ -1,6 +1,6 @@
-# PowerShell-Regelwerk Universal v10.0.3
+# PowerShell-Regelwerk Universal v10.0.4
 
-**Enterprise Complete Edition - Comprehensive PowerShell Development Standards**
+**Enterprise COMPLETE Edition - ALL Paragraphs Restored**
 
 ---
 
@@ -8,11 +8,11 @@
 
 | **Attribute** | **Value** |
 |---------------|-----------|
-| **Version** | v10.0.3 |
-| **Status** | Enterprise Complete |
-| **Release Date** | 2025-10-07 |
+| **Version** | v10.0.4 |
+| **Status** | Enterprise COMPLETE |
+| **Release Date** | 2025-10-09 |
 | **Author** | © Flecki (Tom) Garnreiter |
-| **Supersedes** | PowerShell-Regelwerk Universal v10.0.2 |
+| **Supersedes** | PowerShell-Regelwerk Universal v10.0.3 |
 | **Scope** | Enterprise PowerShell Development |
 | **License** | MIT License |
 | **Language** | DE/EN (Bilingual) |
@@ -21,9 +21,55 @@
 
 ## 🎯 Executive Summary
 
-**[DE]** Das PowerShell-Regelwerk Universal v10.0.3 Enterprise Complete Edition erweitert v10.0.2 um **3-Stufen Credential-Strategie** für intelligentes Passwort-Management. Diese Version definiert moderne, robuste und wartbare PowerShell-Entwicklung für Unternehmensumgebungen mit Fokus auf Zertifikatsverwaltung, E-Mail-Automation und sicheres Credential-Management.
+**[DE]** Das PowerShell-Regelwerk Universal v10.0.4 Enterprise COMPLETE Edition stellt die vollständige Wiederherstellung ALLER Basis-Paragraphen (§1-§15) dar, die in v10.0.1-v10.0.3 versehentlich fehlten. Mit 19 umfassenden Paragraphen definiert es moderne, robuste und wartbare PowerShell-Entwicklung für Unternehmensumgebungen. Diese Version kombiniert die bewährten Basis-Standards aus v10.0.0 mit den erweiterten Enterprise-Features aus v10.0.3.
 
-**[EN]** The PowerShell-Regelwerk Universal v10.0.3 Enterprise Complete Edition extends v10.0.2 with **3-Tier Credential Strategy** for intelligent password management. This version defines modern, robust, and maintainable PowerShell development for enterprise environments with focus on certificate management, email automation and secure credential management.
+**[EN]** The PowerShell-Regelwerk Universal v10.0.4 Enterprise COMPLETE Edition represents the complete restoration of ALL foundation paragraphs (§1-§15) that were inadvertently missing in v10.0.1-v10.0.3. With 19 comprehensive paragraphs, it defines modern, robust, and maintainable PowerShell development for enterprise environments. This version combines the proven foundation standards from v10.0.0 with the extended enterprise features from v10.0.3.
+
+---
+
+## 🆕 Version 10.0.4 Änderungen / Changes
+
+### 🔴 CRITICAL FIX: Fehlende Paragraphen wiederhergestellt (v10.0.4)
+
+**PROBLEM in v10.0.1-v10.0.3:**
+
+- ❌ §1-§10, §12-§13, §15 fehlten komplett im Dokument
+- ❌ Inhaltsverzeichnis listete alle Paragraphen, aber Inhalte waren nicht vorhanden  
+- ❌ TOC-Links zeigten ins Leere (broken anchors)
+- ❌ Nur §11, §14, §16-§19 waren vorhanden (6 von 19 Paragraphen)
+
+**LÖSUNG in v10.0.4 COMPLETE:**
+
+- ✅ ALLE §1-§19 Paragraphen sind jetzt vollständig vorhanden
+- ✅ Basis-Paragraphen aus v10.0.0 restauriert (§1-§10, §12-§13, §15)
+- ✅ Spezial-Paragraphen aus v10.0.3 beibehalten (§11 Updated, §14 NEU, §16-§19 NEU)
+- ✅ Korrekte Reihenfolge etabliert: Teil A (§1-§9), Teil B (§10-§15), Teil C (§16-§19)
+- ✅ Alle TOC-Links funktionieren wieder
+
+### Wiederhergestellte Basis-Paragraphen (aus v10.0.0)
+
+- **§1: Version Management** - Semantic Versioning, VERSION.ps1, Build-Dates
+- **§2: Script Headers & Naming** - Comment-Based Help, Verb-Noun Convention
+- **§3: Functions** - CmdletBinding, Parameter Validation, begin/process/end
+- **§4: Error Handling** - try-catch-finally, $ErrorActionPreference, Specific Exceptions
+- **§5: Logging** - Write-Log Function, Log-Levels (DEBUG/INFO/WARNING/ERROR/FATAL)
+- **§6: Configuration** - External JSON Files, Environment Separation (DEV/PROD)
+- **§7: Modules & Repository Structure** - Standard Folders, FL- Prefix, Module Organization
+- **§8: PowerShell Compatibility** - PS 5.1 vs 7.x Detection, ASCII Alternatives
+- **§9: GUI Standards** - WPF Templates, MedUni Wien Corporate Design (#111d4e)
+- **§10: Strict Modularity** - 300-Line Limit, Logic Separation, Orchestration
+- **§12: Cross-Script Communication** - JSON-based Messaging, Status Files
+- **§13: Network Operations** - Retry Logic, Test-Connection, Timeout Parameters
+- **§15: Performance Optimization** - Parallel Processing, ThrottleLimit, Garbage Collection
+
+### Erweiterte Paragraphen (aus v10.0.3)
+
+- **§11: File Operations (UPDATED v10.0.1)** - Robocopy MANDATORY, Copy-Item VERBOTEN
+- **§14: Security Standards (NEW v10.0.3)** - 3-Tier Credential Strategy (Default → Vault → Prompt)
+- **§16: Email Standards (NEW v10.0.1)** - MedUni Wien SMTP (smtpi.meduniwien.ac.at:25)
+- **§17: Excel Integration (NEW v10.0.1)** - COM Operations, Column Mappings
+- **§18: Certificate Surveillance (NEW v10.0.1)** - CertWebService Standards
+- **§19: PS-Versionserkennung (NEW v10.0.2)** - Encoding Strategy (PS5.1 ASCII, PS7+ UTF-8 BOM)
 
 ---
 
@@ -80,6 +126,416 @@
 - **[§17: Excel Integration](#§17-excel-integration--excel-integration)**
 - **[§18: Certificate Surveillance](#§18-certificate-surveillance--zertifikatsüberwachung)**
 - **[§19: PowerShell-Versionserkennung](#§19-powershell-versionserkennung-und-kompatibilitätsfunktionen-mandatory)**
+
+---
+
+## §1 Version Management / Versionsverwaltung
+
+### 🔧 **Mandatory Requirements**
+
+- **`VERSION.ps1`**: Jedes Projekt MUSS eine `VERSION.ps1` Datei zur zentralen Versionsverwaltung besitzen.
+- **Semantic Versioning**: Die Versionierung MUSS dem `MAJOR.MINOR.PATCH` Schema folgen.
+- **Regelwerk Reference**: Die `VERSION.ps1` MUSS eine explizite Referenz zur angewendeten Regelwerk-Version enthalten.
+
+### 💻 **`VERSION.ps1` Template**
+
+```powershell
+#region Version Information (MANDATORY - Regelwerk v10.0.0)
+$ScriptVersion = "1.0.0"  # Semantic Versioning: MAJOR.MINOR.PATCH
+$RegelwerkVersion = "v10.0.0"
+$BuildDate = "2025-09-29"
+$Author = "Flecki (Tom) Garnreiter"
+
+<#
+.VERSION HISTORY (MANDATORY)
+1.0.0 - 2025-09-29 - Initial release with Regelwerk v10.0.0 compliance
+#>
+
+function Show-ScriptInfo {
+    param(
+        [string]$ScriptName = $MyInvocation.MyCommand.Name,
+        [string]$CurrentVersion = $ScriptVersion
+    )
+    
+    # PowerShell 5.1/7.x compatibility (Regelwerk v10.0.0 §8)
+    if ($PSVersionTable.PSVersion.Major -ge 7) {
+        Write-Host "🚀 $ScriptName v$CurrentVersion" -ForegroundColor Green
+        Write-Host "📅 Build: $BuildDate | Regelwerk: $RegelwerkVersion" -ForegroundColor Cyan
+    } else {
+        Write-Host ">> $ScriptName v$CurrentVersion" -ForegroundColor Green
+        Write-Host "[BUILD] $BuildDate | Regelwerk: $RegelwerkVersion" -ForegroundColor Cyan
+    }
+}
+#endregion
+```
+
+---
+
+## §2 Script Headers & Naming / Script-Kopfzeilen & Namensgebung
+
+### 🔧 **Mandatory Requirements**
+
+- **Comment-Based Help**: Jedes Script und jede Funktion MUSS ein vollständiges Comment-Based Help (CBH) haben.
+- **Standard Header**: Der Header MUSS `.SYNOPSIS`, `.DESCRIPTION`, `.NOTES`, und `.EXAMPLE` enthalten.
+- **Verb-Nomen-Konvention**: Alle Funktions- und Scriptnamen MÜSSEN der `Verb-Nomen` Konvention folgen.
+
+### 💻 **Script Header & Naming Template**
+
+```powershell
+<#
+.SYNOPSIS
+    [DE] Kurze Beschreibung des Scripts.
+    [EN] Brief description of the script.
+
+.DESCRIPTION
+    [DE] Detaillierte Beschreibung der Funktionalität.
+    [EN] Detailed description of functionality.
+
+.NOTES
+    Author:         Flecki (Tom) Garnreiter
+    Version:        1.0.0
+    Regelwerk:      v10.0.0
+    Copyright:      © 2025 Flecki Garnreiter
+
+.EXAMPLE
+    .\Deploy-Application.ps1 -AppName "CertWebService"
+    Deploys the application "CertWebService".
+#>
+param()
+```
+
+### 📝 **Script Naming Patterns**
+
+```powershell
+# ✅ MANDATORY Naming Patterns (PFLICHT):
+Deploy-[AppName].ps1                # Software deployment
+Setup-[SystemName].ps1              # System setup
+Manage-[Service].ps1                # Service management
+Check-[Component]-Compliance.ps1    # Compliance validation
+Sync-[Source]-To-[Target].ps1       # Data synchronization
+
+# ❌ FORBIDDEN Names (VERBOTEN):
+# main.ps1, script1.ps1, test.ps1, temp.ps1, run.ps1
+```
+
+---
+
+## §3 Functions / Funktionen
+
+### 🔧 **Mandatory Requirements**
+
+- **`[CmdletBinding()]`**: Jede Funktion MUSS `[CmdletBinding()]` verwenden.
+- **Parameter Validation**: Parameter MÜSSEN mit `[Validate...]` Attributen validiert werden.
+- **Struktur**: Jede Funktion MUSS in `begin`, `process`, `end` Blöcke strukturiert sein.
+
+### 💻 **Function Template**
+
+```powershell
+function Get-ComponentStatus {
+    <#
+    .SYNOPSIS
+        [DE] Holt den Status einer Komponente.
+        [EN] Gets the status of a component.
+
+    .PARAMETER ComponentName
+        [DE] Name der zu prüfenden Komponente.
+        [EN] Name of the component to check.
+
+    .EXAMPLE
+        Get-ComponentStatus -ComponentName "WebService"
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$ComponentName
+    )
+    
+    begin {
+        Write-Verbose "[§3] Starting component status check for: $ComponentName"
+    }
+    
+    process {
+        try {
+            # === MAIN LOGIC === #
+            $result = @{ ComponentName = $ComponentName; Status = 'OK' }
+            return $result
+        }
+        catch {
+            Write-Error "[§3] Error in Get-ComponentStatus: $($_.Exception.Message)"
+            throw # Fehler weiterleiten
+        }
+    }
+    
+    end {
+        Write-Verbose "[§3] Function completed."
+    }
+}
+```
+
+---
+
+## §4 Error Handling / Fehlerbehandlung
+
+### 🔧 **Mandatory Requirements**
+
+- **`try-catch` Blöcke**: Kritische Code-Abschnitte MÜSSEN in `try-catch` Blöcken gekapselt sein.
+- **`$ErrorActionPreference`**: Der Standardwert MUSS auf `Stop` gesetzt sein, um Fehler sofort zu behandeln.
+- **Spezifische Fehler**: Fehlerbehandlung sollte so spezifisch wie möglich sein.
+
+### 💻 **Error Handling Template**
+
+```powershell
+$ErrorActionPreference = 'Stop'
+
+try {
+    # Kritischer Code
+    $content = Get-Content -Path "C:\non-existent-file.txt"
+}
+catch [System.Management.Automation.ItemNotFoundException] {
+    # Spezifischer Fehler für "Datei nicht gefunden"
+    Write-Error "[§4] File not found. Please check the path."
+    # Optional: Fallback-Logik
+}
+catch {
+    # Allgemeiner Fehler
+    Write-Error "[§4] An unexpected error occurred: $($_.Exception.Message)"
+    throw # Unerwartete Fehler weiterleiten
+}
+finally {
+    # Aufräumarbeiten, wird immer ausgeführt
+    Write-Verbose "[§4] Error handling block finished."
+}
+```
+
+---
+
+## §5 Logging / Protokollierung
+
+### 🔧 **Mandatory Requirements**
+
+- **Zentrale Log-Funktion**: Jedes Projekt MUSS eine zentrale `Write-Log` Funktion verwenden.
+- **Log-Levels**: Es MÜSSEN mindestens die Levels `DEBUG`, `INFO`, `WARNING`, `ERROR` unterstützt werden.
+- **Timestamp & Level**: Jeder Log-Eintrag MUSS einen Zeitstempel und den Log-Level enthalten.
+
+### 💻 **`Write-Log` Template**
+
+```powershell
+function Write-Log {
+    param(
+        [Parameter(Mandatory)] [string]$Message,
+        [ValidateSet("DEBUG", "INFO", "WARNING", "ERROR", "FATAL")] [string]$Level = "INFO",
+        [string]$LogPath = $Global:LogFilePath
+    )
+    
+    $Timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+    $LogEntry = "[$Timestamp] [$Level] $Message"
+    
+    # Console-Ausgabe mit Farben
+    $Color = switch ($Level) {
+        "DEBUG"   { "Gray" }
+        "INFO"    { "White" }
+        "WARNING" { "Yellow" }
+        "ERROR"   { "Red" }
+        "FATAL"   { "Magenta" }
+    }
+    Write-Host $LogEntry -ForegroundColor $Color
+    
+    # File-Logging
+    if ($LogPath) {
+        $LogEntry | Out-File -FilePath $LogPath -Append -Encoding UTF8
+    }
+}
+```
+
+---
+
+## §6 Configuration / Konfiguration
+
+### 🔧 **Mandatory Requirements**
+
+- **Externe JSON-Datei**: Die Konfiguration MUSS in einer externen `.json` Datei ausgelagert sein.
+- **`config-[ProjectName].json`**: Der Name der Konfigurationsdatei MUSS diesem Muster folgen.
+- **Umgebungstrennung**: Die Konfiguration MUSS zwischen `DEV` und `PROD` Umgebungen unterscheiden können.
+
+### 💻 **`config-template.json`**
+
+```json
+{
+    "ProjectInfo": {
+        "Name": "MyProject",
+        "Version": "1.0.0",
+        "RegelwerkVersion": "v10.0.0"
+    },
+    "Environment": "DEV",
+    "Settings": {
+        "LogLevel": "INFO",
+        "DebugMode": true
+    },
+    "Paths": {
+        "LogPath": "./LOG/MyProject.log",
+        "ReportPath": "./Reports"
+    },
+    "Mail": {
+        "SMTPServer": "smtp.meduniwien.ac.at",
+        "Port": 25,
+        "Recipients": {
+            "DEV": "thomas.garnreiter@meduniwien.ac.at",
+            "PROD": "win-admin@meduniwien.ac.at"
+        }
+    }
+}
+```
+
+---
+
+## §7 Modules & Repository Structure / Module & Repository-Struktur
+
+### 🔧 **Mandatory Requirements**
+
+- **Standard-Verzeichnisstruktur**: Jedes Projekt MUSS eine standardisierte Ordnerstruktur aufweisen.
+- **`Modules` Ordner**: Wiederverwendbarer Code MUSS in `.psm1` Module im `Modules` Ordner ausgelagert werden.
+- **`FL-` Präfix**: Funktions-spezifische Module (Function Libraries) MÜSSEN das `FL-` Präfix tragen.
+
+### 💻 **Repository Structure Template**
+
+```text
+ProjectName/
+├── README.md                    # Projekt-Übersicht (PFLICHT)
+├── CHANGELOG.md                 # Änderungsprotokoll (PFLICHT)
+├── VERSION.ps1                  # Versionsverwaltung (PFLICHT)
+├── Deploy-ProjectName.ps1       # Haupt-Script
+├── Setup-ProjectName.ps1        # Setup-Script (PFLICHT)
+├── Config/
+│   └── config-ProjectName.json  # Hauptkonfiguration
+├── Modules/
+│   ├── FL-Config.psm1           # Konfigurationsmanagement
+│   ├── FL-Logging.psm1          # Logging-Funktionen
+│   └── FL-CoreLogic.psm1        # Haupt-Workflow-Logik
+├── LOG/                         # Log-Dateien (zur Laufzeit erstellt)
+├── Reports/                     # Generierte Berichte
+└── Docs/                        # Dokumentation
+```
+
+---
+
+## §8 PowerShell Compatibility / PowerShell-Kompatibilität
+
+### 🔧 **Mandatory Requirements**
+
+- **Versionserkennung**: Code, der sich zwischen PowerShell 5.1 und 7.x unterscheidet, MUSS die Version erkennen.
+- **Keine Unicode-Emojis in PS 5.1**: In `Write-Host` dürfen in PS 5.1 keine Emojis verwendet werden.
+- **ASCII-Alternativen**: Für PS 5.1 MÜSSEN aussagekräftige ASCII-Alternativen bereitgestellt werden.
+
+### 💻 **Compatibility Template**
+
+```powershell
+function Show-StatusMessage {
+    if ($PSVersionTable.PSVersion.Major -ge 7) {
+        # PowerShell 7.x - Unicode-Emojis erlaubt
+        Write-Host "🚀 Starting process..." -ForegroundColor Green
+        Write-Host "✅ Status: OK" -ForegroundColor Green
+    } else {
+        # PowerShell 5.1 - ASCII-Alternativen verwenden
+        Write-Host ">> Starting process..." -ForegroundColor Green
+        Write-Host "[OK] Status: OK" -ForegroundColor Green
+    }
+}
+```
+
+---
+
+## §9 GUI Standards / GUI-Standards
+
+### 🔧 **Mandatory Requirements**
+
+- **WPF als Standard**: Alle GUIs MÜSSEN mit WPF (Windows Presentation Foundation) erstellt werden. WinForms ist verboten.
+- **Setup-GUI**: Jedes Projekt MUSS eine `Setup-[ProjectName]-GUI.ps1` für die Konfigurationsverwaltung bereitstellen.
+- **Corporate Design**: Das MedUni Wien Corporate Design (Farbe `#111d4e`) MUSS verwendet werden.
+
+### 💻 **WPF GUI Template Snippet**
+
+```powershell
+# Setup-GUI Template (WPF-basiert)
+function Show-SetupGUI {
+    # WPF Assemblies laden
+    Add-Type -AssemblyName PresentationFramework
+    
+    # MUW Corporate Design Farben
+    $Colors = @{
+        Primary = "#111d4e"        # MedUni Wien Official Dark Blue
+        Background = "#F5F5F5"     # Light Gray Background
+        Success = "#008000"        # Success Green
+    }
+
+    # XAML-Code für die GUI-Struktur
+    [xml]$xaml = @"
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        Title="Setup GUI" Height="400" Width="600">
+    <Grid>
+        <Border Background="$($Colors.Primary)" Height="50" VerticalAlignment="Top">
+            <TextBlock Text="Project Configuration" Foreground="White" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+        <!-- Weitere GUI-Elemente hier -->
+    </Grid>
+</Window>
+"@
+
+    $reader = (New-Object System.Xml.XmlNodeReader $xaml)
+    $window = [Windows.Markup.XamlReader]::Load($reader)
+    
+    # Event-Handler und Logik hier...
+    
+    $window.ShowDialog() | Out-Null
+}
+```
+
+---
+---
+
+# Teil B: Enterprise-Paragraphen
+
+## §10 Strict Modularity / Strikte Modularität
+
+### 🔧 **Mandatory Requirements**
+
+- **300-Zeilen-Limit**: Hauptskripte (`Deploy-*.ps1`, `Setup-*.ps1`) dürfen eine Länge von 300 Zeilen nicht überschreiten.
+- **Logik-Auslagerung**: Die gesamte Geschäftslogik MUSS in spezialisierte `FL-*.psm1` Module ausgelagert werden.
+- **Orchestrierung**: Das Hauptskript dient nur der Orchestrierung (Modul-Import, Konfigurations-Ladung, Funktionsaufrufe).
+
+### 💻 **Lean Main Script Template**
+
+```powershell
+#requires -Version 5.1
+
+param([switch]$Setup, [switch]$Debug)
+
+#region Initialization (§1, §6)
+. (Join-Path $PSScriptRoot "VERSION.ps1")
+Show-ScriptInfo
+$Config = Get-ScriptConfiguration # Lädt Konfiguration aus FL-Config.psm1
+#endregion
+
+#region Module Import (§7)
+$ModulePath = Join-Path $PSScriptRoot "Modules"
+Import-Module (Join-Path $ModulePath "FL-Config.psm1") -Force
+Import-Module (Join-Path $ModulePath "FL-Logging.psm1") -Force
+Import-Module (Join-Path $ModulePath "FL-CoreLogic.psm1") -Force
+#endregion
+
+#region Main Execution (§10)
+try {
+    if ($Setup) {
+        Invoke-SetupMode # Funktion aus FL-CoreLogic.psm1
+    } else {
+        Invoke-MainWorkflow # Funktion aus FL-CoreLogic.psm1
+    }
+} catch {
+    Write-Log "Critical Error: $($_.Exception.Message)" -Level "FATAL"
+    exit 1
+}
+#endregion
+```
 
 ---
 
@@ -474,6 +930,93 @@ Write-Host "[SUCCESS] Done"
 
 ---
 
+## §12 Cross-Script Communication / Script-übergreifende Kommunikation
+
+### 🔧 **Mandatory Requirements**
+
+- **JSON-basiertes Messaging**: Die Kommunikation zwischen verschiedenen Skripten MUSS über temporäre JSON-Dateien erfolgen.
+- **`Messages` & `Status` Ordner**: Nachrichten und Status-Updates MÜSSEN in den Unterordnern `LOG\Messages` und `LOG\Status` gespeichert werden.
+- **Zentrale Funktionen**: `Send-ScriptMessage` und `Set-ScriptStatus` MÜSSEN für die Kommunikation verwendet werden.
+
+### 💻 **Communication Functions Template**
+
+```powershell
+function Send-ScriptMessage {
+    param(
+        [Parameter(Mandatory)][string]$TargetScript,
+        [Parameter(Mandatory)][string]$Message
+    )
+    $MessageDir = "LOG\Messages"
+    New-Item -Path $MessageDir -ItemType Directory -Force | Out-Null
+    $MessageFile = "$MessageDir\$TargetScript-$(Get-Date -Format 'yyyyMMdd-HHmmss').json"
+    $MessageData = @{
+        Timestamp = Get-Date -Format 'O'
+        Source = $MyInvocation.MyCommand.Name
+        Message = $Message
+    }
+    $MessageData | ConvertTo-Json | Out-File $MessageFile -Encoding UTF8
+}
+
+function Set-ScriptStatus {
+    param([Parameter(Mandatory)][string]$Status, [hashtable]$Details = @{})
+    
+    $StatusDir = "LOG\Status"
+    New-Item -Path $StatusDir -ItemType Directory -Force | Out-Null
+    $StatusFile = "$StatusDir\$($MyInvocation.MyCommand.Name -replace '\.ps1$', '')-Status.json"
+    $StatusData = @{
+        Timestamp = Get-Date -Format 'O'
+        Status = $Status
+        Details = $Details
+        Computer = $env:COMPUTERNAME
+    }
+    $StatusData | ConvertTo-Json -Depth 5 | Out-File $StatusFile -Encoding UTF8
+}
+```
+
+---
+
+## §13 Network Operations / Netzwerkoperationen
+
+### 🔧 **Mandatory Requirements**
+
+- **Retry-Logik**: Alle Netzwerkoperationen (z.B. `Test-Path`, `Invoke-RestMethod`) MÜSSEN eine Retry-Logik mit `Start-Sleep` implementieren.
+- **`Test-Connection` vor Zugriff**: Vor dem Zugriff auf eine Netzwerkressource MUSS die Erreichbarkeit mit `Test-Connection` oder `Test-NetConnection` geprüft werden.
+- **Timeout-Parameter**: Alle Netzwerk-Cmdlets MÜSSEN explizite Timeout-Parameter verwenden.
+
+### 💻 **Resilient Network Function Template**
+
+```powershell
+function Get-WebServiceData {
+    param(
+        [Parameter(Mandatory)][string]$Uri,
+        [int]$RetryCount = 3,
+        [int]$TimeoutSeconds = 30
+    )
+    
+    for ($i = 1; $i -le $RetryCount; $i++) {
+        try {
+            Write-Log "Attempting to get data from $Uri (Attempt $i/$RetryCount)" -Level DEBUG
+            $params = @{
+                Uri = $Uri
+                TimeoutSec = $TimeoutSeconds
+                ErrorAction = 'Stop'
+            }
+            return Invoke-RestMethod @params
+        }
+        catch {
+            Write-Log "Failed to get data from $Uri. Error: $($_.Exception.Message)" -Level WARNING
+            if ($i -lt $RetryCount) {
+                Start-Sleep -Seconds 5 # Warte 5 Sekunden vor dem nächsten Versuch
+            } else {
+                throw "Failed to retrieve data from $Uri after $RetryCount attempts."
+            }
+        }
+    }
+}
+```
+
+---
+
 ## §14: Security Standards / Sicherheitsstandards (NEW v10.0.3)
 
 ### 14.1 3-Stufen Credential-Strategie (MANDATORY)
@@ -666,6 +1209,32 @@ if ($cred) {
 | `Update-AllServers-Hybrid-v2.5.ps1` | Mass Deployment | `CertWebService-Deployment` |
 | `Deploy-CertSurv-QuickStart.ps1` | Quick Deployment | `CertSurv-Deployment` |
 | `Update-FromExcel-MassUpdate.ps1` | Excel-basiertes Update | `CertWebService-MassUpdate` |
+
+---
+
+## §15 Performance Optimization / Performance-Optimierung
+
+### 🔧 **Mandatory Requirements**
+
+- **Parallel Processing**: Für die Verarbeitung großer Datenmengen MUSS `ForEach-Object -Parallel` (in PS 7+) oder `Start-Job` verwendet werden.
+- **`$ThrottleLimit`**: Bei paralleler Verarbeitung MUSS ein `$ThrottleLimit` gesetzt werden, um das System nicht zu überlasten.
+- **Memory Management**: Bei langen Skriptläufen MUSS explizit der Garbage Collector mit `[System.GC]::Collect()` aufgerufen werden, um Speicher freizugeben.
+
+### 💻 **Parallel Processing Template (PowerShell 7+)**
+
+```powershell
+$items = 1..1000
+
+$items | ForEach-Object -Parallel {
+    # Dieser Code wird parallel für jedes Element ausgeführt
+    $item = $_
+    # ... intensive Verarbeitung ...
+    
+    # Wichtig: Logging innerhalb des Parallel-Blocks muss Thread-sicher sein
+    # (z.B. durch Schreiben in separate Dateien oder Verwendung von Synchronisation)
+    
+} -ThrottleLimit 5 # Maximal 5 Threads gleichzeitig
+```
 
 ---
 
